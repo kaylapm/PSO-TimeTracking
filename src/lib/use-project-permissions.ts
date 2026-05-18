@@ -114,13 +114,13 @@ export function useProjectPermissions(members: ProjectMember[] | undefined): Pro
 export function getRoleBadgeColor(role: string): string {
   switch (role) {
     case 'MANAGER':
-      return 'bg-purple-100 text-purple-800 border-purple-300';
+      return 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-700';
     case 'CONTRIBUTOR':
-      return 'bg-blue-100 text-blue-800 border-blue-300';
+      return 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700';
     case 'VIEWER':
-      return 'bg-gray-100 text-gray-800 border-gray-300';
+      return 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-700';
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-300';
+      return 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-700';
   }
 }
 

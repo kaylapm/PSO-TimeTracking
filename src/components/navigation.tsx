@@ -14,6 +14,7 @@ import {
 } from './ui/dropdown-menu';
 import { useEffect, useMemo } from 'react';
 import { ChevronDown, Check, Settings } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const allNavigationItems = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -211,7 +212,10 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
               </Link>
               {user && <Navigation />}
             </div>
-            <UserMenu />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <UserMenu />
+            </div>
           </div>
         </div>
       </nav>
