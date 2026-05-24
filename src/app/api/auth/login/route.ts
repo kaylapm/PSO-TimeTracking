@@ -3,7 +3,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { query as db } from '@/db';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET =
+	process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 export async function POST(request: NextRequest) {
 	try {
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
 		if (!email || !password) {
 			return NextResponse.json(
 				{ error: 'Email and password are required' },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -22,13 +23,13 @@ export async function POST(request: NextRequest) {
 			`SELECT id, email, name, password_hash, instance_role
        FROM users
        WHERE email = $1`,
-			[email]
+			[email],
 		);
 
 		if (userResult.rows.length === 0) {
 			return NextResponse.json(
 				{ error: 'Invalid email or password' },
-				{ status: 401 }
+				{ status: 401 },
 			);
 		}
 
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 		if (!passwordMatch) {
 			return NextResponse.json(
 				{ error: 'Invalid email or password' },
-				{ status: 401 }
+				{ status: 401 },
 			);
 		}
 
@@ -50,10 +51,10 @@ export async function POST(request: NextRequest) {
        FROM team_memberships tm
        JOIN teams t ON t.id = tm.team_id
        WHERE tm.user_id = $1`,
-			[user.id]
+			[user.id],
 		);
 
-		const teams = teamsResult.rows.map(row => ({
+		const teams = teamsResult.rows.map((row) => ({
 			id: row.team_id,
 			name: row.team_name,
 			role: row.team_role,
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
 				instanceRole: user.instance_role,
 			},
 			JWT_SECRET,
-			{ expiresIn: '7d' }
+			{ expiresIn: '7d' },
 		);
 
 		// Create response with user data
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
 		console.error('Login error:', error);
 		return NextResponse.json(
 			{ error: 'Internal server error' },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

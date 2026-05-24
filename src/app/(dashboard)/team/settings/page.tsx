@@ -9,7 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+} from '@/components/ui/dialog';
 import { useRouter } from 'next/navigation';
 import { Settings, Users, Mail, Copy, Check, X, Trash2 } from 'lucide-react';
 import Link from 'next/link';
@@ -169,15 +175,16 @@ export default function TeamSettingsPage() {
 	const handleUpdateTeam = async () => {
 		if (!result.data?.team) return;
 
-		const billingAddress = street || city || state || postalCode || country
-			? {
-				street: street || undefined,
-				city: city || undefined,
-				state: state || undefined,
-				postalCode: postalCode || undefined,
-				country: country || undefined,
-			}
-			: null;
+		const billingAddress =
+			street || city || state || postalCode || country
+				? {
+						street: street || undefined,
+						city: city || undefined,
+						state: state || undefined,
+						postalCode: postalCode || undefined,
+						country: country || undefined,
+					}
+				: null;
 
 		const response = await updateTeam({
 			teamId: currentTeam?.id || '',
@@ -223,7 +230,10 @@ export default function TeamSettingsPage() {
 		}
 
 		// For link mode, use a placeholder email
-		const email = inviteMode === 'link' ? `invite-${Date.now()}@placeholder.local` : inviteEmail;
+		const email =
+			inviteMode === 'link'
+				? `invite-${Date.now()}@placeholder.local`
+				: inviteEmail;
 
 		const response = await createInvite({
 			teamId: currentTeam?.id || '',
@@ -393,16 +403,23 @@ export default function TeamSettingsPage() {
 										<p className="font-medium">
 											{member.user.displayName || member.user.name}
 											{member.userId === user?.id && (
-												<span className="text-sm text-muted-foreground ml-2">(You)</span>
+												<span className="text-sm text-muted-foreground ml-2">
+													(You)
+												</span>
 											)}
 										</p>
-										<p className="text-sm text-muted-foreground">{member.user.email}</p>
+										<p className="text-sm text-muted-foreground">
+											{member.user.email}
+										</p>
 									</div>
 									<div className="flex items-center gap-3">
-										{currentTeam?.role === 'OWNER' && member.role !== 'OWNER' ? (
+										{currentTeam?.role === 'OWNER' &&
+										member.role !== 'OWNER' ? (
 											<select
 												value={member.role}
-												onChange={(e) => handleChangeRole(member.id, e.target.value)}
+												onChange={(e) =>
+													handleChangeRole(member.id, e.target.value)
+												}
 												className="px-3 py-1 border dark:border-border rounded-md text-sm bg-background"
 											>
 												<option value="ADMIN">Admin</option>
@@ -417,7 +434,8 @@ export default function TeamSettingsPage() {
 										)}
 										{member.userId !== user?.id &&
 											(currentTeam?.role === 'OWNER' ||
-												(currentTeam?.role === 'ADMIN' && member.role !== 'OWNER')) && (
+												(currentTeam?.role === 'ADMIN' &&
+													member.role !== 'OWNER')) && (
 												<Button
 													size="sm"
 													variant="destructive"
@@ -489,20 +507,25 @@ export default function TeamSettingsPage() {
 			)}
 
 			{/* Invite Dialog */}
-			<Dialog open={showInviteDialog} onOpenChange={(open) => {
-				setShowInviteDialog(open);
-				if (!open) {
-					setInviteEmail('');
-					setInviteRole('MEMBER');
-					setInviteMode('email');
-					setGeneratedInvite(null);
-				}
-			}}>
+			<Dialog
+				open={showInviteDialog}
+				onOpenChange={(open) => {
+					setShowInviteDialog(open);
+					if (!open) {
+						setInviteEmail('');
+						setInviteRole('MEMBER');
+						setInviteMode('email');
+						setGeneratedInvite(null);
+					}
+				}}
+			>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Invite Team Member</DialogTitle>
 						<DialogDescription>
-							{generatedInvite ? 'Share this invitation link with the person you want to invite' : 'Create an invitation to join your team'}
+							{generatedInvite
+								? 'Share this invitation link with the person you want to invite'
+								: 'Create an invitation to join your team'}
 						</DialogDescription>
 					</DialogHeader>
 
@@ -544,11 +567,13 @@ export default function TeamSettingsPage() {
 									This link expires on {formatDate(generatedInvite.expiresAt)}
 								</p>
 							</div>
-							<Button onClick={() => {
-								setShowInviteDialog(false);
-								setGeneratedInvite(null);
-								refetch({ requestPolicy: 'network-only' });
-							}}>
+							<Button
+								onClick={() => {
+									setShowInviteDialog(false);
+									setGeneratedInvite(null);
+									refetch({ requestPolicy: 'network-only' });
+								}}
+							>
 								Done
 							</Button>
 						</div>
@@ -598,9 +623,15 @@ export default function TeamSettingsPage() {
 									onChange={(e) => setInviteRole(e.target.value)}
 									className="w-full px-3 py-2 border dark:border-border rounded-lg bg-background"
 								>
-									<option value="MEMBER">Member - Can track time and view projects</option>
-									<option value="ADMIN">Admin - Can manage team resources</option>
-									<option value="BILLING">Billing - Can manage invoices and view financials</option>
+									<option value="MEMBER">
+										Member - Can track time and view projects
+									</option>
+									<option value="ADMIN">
+										Admin - Can manage team resources
+									</option>
+									<option value="BILLING">
+										Billing - Can manage invoices and view financials
+									</option>
 									<option value="VIEWER">Viewer - Read-only access</option>
 								</select>
 							</div>
@@ -609,7 +640,10 @@ export default function TeamSettingsPage() {
 								<Button onClick={handleCreateInvite}>
 									{inviteMode === 'link' ? 'Generate Link' : 'Send Invitation'}
 								</Button>
-								<Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+								<Button
+									variant="outline"
+									onClick={() => setShowInviteDialog(false)}
+								>
 									Cancel
 								</Button>
 							</div>
@@ -625,8 +659,11 @@ export default function TeamSettingsPage() {
 						<DialogTitle>Remove Team Member</DialogTitle>
 						<DialogDescription>
 							Are you sure you want to remove{' '}
-							<strong>{memberToRemove?.user?.displayName || memberToRemove?.user?.name}</strong> from the
-							team? This action cannot be undone.
+							<strong>
+								{memberToRemove?.user?.displayName ||
+									memberToRemove?.user?.name}
+							</strong>{' '}
+							from the team? This action cannot be undone.
 						</DialogDescription>
 					</DialogHeader>
 

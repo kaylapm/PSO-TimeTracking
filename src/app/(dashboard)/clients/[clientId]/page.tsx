@@ -5,7 +5,14 @@ import { useQuery } from 'urql';
 import { gql } from '@/lib/gql';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Mail, Phone, MapPin, DollarSign, FileText } from 'lucide-react';
+import {
+	ArrowLeft,
+	Mail,
+	Phone,
+	MapPin,
+	DollarSign,
+	FileText,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useCanManageTeam, useCanAccessFinancials } from '@/lib/auth-context';
 
@@ -136,7 +143,9 @@ export default function ClientDetailPage() {
 					Back to Clients
 				</Link>
 				<div className="border border-red-500 rounded-lg p-4 bg-red-50 dark:bg-red-900/20">
-					<p className="text-red-700 dark:text-red-400">{error ? error.message : 'Client not found'}</p>
+					<p className="text-red-700 dark:text-red-400">
+						{error ? error.message : 'Client not found'}
+					</p>
 				</div>
 			</div>
 		);
@@ -158,7 +167,9 @@ export default function ClientDetailPage() {
 				<div className="flex items-start justify-between">
 					<div className="flex-1">
 						<div className="flex items-center gap-3 mb-2">
-							<h1 className="text-3xl font-bold dark:text-foreground">{client.name}</h1>
+							<h1 className="text-3xl font-bold dark:text-foreground">
+								{client.name}
+							</h1>
 							{client.archivedAt && (
 								<Badge variant="outline" className="text-sm">
 									Archived
@@ -167,12 +178,16 @@ export default function ClientDetailPage() {
 						</div>
 
 						{client.contactName && (
-							<p className="text-lg text-muted-foreground mb-2">Contact: {client.contactName}</p>
+							<p className="text-lg text-muted-foreground mb-2">
+								Contact: {client.contactName}
+							</p>
 						)}
 					</div>
 
 					{canManageTeam && (
-						<Button onClick={() => router.push(`/clients/${clientId}/edit`)}>Edit Client</Button>
+						<Button onClick={() => router.push(`/clients/${clientId}/edit`)}>
+							Edit Client
+						</Button>
 					)}
 				</div>
 			</div>
@@ -180,7 +195,9 @@ export default function ClientDetailPage() {
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 				{/* Contact Information */}
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
-					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">Contact Information</h2>
+					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">
+						Contact Information
+					</h2>
 					<div className="space-y-3">
 						{client.email && (
 							<div className="flex items-center gap-3">
@@ -196,42 +213,60 @@ export default function ClientDetailPage() {
 						{client.phone && (
 							<div className="flex items-center gap-3">
 								<Phone className="w-4 h-4 text-muted-foreground" />
-								<a href={`tel:${client.phone}`} className="text-primary hover:underline">
+								<a
+									href={`tel:${client.phone}`}
+									className="text-primary hover:underline"
+								>
 									{client.phone}
 								</a>
 							</div>
 						)}
-						{billingAddress && (billingAddress.street || billingAddress.city) && (
-							<div className="flex items-start gap-3">
-								<MapPin className="w-4 h-4 text-muted-foreground mt-1" />
-								<div className="text-sm">
-									{billingAddress.street && <p>{billingAddress.street}</p>}
-									{(billingAddress.city || billingAddress.state || billingAddress.postalCode) && (
-										<p>
-											{[billingAddress.city, billingAddress.state, billingAddress.postalCode]
-												.filter(Boolean)
-												.join(', ')}
-										</p>
-									)}
-									{billingAddress.country && <p>{billingAddress.country}</p>}
+						{billingAddress &&
+							(billingAddress.street || billingAddress.city) && (
+								<div className="flex items-start gap-3">
+									<MapPin className="w-4 h-4 text-muted-foreground mt-1" />
+									<div className="text-sm">
+										{billingAddress.street && <p>{billingAddress.street}</p>}
+										{(billingAddress.city ||
+											billingAddress.state ||
+											billingAddress.postalCode) && (
+											<p>
+												{[
+													billingAddress.city,
+													billingAddress.state,
+													billingAddress.postalCode,
+												]
+													.filter(Boolean)
+													.join(', ')}
+											</p>
+										)}
+										{billingAddress.country && <p>{billingAddress.country}</p>}
+									</div>
 								</div>
-							</div>
-						)}
+							)}
 					</div>
 				</div>
 
 				{/* Billing Information */}
 				{canAccessFinancials && (
 					<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
-						<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">Billing Information</h2>
+						<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">
+							Billing Information
+						</h2>
 						<div className="space-y-3">
 							{client.defaultHourlyRateCents && (
 								<div className="flex items-center gap-3">
 									<DollarSign className="w-4 h-4 text-muted-foreground" />
 									<div>
-										<p className="text-sm text-muted-foreground">Default Hourly Rate</p>
+										<p className="text-sm text-muted-foreground">
+											Default Hourly Rate
+										</p>
 										<p className="font-semibold">
-											{formatCurrency(client.defaultHourlyRateCents, client.currency || 'USD')}/hour
+											{formatCurrency(
+												client.defaultHourlyRateCents,
+												client.currency || 'USD',
+											)}
+											/hour
 										</p>
 									</div>
 								</div>
@@ -262,8 +297,12 @@ export default function ClientDetailPage() {
 			{/* Notes */}
 			{client.notes && (
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card mb-6">
-					<h2 className="text-lg font-semibold mb-3 dark:text-card-foreground">Notes</h2>
-					<p className="text-muted-foreground whitespace-pre-wrap">{client.notes}</p>
+					<h2 className="text-lg font-semibold mb-3 dark:text-card-foreground">
+						Notes
+					</h2>
+					<p className="text-muted-foreground whitespace-pre-wrap">
+						{client.notes}
+					</p>
 				</div>
 			)}
 
@@ -301,9 +340,14 @@ export default function ClientDetailPage() {
 							>
 								<div className="flex items-center gap-3">
 									{project.color && (
-										<div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color }} />
+										<div
+											className="w-3 h-3 rounded-full"
+											style={{ backgroundColor: project.color }}
+										/>
 									)}
-									<h3 className="font-semibold text-foreground dark:text-foreground">{project.name}</h3>
+									<h3 className="font-semibold text-foreground dark:text-foreground">
+										{project.name}
+									</h3>
 									{project.code && (
 										<Badge variant="outline" className="text-xs">
 											{project.code}
@@ -322,7 +366,10 @@ export default function ClientDetailPage() {
 
 				{client.projects.pageInfo.hasNextPage && (
 					<div className="p-4 border-t dark:border-border text-center">
-						<Link href={`/projects?client=${clientId}`} className="text-sm text-primary hover:underline">
+						<Link
+							href={`/projects?client=${clientId}`}
+							className="text-sm text-primary hover:underline"
+						>
 							View all {client.projects.total} projects
 						</Link>
 					</div>
@@ -385,7 +432,10 @@ export default function ClientDetailPage() {
 
 					{client.invoices.total > 5 && (
 						<div className="p-4 border-t dark:border-border text-center">
-							<Link href={`/invoices?client=${clientId}`} className="text-sm text-primary hover:underline">
+							<Link
+								href={`/invoices?client=${clientId}`}
+								className="text-sm text-primary hover:underline"
+							>
 								View all {client.invoices.total} invoices
 							</Link>
 						</div>

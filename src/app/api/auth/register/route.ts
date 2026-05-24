@@ -3,7 +3,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { query as db } from '@/db';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET =
+	process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 export async function POST(request: NextRequest) {
 	try {
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
 		if (!name || !email || !password) {
 			return NextResponse.json(
 				{ error: 'Name, email, and password are required' },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
 		if (!emailRegex.test(email)) {
 			return NextResponse.json(
 				{ error: 'Invalid email address' },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -30,20 +31,20 @@ export async function POST(request: NextRequest) {
 		if (password.length < 8) {
 			return NextResponse.json(
 				{ error: 'Password must be at least 8 characters long' },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
 		// Check if user already exists
 		const existingUserResult = await db(
 			'SELECT id FROM users WHERE email = $1',
-			[email.toLowerCase()]
+			[email.toLowerCase()],
 		);
 
 		if (existingUserResult.rows.length > 0) {
 			return NextResponse.json(
 				{ error: 'An account with this email already exists' },
-				{ status: 409 }
+				{ status: 409 },
 			);
 		}
 
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
 			`INSERT INTO users (email, name, password_hash, instance_role)
        VALUES ($1, $2, $3, $4)
        RETURNING id, email, name, instance_role`,
-			[email.toLowerCase(), name, passwordHash, instanceRole]
+			[email.toLowerCase(), name, passwordHash, instanceRole],
 		);
 
 		const user = userResult.rows[0];
@@ -71,13 +72,13 @@ export async function POST(request: NextRequest) {
 			const inviteResult = await db(
 				`SELECT * FROM invites
 				 WHERE token = $1 AND accepted_at IS NULL AND expires_at > NOW()`,
-				[inviteToken]
+				[inviteToken],
 			);
 
 			if (inviteResult.rows.length === 0) {
 				return NextResponse.json(
 					{ error: 'Invalid or expired invitation' },
-					{ status: 400 }
+					{ status: 400 },
 				);
 			}
 
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
 			if (email.toLowerCase() !== invite.email.toLowerCase()) {
 				return NextResponse.json(
 					{ error: 'This invitation was sent to a different email address' },
-					{ status: 400 }
+					{ status: 400 },
 				);
 			}
 
@@ -95,14 +96,13 @@ export async function POST(request: NextRequest) {
 			await db(
 				`INSERT INTO team_memberships (team_id, user_id, role)
 				 VALUES ($1, $2, $3)`,
-				[invite.team_id, user.id, invite.role]
+				[invite.team_id, user.id, invite.role],
 			);
 
 			// Mark invite as accepted
-			await db(
-				'UPDATE invites SET accepted_at = NOW() WHERE id = $1',
-				[invite.id]
-			);
+			await db('UPDATE invites SET accepted_at = NOW() WHERE id = $1', [
+				invite.id,
+			]);
 		} else {
 			// Create default team for the user
 			// Generate a safe slug from the name
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
 				`INSERT INTO teams (name, slug)
 				 VALUES ($1, $2)
 				 RETURNING id, name`,
-				[name, slug]
+				[name, slug],
 			);
 
 			const team = teamResult.rows[0];
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
 			await db(
 				`INSERT INTO team_memberships (team_id, user_id, role)
 				 VALUES ($1, $2, $3)`,
-				[team.id, user.id, 'OWNER']
+				[team.id, user.id, 'OWNER'],
 			);
 		}
 
@@ -137,10 +137,10 @@ export async function POST(request: NextRequest) {
        FROM team_memberships tm
        JOIN teams t ON t.id = tm.team_id
        WHERE tm.user_id = $1`,
-			[user.id]
+			[user.id],
 		);
 
-		const teams = teamsResult.rows.map(row => ({
+		const teams = teamsResult.rows.map((row) => ({
 			id: row.team_id,
 			name: row.team_name,
 			role: row.team_role,
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
 				instanceRole: user.instance_role,
 			},
 			JWT_SECRET,
-			{ expiresIn: '7d' }
+			{ expiresIn: '7d' },
 		);
 
 		// Create response with user data
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
 		console.error('Registration error:', error);
 		return NextResponse.json(
 			{ error: 'Internal server error' },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

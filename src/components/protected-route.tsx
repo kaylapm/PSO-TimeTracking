@@ -5,26 +5,26 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
+	const { isAuthenticated } = useAuth();
+	const router = useRouter();
+	const pathname = usePathname();
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      // Store the current path to redirect back after login
-      sessionStorage.setItem('redirectAfterLogin', pathname);
-      router.push('/login');
-    }
-  }, [isAuthenticated, router, pathname]);
+	useEffect(() => {
+		if (!isAuthenticated) {
+			// Store the current path to redirect back after login
+			sessionStorage.setItem('redirectAfterLogin', pathname);
+			router.push('/login');
+		}
+	}, [isAuthenticated, router, pathname]);
 
-  // Show loading or nothing while redirecting
-  if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
-      </div>
-    );
-  }
+	// Show loading or nothing while redirecting
+	if (!isAuthenticated) {
+		return (
+			<div className="flex min-h-screen items-center justify-center bg-background">
+				<div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+			</div>
+		);
+	}
 
-  return <>{children}</>;
+	return <>{children}</>;
 }

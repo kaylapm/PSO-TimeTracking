@@ -68,7 +68,9 @@ function LoginForm() {
 					<form onSubmit={handleSubmit} className="space-y-6">
 						{error && (
 							<div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-								<p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+								<p className="text-sm text-red-700 dark:text-red-400">
+									{error}
+								</p>
 							</div>
 						)}
 
@@ -111,7 +113,7 @@ function LoginForm() {
 					{/* Footer */}
 					<div className="mt-6 text-center">
 						<p className="text-sm text-gray-600 dark:text-gray-400">
-							Don't have an account?{' '}
+							Don&apos;t have an account?{' '}
 							<Link
 								href={`/register${redirect !== '/dashboard' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
 								className="text-primary hover:underline font-medium"
@@ -128,11 +130,13 @@ function LoginForm() {
 
 export default function LoginPage() {
 	return (
-		<Suspense fallback={
-			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-				<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary" />
-			</div>
-		}>
+		<Suspense
+			fallback={
+				<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+					<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary" />
+				</div>
+			}
+		>
 			<LoginForm />
 		</Suspense>
 	);

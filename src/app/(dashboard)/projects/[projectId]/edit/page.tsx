@@ -159,14 +159,18 @@ export default function EditProjectPage() {
 
 			// Add hourly rate if provided
 			if (formData.defaultHourlyRateCents) {
-				input.defaultHourlyRateCents = parseFloat(formData.defaultHourlyRateCents) * 100;
+				input.defaultHourlyRateCents =
+					parseFloat(formData.defaultHourlyRateCents) * 100;
 			}
 
 			// Add budget if provided
 			if (formData.budgetType === 'hours' && formData.budgetHours) {
 				input.budgetType = 'hours';
 				input.budgetHours = parseFloat(formData.budgetHours);
-			} else if (formData.budgetType === 'amount' && formData.budgetAmountCents) {
+			} else if (
+				formData.budgetType === 'amount' &&
+				formData.budgetAmountCents
+			) {
 				input.budgetType = 'amount';
 				input.budgetAmountCents = parseFloat(formData.budgetAmountCents) * 100;
 			} else {
@@ -175,7 +179,7 @@ export default function EditProjectPage() {
 
 			const updateResult = await updateProjectMutation({
 				id: projectId,
-				input
+				input,
 			});
 
 			if (updateResult.error) {
@@ -223,7 +227,9 @@ export default function EditProjectPage() {
 				</Link>
 				<div className="border border-red-500 rounded-lg p-4 bg-red-50 dark:bg-red-900/20">
 					<p className="text-red-700 dark:text-red-400">
-						{result.error ? result.error.message : 'Project not found or access denied'}
+						{result.error
+							? result.error.message
+							: 'Project not found or access denied'}
 					</p>
 				</div>
 			</div>
@@ -249,7 +255,8 @@ export default function EditProjectPage() {
 								Access Denied
 							</h3>
 							<p className="text-amber-700 dark:text-amber-400 text-sm">
-								You do not have permission to edit this project. Only project managers can edit project details.
+								You do not have permission to edit this project. Only project
+								managers can edit project details.
 							</p>
 							<p className="text-amber-600 dark:text-amber-500 text-xs mt-2">
 								Your current role: <strong>{permissions.role}</strong>
@@ -273,7 +280,9 @@ export default function EditProjectPage() {
 					<ArrowLeft className="w-4 h-4 mr-2" />
 					Back to Project
 				</Link>
-				<h1 className="text-3xl font-bold dark:text-foreground">Edit Project</h1>
+				<h1 className="text-3xl font-bold dark:text-foreground">
+					Edit Project
+				</h1>
 			</div>
 
 			{error && (
@@ -285,7 +294,9 @@ export default function EditProjectPage() {
 			<form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
 				{/* Basic Information */}
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
-					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">Basic Information</h2>
+					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">
+						Basic Information
+					</h2>
 
 					<div className="space-y-4">
 						<div>
@@ -293,7 +304,9 @@ export default function EditProjectPage() {
 							<Input
 								id="name"
 								value={formData.name}
-								onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, name: e.target.value })
+								}
 								required
 								placeholder="Website Redesign"
 							/>
@@ -305,7 +318,12 @@ export default function EditProjectPage() {
 								<Input
 									id="code"
 									value={formData.code}
-									onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+									onChange={(e) =>
+										setFormData({
+											...formData,
+											code: e.target.value.toUpperCase(),
+										})
+									}
 									placeholder="WEB-2025"
 									maxLength={20}
 								/>
@@ -316,7 +334,9 @@ export default function EditProjectPage() {
 								<select
 									id="client"
 									value={formData.clientId}
-									onChange={(e) => setFormData({ ...formData, clientId: e.target.value })}
+									onChange={(e) =>
+										setFormData({ ...formData, clientId: e.target.value })
+									}
 									className="w-full px-3 py-2 border dark:border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-ring bg-background dark:bg-background text-foreground dark:text-foreground"
 								>
 									<option value="">No Client</option>
@@ -334,7 +354,9 @@ export default function EditProjectPage() {
 							<Textarea
 								id="description"
 								value={formData.description}
-								onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, description: e.target.value })
+								}
 								placeholder="Project details and objectives..."
 								rows={3}
 							/>
@@ -346,7 +368,9 @@ export default function EditProjectPage() {
 								<select
 									id="status"
 									value={formData.status}
-									onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+									onChange={(e) =>
+										setFormData({ ...formData, status: e.target.value })
+									}
 									className="w-full px-3 py-2 border dark:border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-ring bg-background dark:bg-background text-foreground dark:text-foreground"
 								>
 									<option value="active">Active</option>
@@ -362,7 +386,9 @@ export default function EditProjectPage() {
 									id="color"
 									type="color"
 									value={formData.color}
-									onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+									onChange={(e) =>
+										setFormData({ ...formData, color: e.target.value })
+									}
 								/>
 							</div>
 
@@ -373,7 +399,12 @@ export default function EditProjectPage() {
 									type="number"
 									step="0.01"
 									value={formData.defaultHourlyRateCents}
-									onChange={(e) => setFormData({ ...formData, defaultHourlyRateCents: e.target.value })}
+									onChange={(e) =>
+										setFormData({
+											...formData,
+											defaultHourlyRateCents: e.target.value,
+										})
+									}
 									placeholder="150.00"
 								/>
 							</div>
@@ -383,7 +414,9 @@ export default function EditProjectPage() {
 
 				{/* Timeline */}
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
-					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">Timeline</h2>
+					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">
+						Timeline
+					</h2>
 
 					<div className="grid grid-cols-2 gap-4">
 						<div>
@@ -392,7 +425,9 @@ export default function EditProjectPage() {
 								id="startDate"
 								type="date"
 								value={formData.startDate}
-								onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, startDate: e.target.value })
+								}
 							/>
 						</div>
 
@@ -402,7 +437,9 @@ export default function EditProjectPage() {
 								id="dueDate"
 								type="date"
 								value={formData.dueDate}
-								onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, dueDate: e.target.value })
+								}
 							/>
 						</div>
 					</div>
@@ -410,7 +447,9 @@ export default function EditProjectPage() {
 
 				{/* Budget */}
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
-					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">Budget</h2>
+					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">
+						Budget
+					</h2>
 
 					<div className="space-y-4">
 						<div>
@@ -418,7 +457,9 @@ export default function EditProjectPage() {
 							<select
 								id="budgetType"
 								value={formData.budgetType}
-								onChange={(e) => setFormData({ ...formData, budgetType: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, budgetType: e.target.value })
+								}
 								className="w-full px-3 py-2 border dark:border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-ring bg-background dark:bg-background text-foreground dark:text-foreground"
 							>
 								<option value="none">No Budget</option>
@@ -435,7 +476,9 @@ export default function EditProjectPage() {
 									type="number"
 									step="0.5"
 									value={formData.budgetHours}
-									onChange={(e) => setFormData({ ...formData, budgetHours: e.target.value })}
+									onChange={(e) =>
+										setFormData({ ...formData, budgetHours: e.target.value })
+									}
 									placeholder="100"
 								/>
 							</div>
@@ -449,7 +492,12 @@ export default function EditProjectPage() {
 									type="number"
 									step="0.01"
 									value={formData.budgetAmountCents}
-									onChange={(e) => setFormData({ ...formData, budgetAmountCents: e.target.value })}
+									onChange={(e) =>
+										setFormData({
+											...formData,
+											budgetAmountCents: e.target.value,
+										})
+									}
 									placeholder="15000.00"
 								/>
 							</div>

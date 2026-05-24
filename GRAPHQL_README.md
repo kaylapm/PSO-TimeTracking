@@ -61,14 +61,14 @@ All list queries return a `Connection` type:
 
 ```graphql
 type ClientConnection {
-  nodes: [Client!]!
-  total: Int!
-  pageInfo: PageInfo!
+	nodes: [Client!]!
+	total: Int!
+	pageInfo: PageInfo!
 }
 
 type PageInfo {
-  hasNextPage: Boolean!
-  nextOffset: Int
+	hasNextPage: Boolean!
+	nextOffset: Int
 }
 ```
 
@@ -78,15 +78,15 @@ Common list arguments:
 
 ```graphql
 input ListArgs {
-  teamId: ID!
-  offset: Int = 0
-  limit: Int = 25
-  search: String
-  status: Status
-  from: DateTime
-  to: DateTime
-  orderBy: String
-  order: Order = desc
+	teamId: ID!
+	offset: Int = 0
+	limit: Int = 25
+	search: String
+	status: Status
+	from: DateTime
+	to: DateTime
+	orderBy: String
+	order: Order = desc
 }
 ```
 
@@ -103,14 +103,14 @@ Every request includes:
 
 ```typescript
 interface GraphQLContext {
-  db: { query: QueryFunction };
-  auth: {
-    userId: string | null;
-    teamId: string | null;
-    instanceRole: 'USER' | 'ADMIN' | null;
-    teamRole: 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER' | 'BILLING' | null;
-  };
-  loaders: Loaders;
+	db: { query: QueryFunction };
+	auth: {
+		userId: string | null;
+		teamId: string | null;
+		instanceRole: 'USER' | 'ADMIN' | null;
+		teamRole: 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER' | 'BILLING' | null;
+	};
+	loaders: Loaders;
 }
 ```
 
@@ -144,6 +144,7 @@ All queries and mutations enforce team scoping.
 - `invoiceItemsByInvoiceId`
 
 **Example**: Querying 10 clients with their projects executes only 2 SQL queries:
+
 1. Load 10 clients
 2. Batch load projects for all client IDs
 
@@ -151,25 +152,28 @@ All queries and mutations enforce team scoping.
 
 ### PostgreSQL Error Mapping
 
-| PG Code | GraphQL Error | HTTP Status |
-|---------|---------------|-------------|
-| 23505   | `CONFLICT` (unique violation) | 409 |
-| 23503   | `DEPENDENCY_VIOLATION` (FK violation) | 422 |
-| 23502   | `VALIDATION_ERROR` (not null) | 400 |
-| Others  | `INTERNAL_SERVER_ERROR` | 500 |
+| PG Code | GraphQL Error                         | HTTP Status |
+| ------- | ------------------------------------- | ----------- |
+| 23505   | `CONFLICT` (unique violation)         | 409         |
+| 23503   | `DEPENDENCY_VIOLATION` (FK violation) | 422         |
+| 23502   | `VALIDATION_ERROR` (not null)         | 400         |
+| Others  | `INTERNAL_SERVER_ERROR`               | 500         |
 
 All errors include `extensions.code` and `extensions.detail` fields.
 
 **Example**:
+
 ```json
 {
-  "errors": [{
-    "message": "A record with this value already exists",
-    "extensions": {
-      "code": "CONFLICT",
-      "detail": "unique_client_name_per_team"
-    }
-  }]
+	"errors": [
+		{
+			"message": "A record with this value already exists",
+			"extensions": {
+				"code": "CONFLICT",
+				"detail": "unique_client_name_per_team"
+			}
+		}
+	]
 }
 ```
 
@@ -326,6 +330,7 @@ This generates TypeScript types from your GraphQL operations in `graphql/generat
 ### Example Request
 
 **Headers**:
+
 ```
 x-user-id: user-123
 x-team-id: team-456
@@ -334,34 +339,37 @@ x-team-role: ADMIN
 ```
 
 **Query**:
+
 ```graphql
 query GetClients {
-  clients(args: {
-    teamId: "team-456"
-    limit: 10
-    search: "acme"
-    status: active
-    orderBy: "name"
-    order: asc
-  }) {
-    nodes {
-      id
-      name
-      email
-      projects(limit: 5) {
-        nodes {
-          id
-          name
-        }
-        total
-      }
-    }
-    total
-    pageInfo {
-      hasNextPage
-      nextOffset
-    }
-  }
+	clients(
+		args: {
+			teamId: "team-456"
+			limit: 10
+			search: "acme"
+			status: active
+			orderBy: "name"
+			order: asc
+		}
+	) {
+		nodes {
+			id
+			name
+			email
+			projects(limit: 5) {
+				nodes {
+					id
+					name
+				}
+				total
+			}
+		}
+		total
+		pageInfo {
+			hasNextPage
+			nextOffset
+		}
+	}
 }
 ```
 

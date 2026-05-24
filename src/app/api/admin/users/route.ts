@@ -6,17 +6,17 @@ import { requireAdminAuth, db } from '@/lib/admin-auth';
  * List all users with their teams and roles
  */
 export async function GET(request: NextRequest) {
-  const authResult = await requireAdminAuth(request);
+	const authResult = await requireAdminAuth(request);
 
-  if (!authResult.success) {
-    return NextResponse.json(
-      { error: authResult.error },
-      { status: authResult.status }
-    );
-  }
+	if (!authResult.success) {
+		return NextResponse.json(
+			{ error: authResult.error },
+			{ status: authResult.status },
+		);
+	}
 
-  try {
-    const result = await db(`
+	try {
+		const result = await db(`
       SELECT
         u.id,
         u.email,
@@ -43,12 +43,12 @@ export async function GET(request: NextRequest) {
       ORDER BY u.created_at DESC
     `);
 
-    return NextResponse.json({ users: result.rows });
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch users' },
-      { status: 500 }
-    );
-  }
+		return NextResponse.json({ users: result.rows });
+	} catch (error) {
+		console.error('Error fetching users:', error);
+		return NextResponse.json(
+			{ error: 'Failed to fetch users' },
+			{ status: 500 },
+		);
+	}
 }

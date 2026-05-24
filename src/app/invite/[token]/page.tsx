@@ -117,7 +117,8 @@ export default function InvitePage() {
 								<CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
 								<h1 className="text-2xl font-bold mb-2">Already Accepted</h1>
 								<p className="text-muted-foreground mb-6">
-									You've already accepted this invitation and are part of the team!
+									You&apos;ve already accepted this invitation and are part of
+									the team!
 								</p>
 								<Link href="/dashboard">
 									<Button>Go to Dashboard</Button>
@@ -128,8 +129,8 @@ export default function InvitePage() {
 								<XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
 								<h1 className="text-2xl font-bold mb-2">Invalid Invitation</h1>
 								<p className="text-muted-foreground mb-6">
-									This invitation link is invalid or has expired. Please contact your team administrator for a
-									new invitation.
+									This invitation link is invalid or has expired. Please contact
+									your team administrator for a new invitation.
 								</p>
 								{isAuthenticated ? (
 									<Link href="/dashboard">
@@ -156,7 +157,8 @@ export default function InvitePage() {
 						<CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
 						<h1 className="text-2xl font-bold mb-2">Welcome to the Team!</h1>
 						<p className="text-muted-foreground mb-6">
-							You've successfully joined the team. Redirecting you to the dashboard...
+							You&apos;ve successfully joined the team. Redirecting you to the
+							dashboard...
 						</p>
 					</div>
 				</div>
@@ -165,7 +167,8 @@ export default function InvitePage() {
 	}
 
 	const isExpired = new Date(invite.expiresAt) < new Date();
-	const emailMatches = user && user.email.toLowerCase() === invite.email.toLowerCase();
+	const emailMatches =
+		user && user.email.toLowerCase() === invite.email.toLowerCase();
 
 	const getRoleBadgeColor = (role: string) => {
 		switch (role) {
@@ -191,14 +194,18 @@ export default function InvitePage() {
 							<Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
 						</div>
 						<h1 className="text-2xl font-bold mb-2">Team Invitation</h1>
-						<p className="text-muted-foreground">You've been invited to join a team</p>
+						<p className="text-muted-foreground">
+							You&apos;ve been invited to join a team
+						</p>
 					</div>
 
 					<div className="space-y-4 mb-6">
 						<div className="border dark:border-border rounded-lg p-4 bg-muted/30">
 							<div className="flex items-center gap-2 mb-2">
 								<Mail className="w-4 h-4 text-muted-foreground" />
-								<span className="text-sm text-muted-foreground">Invited as</span>
+								<span className="text-sm text-muted-foreground">
+									Invited as
+								</span>
 							</div>
 							<p className="font-medium">{invite.email}</p>
 						</div>
@@ -209,7 +216,9 @@ export default function InvitePage() {
 								<span className="text-sm text-muted-foreground">Role</span>
 							</div>
 							<div>
-								<span className={`inline-block px-3 py-1 rounded text-sm font-medium ${getRoleBadgeColor(invite.role)}`}>
+								<span
+									className={`inline-block px-3 py-1 rounded text-sm font-medium ${getRoleBadgeColor(invite.role)}`}
+								>
 									{invite.role.toLowerCase()}
 								</span>
 							</div>
@@ -232,7 +241,9 @@ export default function InvitePage() {
 
 					{isExpired ? (
 						<div className="border border-red-500 rounded-lg p-4 bg-red-50 dark:bg-red-900/20 text-center">
-							<p className="text-red-700 dark:text-red-400 font-medium">This invitation has expired</p>
+							<p className="text-red-700 dark:text-red-400 font-medium">
+								This invitation has expired
+							</p>
 							<p className="text-sm text-red-600 dark:text-red-400 mt-1">
 								Please contact your team administrator for a new invitation
 							</p>
@@ -248,7 +259,10 @@ export default function InvitePage() {
 									<ArrowRight className="w-4 h-4 ml-2" />
 								</Button>
 							</Link>
-							<Link href={`/register?redirect=/invite/${token}`} className="block">
+							<Link
+								href={`/register?redirect=/invite/${token}`}
+								className="block"
+							>
 								<Button variant="outline" className="w-full">
 									Create Account
 								</Button>
@@ -256,28 +270,43 @@ export default function InvitePage() {
 						</div>
 					) : !emailMatches ? (
 						<div className="border border-yellow-500 rounded-lg p-4 bg-yellow-50 dark:bg-yellow-900/20">
-							<p className="text-yellow-700 dark:text-yellow-400 font-medium mb-2">Email Mismatch</p>
+							<p className="text-yellow-700 dark:text-yellow-400 font-medium mb-2">
+								Email Mismatch
+							</p>
 							<p className="text-sm text-yellow-600 dark:text-yellow-400">
-								This invitation was sent to <strong>{invite.email}</strong>, but you're signed in as{' '}
-								<strong>{user?.email}</strong>.
+								This invitation was sent to <strong>{invite.email}</strong>, but
+								you&apos;re signed in as <strong>{user?.email}</strong>.
 							</p>
 							<p className="text-sm text-yellow-600 dark:text-yellow-400 mt-2">
-								Please sign in with the correct account or contact your team administrator.
+								Please sign in with the correct account or contact your team
+								administrator.
 							</p>
 						</div>
 					) : error ? (
 						<div className="space-y-3">
 							<div className="border border-red-500 rounded-lg p-4 bg-red-50 dark:bg-red-900/20">
-								<p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
+								<p className="text-red-700 dark:text-red-400 text-sm">
+									{error}
+								</p>
 							</div>
-							<Button onClick={handleAcceptInvite} className="w-full" disabled={acceptResult.fetching}>
+							<Button
+								onClick={handleAcceptInvite}
+								className="w-full"
+								disabled={acceptResult.fetching}
+							>
 								{acceptResult.fetching ? 'Accepting...' : 'Try Again'}
 							</Button>
 						</div>
 					) : (
-						<Button onClick={handleAcceptInvite} className="w-full" disabled={acceptResult.fetching}>
+						<Button
+							onClick={handleAcceptInvite}
+							className="w-full"
+							disabled={acceptResult.fetching}
+						>
 							{acceptResult.fetching ? 'Accepting...' : 'Accept Invitation'}
-							{!acceptResult.fetching && <ArrowRight className="w-4 h-4 ml-2" />}
+							{!acceptResult.fetching && (
+								<ArrowRight className="w-4 h-4 ml-2" />
+							)}
 						</Button>
 					)}
 				</div>

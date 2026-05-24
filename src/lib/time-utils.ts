@@ -8,7 +8,7 @@
  * @returns Formatted string like "2h 30m" or "45m" or "1h"
  */
 export function formatDuration(seconds: number | null | undefined): string {
-	if (!seconds || seconds === 0) return "0m";
+	if (!seconds || seconds === 0) return '0m';
 
 	const hours = Math.floor(seconds / 3600);
 	const minutes = Math.floor((seconds % 3600) / 60);
@@ -27,10 +27,8 @@ export function formatDuration(seconds: number | null | undefined): string {
  * @param seconds - Duration in seconds
  * @returns Decimal hours like "2.5" or "0.75"
  */
-export function formatDecimalHours(
-	seconds: number | null | undefined,
-): string {
-	if (!seconds) return "0.00";
+export function formatDecimalHours(seconds: number | null | undefined): string {
+	if (!seconds) return '0.00';
 	const hours = seconds / 3600;
 	return hours.toFixed(2);
 }
@@ -43,15 +41,15 @@ export function formatDecimalHours(
  */
 export function formatDateRange(from: Date, to: Date): string {
 	const options: Intl.DateTimeFormatOptions = {
-		weekday: "short",
-		month: "short",
-		day: "numeric",
+		weekday: 'short',
+		month: 'short',
+		day: 'numeric',
 	};
 
-	const fromStr = from.toLocaleDateString("en-US", options);
-	const toStr = to.toLocaleDateString("en-US", {
+	const fromStr = from.toLocaleDateString('en-US', options);
+	const toStr = to.toLocaleDateString('en-US', {
 		...options,
-		year: "numeric",
+		year: 'numeric',
 	});
 
 	return `${fromStr} - ${toStr}`;
@@ -92,7 +90,7 @@ export function getWeekDays(startDate: Date): Date[] {
  * Format a date for display in the grid (e.g., "Mon 15")
  */
 export function formatGridDate(date: Date): string {
-	const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+	const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
 	const day = date.getDate();
 	return `${weekday} ${day}`;
 }
@@ -101,9 +99,9 @@ export function formatGridDate(date: Date): string {
  * Format time for display (e.g., "2:30 PM")
  */
 export function formatTime(date: Date): string {
-	return date.toLocaleTimeString("en-US", {
-		hour: "numeric",
-		minute: "2-digit",
+	return date.toLocaleTimeString('en-US', {
+		hour: 'numeric',
+		minute: '2-digit',
 		hour12: true,
 	});
 }
@@ -112,7 +110,7 @@ export function formatTime(date: Date): string {
  * Format date to YYYY-MM-DD for API calls
  */
 export function formatDateISO(date: Date): string {
-	return date.toISOString().split("T")[0];
+	return date.toISOString().split('T')[0];
 }
 
 /**
@@ -145,7 +143,7 @@ export function formatElapsedTime(elapsedSeconds: number): string {
 	const minutes = Math.floor((elapsedSeconds % 3600) / 60);
 	const seconds = elapsedSeconds % 60;
 
-	return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+	return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
 /**
@@ -163,8 +161,8 @@ export function parseDuration(input: string): number {
 	// Handle "Xh Ym" format
 	const complexMatch = trimmed.match(/^(?:(\d+)h\s*)?(?:(\d+)m)?$/);
 	if (complexMatch) {
-		const hours = Number.parseInt(complexMatch[1] || "0", 10);
-		const minutes = Number.parseInt(complexMatch[2] || "0", 10);
+		const hours = Number.parseInt(complexMatch[1] || '0', 10);
+		const minutes = Number.parseInt(complexMatch[2] || '0', 10);
 		return hours * 3600 + minutes * 60;
 	}
 
@@ -182,15 +180,16 @@ export function getRelativeTime(date: Date): string {
 	const diffHours = Math.floor(diffMinutes / 60);
 	const diffDays = Math.floor(diffHours / 24);
 
-	if (diffSeconds < 60) return "just now";
-	if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
-	if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-	if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+	if (diffSeconds < 60) return 'just now';
+	if (diffMinutes < 60)
+		return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
+	if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+	if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
 
 	// For older dates, show the actual date
-	return date.toLocaleDateString("en-US", {
-		month: "short",
-		day: "numeric",
-		year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+	return date.toLocaleDateString('en-US', {
+		month: 'short',
+		day: 'numeric',
+		year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
 	});
 }

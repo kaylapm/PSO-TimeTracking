@@ -6,17 +6,17 @@ import { requireAdminAuth, db } from '@/lib/admin-auth';
  * List all clients across all teams
  */
 export async function GET(request: NextRequest) {
-  const authResult = await requireAdminAuth(request);
+	const authResult = await requireAdminAuth(request);
 
-  if (!authResult.success) {
-    return NextResponse.json(
-      { error: authResult.error },
-      { status: authResult.status }
-    );
-  }
+	if (!authResult.success) {
+		return NextResponse.json(
+			{ error: authResult.error },
+			{ status: authResult.status },
+		);
+	}
 
-  try {
-    const result = await db(`
+	try {
+		const result = await db(`
       SELECT
         c.id,
         c.name,
@@ -36,12 +36,12 @@ export async function GET(request: NextRequest) {
       ORDER BY c.created_at DESC
     `);
 
-    return NextResponse.json({ clients: result.rows });
-  } catch (error) {
-    console.error('Error fetching clients:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch clients' },
-      { status: 500 }
-    );
-  }
+		return NextResponse.json({ clients: result.rows });
+	} catch (error) {
+		console.error('Error fetching clients:', error);
+		return NextResponse.json(
+			{ error: 'Failed to fetch clients' },
+			{ status: 500 },
+		);
+	}
 }

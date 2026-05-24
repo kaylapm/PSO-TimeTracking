@@ -1,4 +1,4 @@
-import { PageLayout } from "@/components/navigation";
+import { PageLayout } from '@/components/navigation';
 
 export default function DashboardLayout({
 	children,

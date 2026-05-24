@@ -9,9 +9,21 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import { Timer } from '@/components/timer';
-import { Clock, DollarSign, FileText, TrendingUp, Plus, ArrowRight } from 'lucide-react';
+import {
+	Clock,
+	DollarSign,
+	FileText,
+	TrendingUp,
+	Plus,
+	ArrowRight,
+} from 'lucide-react';
 
 const DASHBOARD_QUERY = gql(`
   query Dashboard($teamId: ID!, $thisWeekStart: DateTime!, $thisMonthStart: DateTime!) {
@@ -199,7 +211,14 @@ export default function DashboardPage() {
 
 	// Start and end of last month
 	const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-	const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+	const lastMonthEnd = new Date(
+		now.getFullYear(),
+		now.getMonth(),
+		0,
+		23,
+		59,
+		59,
+	);
 
 	// Query time entries (available to all users)
 	const [dashboardResult] = useQuery({
@@ -278,61 +297,86 @@ export default function DashboardPage() {
 	};
 
 	// Calculate metrics
-	const thisWeekSeconds = data?.thisWeekEntries.nodes.reduce(
-		(acc: number, entry: any) => acc + (entry.stoppedAt ? entry.durationSeconds || 0 : 0),
-		0
-	) || 0;
+	const thisWeekSeconds =
+		data?.thisWeekEntries.nodes.reduce(
+			(acc: number, entry: any) =>
+				acc + (entry.stoppedAt ? entry.durationSeconds || 0 : 0),
+			0,
+		) || 0;
 	const thisWeekHours = (thisWeekSeconds / 3600).toFixed(1);
 
-	const thisMonthSeconds = data?.thisMonthEntries.nodes.reduce(
-		(acc: number, entry: any) => acc + (entry.durationSeconds || 0),
-		0
-	) || 0;
+	const thisMonthSeconds =
+		data?.thisMonthEntries.nodes.reduce(
+			(acc: number, entry: any) => acc + (entry.durationSeconds || 0),
+			0,
+		) || 0;
 	const thisMonthHours = (thisMonthSeconds / 3600).toFixed(1);
 
-	const unbilledSeconds = data?.unbilledEntries.nodes.reduce(
-		(acc: number, entry: any) => acc + (entry.durationSeconds || 0),
-		0
-	) || 0;
+	const unbilledSeconds =
+		data?.unbilledEntries.nodes.reduce(
+			(acc: number, entry: any) => acc + (entry.durationSeconds || 0),
+			0,
+		) || 0;
 	const unbilledHours = (unbilledSeconds / 3600).toFixed(1);
-	const unbilledAmount = data?.unbilledEntries.nodes.reduce(
-		(acc: number, entry: any) => acc + (entry.amountCents || 0),
-		0
-	) || 0;
+	const unbilledAmount =
+		data?.unbilledEntries.nodes.reduce(
+			(acc: number, entry: any) => acc + (entry.amountCents || 0),
+			0,
+		) || 0;
 
 	// Invoice metrics
-	const outstandingAmount = invoicesData?.sentInvoices.nodes.reduce(
-		(acc: number, invoice: any) => acc + (invoice.totalCents || 0),
-		0
-	) || 0;
+	const outstandingAmount =
+		invoicesData?.sentInvoices.nodes.reduce(
+			(acc: number, invoice: any) => acc + (invoice.totalCents || 0),
+			0,
+		) || 0;
 
-	const thisMonthRevenue = invoicesData?.thisMonthInvoices.nodes
-		.filter((inv: any) => inv.status === 'paid')
-		.reduce((acc: number, invoice: any) => acc + (invoice.totalCents || 0), 0) || 0;
+	const thisMonthRevenue =
+		invoicesData?.thisMonthInvoices.nodes
+			.filter((inv: any) => inv.status === 'paid')
+			.reduce(
+				(acc: number, invoice: any) => acc + (invoice.totalCents || 0),
+				0,
+			) || 0;
 
-	const lastMonthRevenue = invoicesData?.lastMonthInvoices.nodes
-		.filter((inv: any) => inv.status === 'paid')
-		.reduce((acc: number, invoice: any) => acc + (invoice.totalCents || 0), 0) || 0;
+	const lastMonthRevenue =
+		invoicesData?.lastMonthInvoices.nodes
+			.filter((inv: any) => inv.status === 'paid')
+			.reduce(
+				(acc: number, invoice: any) => acc + (invoice.totalCents || 0),
+				0,
+			) || 0;
 
-	const revenueChange = lastMonthRevenue > 0
-		? Number(((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100).toFixed(0))
-		: 0;
+	const revenueChange =
+		lastMonthRevenue > 0
+			? Number(
+					(
+						((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) *
+						100
+					).toFixed(0),
+				)
+			: 0;
 
 	// Group hours by project for this week
-	const hoursByProject = data?.thisWeekEntries.nodes.reduce((acc: any, entry: any) => {
-		if (!entry.stoppedAt) return acc;
-		const projectId = entry.project.id;
-		if (!acc[projectId]) {
-			acc[projectId] = {
-				project: entry.project,
-				seconds: 0,
-			};
-		}
-		acc[projectId].seconds += entry.durationSeconds || 0;
-		return acc;
-	}, {} as Record<string, any>);
+	const hoursByProject = data?.thisWeekEntries.nodes.reduce(
+		(acc: any, entry: any) => {
+			if (!entry.stoppedAt) return acc;
+			const projectId = entry.project.id;
+			if (!acc[projectId]) {
+				acc[projectId] = {
+					project: entry.project,
+					seconds: 0,
+				};
+			}
+			acc[projectId].seconds += entry.durationSeconds || 0;
+			return acc;
+		},
+		{} as Record<string, any>,
+	);
 
-	const projectStats = Object.values(hoursByProject || {}).sort((a: any, b: any) => b.seconds - a.seconds);
+	const projectStats = Object.values(hoursByProject || {}).sort(
+		(a: any, b: any) => b.seconds - a.seconds,
+	);
 
 	const formatCurrency = (cents: number) => {
 		return new Intl.NumberFormat('en-US', {
@@ -374,9 +418,13 @@ export default function DashboardPage() {
 	if (error) {
 		return (
 			<div>
-				<h1 className="text-3xl font-bold mb-6 dark:text-foreground">Dashboard</h1>
+				<h1 className="text-3xl font-bold mb-6 dark:text-foreground">
+					Dashboard
+				</h1>
 				<div className="border border-red-500 rounded-lg p-4 bg-red-50 dark:bg-red-900/20">
-					<p className="text-red-700 dark:text-red-400">Error loading dashboard: {error.message}</p>
+					<p className="text-red-700 dark:text-red-400">
+						Error loading dashboard: {error.message}
+					</p>
 				</div>
 			</div>
 		);
@@ -387,10 +435,7 @@ export default function DashboardPage() {
 			<div className="flex items-center justify-between mb-6">
 				<h1 className="text-3xl font-bold dark:text-foreground">Dashboard</h1>
 				<div className="flex gap-2">
-					<Timer
-						variant="compact"
-						onStart={() => setShowStartDialog(true)}
-					/>
+					<Timer variant="compact" onStart={() => setShowStartDialog(true)} />
 					{canAccessInvoices && (
 						<Link href="/invoices/new">
 							<Button size="sm" variant="outline">
@@ -464,7 +509,10 @@ export default function DashboardPage() {
 							<Button onClick={handleStartTimer} disabled={!selectedProjectId}>
 								Start Timer
 							</Button>
-							<Button variant="outline" onClick={() => setShowStartDialog(false)}>
+							<Button
+								variant="outline"
+								onClick={() => setShowStartDialog(false)}
+							>
 								Cancel
 							</Button>
 						</div>
@@ -473,20 +521,28 @@ export default function DashboardPage() {
 			</Dialog>
 
 			{/* Key Metrics */}
-			<div className={`grid grid-cols-1 gap-4 mb-6 ${canAccessInvoices ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+			<div
+				className={`grid grid-cols-1 gap-4 mb-6 ${canAccessInvoices ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}
+			>
 				{/* This Week */}
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
 					<div className="flex items-center justify-between mb-2">
-						<h2 className="text-sm font-medium text-muted-foreground">This Week</h2>
+						<h2 className="text-sm font-medium text-muted-foreground">
+							This Week
+						</h2>
 						<Clock className="w-4 h-4 text-muted-foreground" />
 					</div>
 					{fetching ? (
 						<p className="text-muted-foreground">Loading...</p>
 					) : (
 						<div>
-							<p className="text-2xl font-bold dark:text-foreground">{thisWeekHours}h</p>
+							<p className="text-2xl font-bold dark:text-foreground">
+								{thisWeekHours}h
+							</p>
 							<p className="text-xs text-muted-foreground mt-1">
-								{data?.thisWeekEntries.nodes.filter((e: any) => e.stoppedAt).length || 0} entries
+								{data?.thisWeekEntries.nodes.filter((e: any) => e.stoppedAt)
+									.length || 0}{' '}
+								entries
 							</p>
 						</div>
 					)}
@@ -495,14 +551,18 @@ export default function DashboardPage() {
 				{/* This Month */}
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
 					<div className="flex items-center justify-between mb-2">
-						<h2 className="text-sm font-medium text-muted-foreground">This Month</h2>
+						<h2 className="text-sm font-medium text-muted-foreground">
+							This Month
+						</h2>
 						<TrendingUp className="w-4 h-4 text-muted-foreground" />
 					</div>
 					{fetching ? (
 						<p className="text-muted-foreground">Loading...</p>
 					) : (
 						<div>
-							<p className="text-2xl font-bold dark:text-foreground">{thisMonthHours}h</p>
+							<p className="text-2xl font-bold dark:text-foreground">
+								{thisMonthHours}h
+							</p>
 							<p className="text-xs text-muted-foreground mt-1">
 								{data?.thisMonthEntries.nodes.length || 0} entries
 							</p>
@@ -514,14 +574,18 @@ export default function DashboardPage() {
 				{canAccessInvoices && (
 					<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
 						<div className="flex items-center justify-between mb-2">
-							<h2 className="text-sm font-medium text-muted-foreground">Unbilled</h2>
+							<h2 className="text-sm font-medium text-muted-foreground">
+								Unbilled
+							</h2>
 							<DollarSign className="w-4 h-4 text-muted-foreground" />
 						</div>
 						{fetching ? (
 							<p className="text-muted-foreground">Loading...</p>
 						) : (
 							<div>
-								<p className="text-2xl font-bold dark:text-foreground">{formatCurrency(unbilledAmount)}</p>
+								<p className="text-2xl font-bold dark:text-foreground">
+									{formatCurrency(unbilledAmount)}
+								</p>
 								<p className="text-xs text-muted-foreground mt-1">
 									{unbilledHours}h unbilled
 								</p>
@@ -536,7 +600,9 @@ export default function DashboardPage() {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 					<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
 						<div className="flex items-center justify-between mb-2">
-							<h2 className="text-sm font-medium text-muted-foreground">Outstanding Invoices</h2>
+							<h2 className="text-sm font-medium text-muted-foreground">
+								Outstanding Invoices
+							</h2>
 							<FileText className="w-4 h-4 text-muted-foreground" />
 						</div>
 						{invoicesFetching ? (
@@ -547,7 +613,8 @@ export default function DashboardPage() {
 									{formatCurrency(outstandingAmount)}
 								</p>
 								<p className="text-xs text-muted-foreground mt-1">
-									{invoicesData?.sentInvoices.nodes.length || 0} invoices awaiting payment
+									{invoicesData?.sentInvoices.nodes.length || 0} invoices
+									awaiting payment
 								</p>
 							</div>
 						)}
@@ -555,7 +622,9 @@ export default function DashboardPage() {
 
 					<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
 						<div className="flex items-center justify-between mb-2">
-							<h2 className="text-sm font-medium text-muted-foreground">Revenue (This Month)</h2>
+							<h2 className="text-sm font-medium text-muted-foreground">
+								Revenue (This Month)
+							</h2>
 							<TrendingUp className="w-4 h-4 text-muted-foreground" />
 						</div>
 						{invoicesFetching ? (
@@ -593,26 +662,38 @@ export default function DashboardPage() {
 						{fetching ? (
 							<p className="text-muted-foreground">Loading...</p>
 						) : data?.recentEntries.nodes.length === 0 ? (
-							<p className="text-muted-foreground text-center py-8">No time entries yet</p>
+							<p className="text-muted-foreground text-center py-8">
+								No time entries yet
+							</p>
 						) : (
 							<div className="space-y-3">
 								{data?.recentEntries.nodes.slice(0, 5).map((entry: any) => (
-									<div key={entry.id} className="flex items-start gap-3 pb-3 border-b dark:border-border last:border-0 last:pb-0">
+									<div
+										key={entry.id}
+										className="flex items-start gap-3 pb-3 border-b dark:border-border last:border-0 last:pb-0"
+									>
 										<div
 											className="w-1 h-12 rounded-full mt-1"
-											style={{ backgroundColor: entry.project?.color || '#6B7280' }}
+											style={{
+												backgroundColor: entry.project?.color || '#6B7280',
+											}}
 										/>
 										<div className="flex-1 min-w-0">
 											<div className="flex items-center gap-2 mb-1">
 												<span className="font-medium text-sm">
-													{entry.project?.code ? `[${entry.project.code}]` : ''} {entry.project?.name}
+													{entry.project?.code ? `[${entry.project.code}]` : ''}{' '}
+													{entry.project?.name}
 												</span>
 												{entry.task && (
-													<span className="text-xs text-muted-foreground">• {entry.task.name}</span>
+													<span className="text-xs text-muted-foreground">
+														• {entry.task.name}
+													</span>
 												)}
 											</div>
 											{entry.note && (
-												<p className="text-xs text-muted-foreground mb-1">{entry.note}</p>
+												<p className="text-xs text-muted-foreground mb-1">
+													{entry.note}
+												</p>
 											)}
 											<div className="flex items-center gap-2 text-xs text-muted-foreground">
 												<span>{formatDate(entry.startedAt)}</span>
@@ -623,11 +704,15 @@ export default function DashboardPage() {
 														<span>→</span>
 														<span>{formatTime(entry.stoppedAt)}</span>
 														<span>•</span>
-														<span className="font-medium">{formatDuration(entry.durationSeconds)}</span>
+														<span className="font-medium">
+															{formatDuration(entry.durationSeconds)}
+														</span>
 													</>
 												)}
 												{!entry.stoppedAt && (
-													<span className="text-green-600 dark:text-green-400 font-medium">Running</span>
+													<span className="text-green-600 dark:text-green-400 font-medium">
+														Running
+													</span>
 												)}
 											</div>
 										</div>
@@ -656,7 +741,9 @@ export default function DashboardPage() {
 							{invoicesFetching ? (
 								<p className="text-muted-foreground">Loading...</p>
 							) : invoicesData?.recentInvoices.nodes.length === 0 ? (
-								<p className="text-muted-foreground text-center py-8">No invoices yet</p>
+								<p className="text-muted-foreground text-center py-8">
+									No invoices yet
+								</p>
 							) : (
 								<div className="space-y-3">
 									{invoicesData?.recentInvoices.nodes.map((invoice: any) => (
@@ -667,7 +754,9 @@ export default function DashboardPage() {
 														<span className="font-medium text-sm">
 															Invoice {invoice.invoiceNumber}
 														</span>
-														<span className={`text-xs px-2 py-0.5 rounded ${getStatusColor(invoice.status)}`}>
+														<span
+															className={`text-xs px-2 py-0.5 rounded ${getStatusColor(invoice.status)}`}
+														>
 															{invoice.status}
 														</span>
 													</div>
@@ -678,7 +767,9 @@ export default function DashboardPage() {
 													</div>
 												</div>
 												<div className="text-right">
-													<p className="font-semibold">{formatCurrency(invoice.totalCents)}</p>
+													<p className="font-semibold">
+														{formatCurrency(invoice.totalCents)}
+													</p>
 												</div>
 											</div>
 										</Link>
@@ -690,33 +781,46 @@ export default function DashboardPage() {
 				) : (
 					<div className="border dark:border-border rounded-lg bg-card dark:bg-card">
 						<div className="p-6 border-b dark:border-border">
-							<h2 className="text-lg font-semibold">Hours by Project (This Week)</h2>
+							<h2 className="text-lg font-semibold">
+								Hours by Project (This Week)
+							</h2>
 						</div>
 						<div className="p-6">
 							{fetching ? (
 								<p className="text-muted-foreground">Loading...</p>
 							) : projectStats.length === 0 ? (
-								<p className="text-muted-foreground text-center py-8">No time tracked this week</p>
+								<p className="text-muted-foreground text-center py-8">
+									No time tracked this week
+								</p>
 							) : (
 								<div className="space-y-3">
 									{projectStats.slice(0, 5).map((stat: any) => {
 										const hours = (stat.seconds / 3600).toFixed(1);
-										const percentage = thisWeekSeconds > 0
-											? ((stat.seconds / thisWeekSeconds) * 100).toFixed(0)
-											: 0;
+										const percentage =
+											thisWeekSeconds > 0
+												? ((stat.seconds / thisWeekSeconds) * 100).toFixed(0)
+												: 0;
 										return (
 											<div key={stat.project.id}>
 												<div className="flex items-center justify-between mb-2">
 													<div className="flex items-center gap-2">
 														<div
 															className="w-3 h-3 rounded-full"
-															style={{ backgroundColor: stat.project.color || '#6B7280' }}
+															style={{
+																backgroundColor:
+																	stat.project.color || '#6B7280',
+															}}
 														/>
 														<span className="text-sm font-medium">
-															{stat.project.code ? `[${stat.project.code}]` : ''} {stat.project.name}
+															{stat.project.code
+																? `[${stat.project.code}]`
+																: ''}{' '}
+															{stat.project.name}
 														</span>
 													</div>
-													<span className="text-sm font-semibold">{hours}h</span>
+													<span className="text-sm font-semibold">
+														{hours}h
+													</span>
 												</div>
 												<div className="w-full bg-muted rounded-full h-2">
 													<div

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { Play, Square, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { formatElapsedTime } from "@/lib/time-utils";
-import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/auth-context";
-import { useQuery, useMutation } from "urql";
-import { gql } from "@/lib/gql";
+import { useState, useEffect, useCallback } from 'react';
+import { Play, Square, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { formatElapsedTime } from '@/lib/time-utils';
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/lib/auth-context';
+import { useQuery, useMutation } from 'urql';
+import { gql } from '@/lib/gql';
 
 // GraphQL queries and mutations
 const ACTIVE_TIMER_QUERY = gql(`
@@ -45,7 +45,7 @@ const STOP_TIMER_MUTATION = gql(`
 interface TimerProps {
 	onStart?: () => void;
 	onStop?: () => void;
-	variant?: "compact" | "full";
+	variant?: 'compact' | 'full';
 	className?: string;
 }
 
@@ -53,7 +53,12 @@ interface TimerProps {
  * Timer component with localStorage sync across tabs
  * Displays the active timer and allows start/stop operations
  */
-export function Timer({ onStart, onStop, variant = "full", className }: TimerProps) {
+export function Timer({
+	onStart,
+	onStop,
+	variant = 'full',
+	className,
+}: TimerProps) {
 	const [elapsedSeconds, setElapsedSeconds] = useState(0);
 	const { currentTeam, user } = useAuth();
 
@@ -62,18 +67,19 @@ export function Timer({ onStart, onStop, variant = "full", className }: TimerPro
 	const [{ data, fetching: isLoading }, refetchTimer] = useQuery({
 		query: ACTIVE_TIMER_QUERY,
 		variables: {
-			teamId: currentTeam?.id || "",
-			userId: user?.id || ""
+			teamId: currentTeam?.id || '',
+			userId: user?.id || '',
 		},
 		pause: !currentTeam?.id || !user?.id,
-		requestPolicy: "cache-first",
+		requestPolicy: 'cache-first',
 	});
 
 	const [stopResult, stopTimer] = useMutation(STOP_TIMER_MUTATION);
 
 	// Get the most recent entry and check if it's still running (no stoppedAt)
 	const mostRecentEntry = data?.activeTimer?.nodes?.[0];
-	const activeTimer = mostRecentEntry && !mostRecentEntry.stoppedAt ? mostRecentEntry : null;
+	const activeTimer =
+		mostRecentEntry && !mostRecentEntry.stoppedAt ? mostRecentEntry : null;
 
 	// Poll for timer updates every 10 seconds, but only when NOT actively running a timer
 	// This prevents flickering while keeping the UI in sync across tabs
@@ -81,7 +87,7 @@ export function Timer({ onStart, onStop, variant = "full", className }: TimerPro
 		if (!currentTeam?.id || !user?.id || activeTimer) return;
 
 		const pollInterval = setInterval(() => {
-			refetchTimer({ requestPolicy: "cache-and-network" });
+			refetchTimer({ requestPolicy: 'cache-and-network' });
 		}, 10000);
 
 		return () => clearInterval(pollInterval);
@@ -112,25 +118,25 @@ export function Timer({ onStart, onStop, variant = "full", className }: TimerPro
 
 		// Listen for localStorage changes (cross-tab sync)
 		const handleStorageChange = (e: StorageEvent) => {
-			if (e.key === "ardine_active_timer") {
+			if (e.key === 'ardine_active_timer') {
 				// Timer state changed in another tab, refetch from API
-				refetchTimer({ requestPolicy: "cache-and-network" });
+				refetchTimer({ requestPolicy: 'cache-and-network' });
 			}
 		};
 
-		window.addEventListener("storage", handleStorageChange);
+		window.addEventListener('storage', handleStorageChange);
 
 		return () => {
 			clearInterval(interval);
-			window.removeEventListener("storage", handleStorageChange);
+			window.removeEventListener('storage', handleStorageChange);
 		};
-	}, [activeTimer?.id, activeTimer?.startedAt, calculateElapsed, refetchTimer]);
+	}, [activeTimer?.id, activeTimer?.startedAt, calculateElapsed, refetchTimer]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Sync with localStorage on timer changes
 	useEffect(() => {
 		if (activeTimer) {
 			localStorage.setItem(
-				"ardine_active_timer",
+				'ardine_active_timer',
 				JSON.stringify({
 					id: activeTimer.id,
 					startedAt: new Date(activeTimer.startedAt).toISOString(),
@@ -138,7 +144,7 @@ export function Timer({ onStart, onStop, variant = "full", className }: TimerPro
 				}),
 			);
 		} else {
-			localStorage.removeItem("ardine_active_timer");
+			localStorage.removeItem('ardine_active_timer');
 		}
 	}, [activeTimer]);
 
@@ -155,9 +161,9 @@ export function Timer({ onStart, onStop, variant = "full", className }: TimerPro
 
 		if (!result.error) {
 			// Clear localStorage immediately to prevent cross-tab issues
-			localStorage.removeItem("ardine_active_timer");
+			localStorage.removeItem('ardine_active_timer');
 			// Refetch with cache-and-network to smoothly update
-			refetchTimer({ requestPolicy: "cache-and-network" });
+			refetchTimer({ requestPolicy: 'cache-and-network' });
 			onStop?.();
 		}
 	}, [activeTimer, stopTimer, refetchTimer, onStop]);
@@ -165,16 +171,16 @@ export function Timer({ onStart, onStop, variant = "full", className }: TimerPro
 	// Only show loading on initial load, not during refetch
 	if (isLoading && !data) {
 		return (
-			<div className={cn("flex items-center gap-2", className)}>
+			<div className={cn('flex items-center gap-2', className)}>
 				<Clock className="w-4 h-4 animate-pulse text-muted-foreground" />
 				<span className="text-sm text-muted-foreground">Loading...</span>
 			</div>
 		);
 	}
 
-	if (variant === "compact") {
+	if (variant === 'compact') {
 		return (
-			<div className={cn("flex items-center gap-2", className)}>
+			<div className={cn('flex items-center gap-2', className)}>
 				{activeTimer ? (
 					<>
 						<div className="flex items-center gap-2 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-md px-3 py-1.5">
@@ -204,7 +210,7 @@ export function Timer({ onStart, onStop, variant = "full", className }: TimerPro
 	}
 
 	return (
-		<div className={cn("flex flex-col gap-3", className)}>
+		<div className={cn('flex flex-col gap-3', className)}>
 			{activeTimer ? (
 				<div className="bg-card border rounded-lg p-4">
 					<div className="flex items-center justify-between mb-3">

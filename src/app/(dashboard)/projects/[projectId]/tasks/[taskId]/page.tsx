@@ -133,9 +133,14 @@ export default function TaskDetailPage() {
 					<div className="flex-1">
 						<div className="flex items-center gap-3 mb-2">
 							{task.project.color && (
-								<div className="w-4 h-4 rounded-full" style={{ backgroundColor: task.project.color }} />
+								<div
+									className="w-4 h-4 rounded-full"
+									style={{ backgroundColor: task.project.color }}
+								/>
 							)}
-							<h1 className="text-3xl font-bold dark:text-foreground">{task.name}</h1>
+							<h1 className="text-3xl font-bold dark:text-foreground">
+								{task.name}
+							</h1>
 							<span
 								className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}`}
 							>
@@ -148,7 +153,11 @@ export default function TaskDetailPage() {
 						)}
 					</div>
 
-					<Button onClick={() => router.push(`/projects/${projectId}/tasks/${taskId}/edit`)}>
+					<Button
+						onClick={() =>
+							router.push(`/projects/${projectId}/tasks/${taskId}/edit`)
+						}
+					>
 						<Edit className="w-4 h-4 mr-2" />
 						Edit Task
 					</Button>
@@ -161,7 +170,9 @@ export default function TaskDetailPage() {
 					<div className="border dark:border-border rounded-lg p-4 bg-card dark:bg-card">
 						<div className="flex items-center gap-2 mb-2">
 							<DollarSign className="w-4 h-4 text-muted-foreground" />
-							<h3 className="font-semibold text-sm text-muted-foreground">Billing</h3>
+							<h3 className="font-semibold text-sm text-muted-foreground">
+								Billing
+							</h3>
 						</div>
 						<div className="space-y-1">
 							<p className="text-lg font-semibold">
@@ -180,7 +191,9 @@ export default function TaskDetailPage() {
 				<div className="border dark:border-border rounded-lg p-4 bg-card dark:bg-card">
 					<div className="flex items-center gap-2 mb-2">
 						<Users className="w-4 h-4 text-muted-foreground" />
-						<h3 className="font-semibold text-sm text-muted-foreground">Assignees</h3>
+						<h3 className="font-semibold text-sm text-muted-foreground">
+							Assignees
+						</h3>
 					</div>
 					<div className="space-y-1">
 						{task.assignees.length > 0 ? (
@@ -199,17 +212,25 @@ export default function TaskDetailPage() {
 				<div className="border dark:border-border rounded-lg p-4 bg-card dark:bg-card">
 					<div className="flex items-center gap-2 mb-2">
 						<Calendar className="w-4 h-4 text-muted-foreground" />
-						<h3 className="font-semibold text-sm text-muted-foreground">Metadata</h3>
+						<h3 className="font-semibold text-sm text-muted-foreground">
+							Metadata
+						</h3>
 					</div>
 					<div className="space-y-1">
 						{task.createdAt && (
 							<p className="text-xs">
-								Created: <span className="font-semibold">{formatDate(task.createdAt)}</span>
+								Created:{' '}
+								<span className="font-semibold">
+									{formatDate(task.createdAt)}
+								</span>
 							</p>
 						)}
 						{task.updatedAt && (
 							<p className="text-xs">
-								Updated: <span className="font-semibold">{formatDate(task.updatedAt)}</span>
+								Updated:{' '}
+								<span className="font-semibold">
+									{formatDate(task.updatedAt)}
+								</span>
 							</p>
 						)}
 					</div>
@@ -219,7 +240,9 @@ export default function TaskDetailPage() {
 			{/* Tags */}
 			{task.tags && task.tags.length > 0 && (
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card mb-8">
-					<h2 className="text-xl font-semibold mb-4 dark:text-card-foreground">Tags</h2>
+					<h2 className="text-xl font-semibold mb-4 dark:text-card-foreground">
+						Tags
+					</h2>
 					<div className="flex gap-2 flex-wrap">
 						{task.tags.map((tag: string, idx: number) => (
 							<Badge key={idx} variant="secondary">
@@ -232,8 +255,12 @@ export default function TaskDetailPage() {
 
 			{/* Time Entries Section - Placeholder */}
 			<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
-				<h2 className="text-xl font-semibold mb-4 dark:text-card-foreground">Time Entries</h2>
-				<p className="text-sm text-muted-foreground">Time tracking coming soon...</p>
+				<h2 className="text-xl font-semibold mb-4 dark:text-card-foreground">
+					Time Entries
+				</h2>
+				<p className="text-sm text-muted-foreground">
+					Time tracking coming soon...
+				</p>
 			</div>
 		</div>
 	);

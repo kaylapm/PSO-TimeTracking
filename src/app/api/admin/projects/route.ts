@@ -6,17 +6,17 @@ import { requireAdminAuth, db } from '@/lib/admin-auth';
  * List all projects across all teams
  */
 export async function GET(request: NextRequest) {
-  const authResult = await requireAdminAuth(request);
+	const authResult = await requireAdminAuth(request);
 
-  if (!authResult.success) {
-    return NextResponse.json(
-      { error: authResult.error },
-      { status: authResult.status }
-    );
-  }
+	if (!authResult.success) {
+		return NextResponse.json(
+			{ error: authResult.error },
+			{ status: authResult.status },
+		);
+	}
 
-  try {
-    const result = await db(`
+	try {
+		const result = await db(`
       SELECT
         p.id,
         p.name,
@@ -41,12 +41,12 @@ export async function GET(request: NextRequest) {
       ORDER BY p.created_at DESC
     `);
 
-    return NextResponse.json({ projects: result.rows });
-  } catch (error) {
-    console.error('Error fetching projects:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch projects' },
-      { status: 500 }
-    );
-  }
+		return NextResponse.json({ projects: result.rows });
+	} catch (error) {
+		console.error('Error fetching projects:', error);
+		return NextResponse.json(
+			{ error: 'Failed to fetch projects' },
+			{ status: 500 },
+		);
+	}
 }

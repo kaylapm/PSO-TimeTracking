@@ -81,7 +81,9 @@ function RegisterForm() {
 							{inviteToken ? 'Accept your invitation' : 'Create your account'}
 						</h1>
 						<p className="text-gray-600 dark:text-gray-400">
-							{inviteToken ? 'Create an account to join the team' : 'Get started with Ardine'}
+							{inviteToken
+								? 'Create an account to join the team'
+								: 'Get started with Ardine'}
 						</p>
 					</div>
 
@@ -89,7 +91,9 @@ function RegisterForm() {
 					<form onSubmit={handleSubmit} className="space-y-5">
 						{error && (
 							<div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-								<p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+								<p className="text-sm text-red-700 dark:text-red-400">
+									{error}
+								</p>
 							</div>
 						)}
 
@@ -154,7 +158,9 @@ function RegisterForm() {
 						<Button
 							type="submit"
 							className="w-full"
-							disabled={loading || !name || !email || !password || !confirmPassword}
+							disabled={
+								loading || !name || !email || !password || !confirmPassword
+							}
 						>
 							{loading ? 'Creating account...' : 'Create account'}
 						</Button>
@@ -180,11 +186,13 @@ function RegisterForm() {
 
 export default function RegisterPage() {
 	return (
-		<Suspense fallback={
-			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-				<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary" />
-			</div>
-		}>
+		<Suspense
+			fallback={
+				<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+					<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary" />
+				</div>
+			}
+		>
 			<RegisterForm />
 		</Suspense>
 	);

@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useQuery } from "urql";
-import { useAuth, useCanAccessInvoices } from "@/lib/auth-context";
-import { gql } from "@/lib/gql";
-import { useRouter } from "next/navigation";
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useQuery } from 'urql';
+import { useAuth, useCanAccessInvoices } from '@/lib/auth-context';
+import { gql } from '@/lib/gql';
+import { useRouter } from 'next/navigation';
 
 const LIST_INVOICES_QUERY = gql(`
   query ListInvoices(
@@ -72,11 +72,6 @@ export default function InvoicesPage() {
 		}
 	}, [currentTeam, canAccessInvoices, router]);
 
-	// Don't render if user doesn't have access
-	if (!canAccessInvoices) {
-		return null;
-	}
-
 	const [result, refetchInvoices] = useQuery({
 		query: LIST_INVOICES_QUERY,
 		variables: {
@@ -110,6 +105,11 @@ export default function InvoicesPage() {
 		};
 	}, [refetchInvoices]);
 
+	// Don't render if user doesn't have access
+	if (!canAccessInvoices) {
+		return null;
+	}
+
 	const formatCurrency = (cents: number) => {
 		return new Intl.NumberFormat('en-US', {
 			style: 'currency',
@@ -127,11 +127,16 @@ export default function InvoicesPage() {
 
 	const getStatusColor = (status: string) => {
 		switch (status) {
-			case 'draft': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
-			case 'sent': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-			case 'paid': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-			case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-			default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+			case 'draft':
+				return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+			case 'sent':
+				return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+			case 'paid':
+				return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+			case 'cancelled':
+				return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+			default:
+				return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
 		}
 	};
 
@@ -189,14 +194,18 @@ export default function InvoicesPage() {
 			{/* Error state */}
 			{error && (
 				<div className="border border-red-500 rounded-lg p-4 bg-red-50 dark:bg-red-900/20 mb-6">
-					<p className="text-red-700 dark:text-red-400">Error loading invoices: {error.message}</p>
+					<p className="text-red-700 dark:text-red-400">
+						Error loading invoices: {error.message}
+					</p>
 				</div>
 			)}
 
 			{/* Loading state */}
 			{fetching && (
 				<div className="border dark:border-border rounded-lg p-12 text-center bg-card dark:bg-card">
-					<p className="text-muted-foreground dark:text-muted-foreground">Loading invoices...</p>
+					<p className="text-muted-foreground dark:text-muted-foreground">
+						Loading invoices...
+					</p>
 				</div>
 			)}
 
@@ -244,38 +253,43 @@ export default function InvoicesPage() {
 							</thead>
 							<tbody className="divide-y divide-border dark:divide-border">
 								{invoices.map((invoice: any) => (
-									<tr key={invoice.id} className="hover:bg-muted/30 dark:hover:bg-muted/30 transition-colors">
+									<tr
+										key={invoice.id}
+										className="hover:bg-muted/30 dark:hover:bg-muted/30 transition-colors"
+									>
 										<td className="py-4 px-4 whitespace-nowrap">
-										<Link
-											href={`/invoices/${invoice.id}`}
-											className="text-sm font-medium text-primary hover:underline"
-										>
-											{invoice.invoiceNumber}
-										</Link>
-									</td>
-									<td className="py-4 px-4 whitespace-nowrap">
-										<div className="text-sm text-foreground dark:text-foreground">
-											{invoice.client.name}
-										</div>
-									</td>
-									<td className="py-4 px-4 whitespace-nowrap">
-										<span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>
-											{invoice.status}
-										</span>
-									</td>
-									<td className="py-4 px-4 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
-										{formatDate(invoice.issuedDate)}
-									</td>
-									<td className="py-4 px-4 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
-										{formatDate(invoice.dueDate)}
-									</td>
-									<td className="py-4 px-4 whitespace-nowrap text-sm text-right font-semibold text-foreground dark:text-foreground">
-										{formatCurrency(invoice.totalCents)}
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
+											<Link
+												href={`/invoices/${invoice.id}`}
+												className="text-sm font-medium text-primary hover:underline"
+											>
+												{invoice.invoiceNumber}
+											</Link>
+										</td>
+										<td className="py-4 px-4 whitespace-nowrap">
+											<div className="text-sm text-foreground dark:text-foreground">
+												{invoice.client.name}
+											</div>
+										</td>
+										<td className="py-4 px-4 whitespace-nowrap">
+											<span
+												className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}
+											>
+												{invoice.status}
+											</span>
+										</td>
+										<td className="py-4 px-4 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
+											{formatDate(invoice.issuedDate)}
+										</td>
+										<td className="py-4 px-4 whitespace-nowrap text-sm text-muted-foreground dark:text-muted-foreground">
+											{formatDate(invoice.dueDate)}
+										</td>
+										<td className="py-4 px-4 whitespace-nowrap text-sm text-right font-semibold text-foreground dark:text-foreground">
+											{formatCurrency(invoice.totalCents)}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
 					</div>
 				</div>
 			)}

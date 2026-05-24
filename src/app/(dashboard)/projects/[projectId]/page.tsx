@@ -5,7 +5,17 @@ import { useQuery, useMutation } from 'urql';
 import { gql } from '@/lib/gql';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Calendar, DollarSign, Users, CheckCircle2, Circle, X, UserPlus } from 'lucide-react';
+import {
+	ArrowLeft,
+	Plus,
+	Calendar,
+	DollarSign,
+	Users,
+	CheckCircle2,
+	Circle,
+	X,
+	UserPlus,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import {
@@ -28,7 +38,11 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { useAuth, useCanAccessFinancials } from '@/lib/auth-context';
-import { useProjectPermissions, getRoleBadgeColor, getRoleDisplayName } from '@/lib/use-project-permissions';
+import {
+	useProjectPermissions,
+	getRoleBadgeColor,
+	getRoleDisplayName,
+} from '@/lib/use-project-permissions';
 
 const GET_PROJECT_QUERY = gql(`
   query GetProject($id: ID!) {
@@ -188,12 +202,16 @@ export default function ProjectDetailPage() {
 	const [addingMember, setAddingMember] = useState(false);
 
 	// Task assignee state
-	const [assigneeModalTaskId, setAssigneeModalTaskId] = useState<string | null>(null);
+	const [assigneeModalTaskId, setAssigneeModalTaskId] = useState<string | null>(
+		null,
+	);
 	const [addingAssignee, setAddingAssignee] = useState(false);
 
 	// Local optimistic state for members and assignees
 	const [optimisticMembers, setOptimisticMembers] = useState<any[]>([]);
-	const [optimisticTaskAssignees, setOptimisticTaskAssignees] = useState<Record<string, any[]>>({});
+	const [optimisticTaskAssignees, setOptimisticTaskAssignees] = useState<
+		Record<string, any[]>
+	>({});
 
 	// Queries
 	const [result, reexecuteQuery] = useQuery({
@@ -211,9 +229,13 @@ export default function ProjectDetailPage() {
 	// Mutations
 	const [, createTaskMutation] = useMutation(CREATE_TASK_MUTATION);
 	const [, addProjectMemberMutation] = useMutation(ADD_PROJECT_MEMBER_MUTATION);
-	const [, removeProjectMemberMutation] = useMutation(REMOVE_PROJECT_MEMBER_MUTATION);
+	const [, removeProjectMemberMutation] = useMutation(
+		REMOVE_PROJECT_MEMBER_MUTATION,
+	);
 	const [, addTaskAssigneeMutation] = useMutation(ADD_TASK_ASSIGNEE_MUTATION);
-	const [, removeTaskAssigneeMutation] = useMutation(REMOVE_TASK_ASSIGNEE_MUTATION);
+	const [, removeTaskAssigneeMutation] = useMutation(
+		REMOVE_TASK_ASSIGNEE_MUTATION,
+	);
 
 	const { data, fetching, error } = result;
 	const project = data?.project;
@@ -234,7 +256,9 @@ export default function ProjectDetailPage() {
 		if (optimisticTaskAssignees[taskId]) {
 			return optimisticTaskAssignees[taskId];
 		}
-		return project?.tasks.nodes.find((t: any) => t.id === taskId)?.assignees || [];
+		return (
+			project?.tasks.nodes.find((t: any) => t.id === taskId)?.assignees || []
+		);
 	};
 
 	const formatCurrency = (cents: number | null) => {
@@ -282,7 +306,8 @@ export default function ProjectDetailPage() {
 				description: taskForm.description || undefined,
 				status: 'active',
 				billable: taskForm.billable,
-				hourlyRateCents: taskForm.hourlyRateCents > 0 ? taskForm.hourlyRateCents : undefined,
+				hourlyRateCents:
+					taskForm.hourlyRateCents > 0 ? taskForm.hourlyRateCents : undefined,
 				tags: taskForm.tags.length > 0 ? taskForm.tags : undefined,
 			},
 		});
@@ -310,16 +335,19 @@ export default function ProjectDetailPage() {
 		setAddingMember(true);
 
 		// Optimistically add member to UI
-		const selectedTeamMember = teamMembers.find((tm: any) => tm.user.id === selectedUserId);
+		const selectedTeamMember = teamMembers.find(
+			(tm: any) => tm.user.id === selectedUserId,
+		);
 		if (!selectedTeamMember) {
 			setAddingMember(false);
 			return;
 		}
 
 		// Get current display state (optimistic if exists, otherwise server data)
-		const currentMembers = optimisticMembers.length > 0 ? optimisticMembers : project.members;
+		const currentMembers =
+			optimisticMembers.length > 0 ? optimisticMembers : project.members;
 
-		const tempId = 'temp-' + Date.now();
+		const tempId = 'temp-' + Date.now(); // eslint-disable-line react-hooks/purity
 		const tempMember = {
 			id: tempId,
 			role: selectedRole,
@@ -337,7 +365,7 @@ export default function ProjectDetailPage() {
 			// Replace temp ID with real ID from server
 			const newMember = result.data.addProjectMember;
 			setOptimisticMembers((current) =>
-				current.map((m) => (m.id === tempId ? newMember : m))
+				current.map((m) => (m.id === tempId ? newMember : m)),
 			);
 
 			setSelectedUserId('');
@@ -355,7 +383,8 @@ export default function ProjectDetailPage() {
 		if (!project) return;
 
 		// Get current display state
-		const currentMembers = optimisticMembers.length > 0 ? optimisticMembers : project.members;
+		const currentMembers =
+			optimisticMembers.length > 0 ? optimisticMembers : project.members;
 
 		// Optimistically remove from UI
 		const updatedMembers = currentMembers.filter((m: any) => m.id !== memberId);
@@ -376,7 +405,8 @@ export default function ProjectDetailPage() {
 		setAddingAssignee(true);
 
 		const task = project.tasks.nodes.find((t: any) => t.id === taskId);
-		const currentMembers = optimisticMembers.length > 0 ? optimisticMembers : project.members;
+		const currentMembers =
+			optimisticMembers.length > 0 ? optimisticMembers : project.members;
 		const member = currentMembers.find((m: any) => m.user.id === userId);
 
 		if (!task || !member) {
@@ -384,7 +414,7 @@ export default function ProjectDetailPage() {
 			return;
 		}
 
-		const tempId = 'temp-' + Date.now();
+		const tempId = 'temp-' + Date.now(); // eslint-disable-line react-hooks/purity
 		const tempAssignee = {
 			id: tempId,
 			user: member.user,
@@ -406,7 +436,9 @@ export default function ProjectDetailPage() {
 			const newAssignee = result.data.addTaskAssignee;
 			setOptimisticTaskAssignees((prev) => ({
 				...prev,
-				[taskId]: prev[taskId]?.map((a) => (a.id === tempId ? newAssignee : a)) || [newAssignee],
+				[taskId]: prev[taskId]?.map((a) =>
+					a.id === tempId ? newAssignee : a,
+				) || [newAssignee],
 			}));
 			setAssigneeModalTaskId(null);
 		} else {
@@ -419,7 +451,10 @@ export default function ProjectDetailPage() {
 		setAddingAssignee(false);
 	};
 
-	const handleRemoveTaskAssignee = async (assigneeId: string, taskId: string) => {
+	const handleRemoveTaskAssignee = async (
+		assigneeId: string,
+		taskId: string,
+	) => {
 		if (!project) return;
 
 		const task = project.tasks.nodes.find((t: any) => t.id === taskId);
@@ -429,7 +464,9 @@ export default function ProjectDetailPage() {
 		const currentAssignees = optimisticTaskAssignees[taskId] || task.assignees;
 
 		// Optimistically remove assignee
-		const updatedAssignees = currentAssignees.filter((a: any) => a.id !== assigneeId);
+		const updatedAssignees = currentAssignees.filter(
+			(a: any) => a.id !== assigneeId,
+		);
 		setOptimisticTaskAssignees({
 			...optimisticTaskAssignees,
 			[taskId]: updatedAssignees,
@@ -467,7 +504,9 @@ export default function ProjectDetailPage() {
 	// Get available users (not already members)
 	const availableUsers = teamMembers.filter(
 		(teamMember: any) =>
-			!displayMembers.some((projectMember: any) => projectMember.user.id === teamMember.user.id)
+			!displayMembers.some(
+				(projectMember: any) => projectMember.user.id === teamMember.user.id,
+			),
 	);
 
 	// Get available assignees for a task (project members not already assigned)
@@ -476,7 +515,10 @@ export default function ProjectDetailPage() {
 		if (!displayMembers) return [];
 
 		return displayMembers.filter(
-			(member: any) => !taskAssignees.some((assignee: any) => assignee.user.id === member.user.id)
+			(member: any) =>
+				!taskAssignees.some(
+					(assignee: any) => assignee.user.id === member.user.id,
+				),
 		);
 	};
 
@@ -522,9 +564,14 @@ export default function ProjectDetailPage() {
 					<div className="flex-1">
 						<div className="flex items-center gap-3 mb-2">
 							{project.color && (
-								<div className="w-4 h-4 rounded-full" style={{ backgroundColor: project.color }} />
+								<div
+									className="w-4 h-4 rounded-full"
+									style={{ backgroundColor: project.color }}
+								/>
 							)}
-							<h1 className="text-3xl font-bold dark:text-foreground">{project.name}</h1>
+							<h1 className="text-3xl font-bold dark:text-foreground">
+								{project.name}
+							</h1>
 							{project.code && (
 								<Badge variant="outline" className="text-sm">
 									{project.code}
@@ -538,12 +585,16 @@ export default function ProjectDetailPage() {
 						</div>
 
 						{project.description && (
-							<p className="text-muted-foreground mb-4">{project.description}</p>
+							<p className="text-muted-foreground mb-4">
+								{project.description}
+							</p>
 						)}
 					</div>
 
 					{permissions.canManageProject && (
-						<Button onClick={() => router.push(`/projects/${projectId}/edit`)}>Edit Project</Button>
+						<Button onClick={() => router.push(`/projects/${projectId}/edit`)}>
+							Edit Project
+						</Button>
 					)}
 				</div>
 			</div>
@@ -554,7 +605,9 @@ export default function ProjectDetailPage() {
 					<div className="border dark:border-border rounded-lg p-4 bg-card dark:bg-card">
 						<div className="flex items-center gap-2 mb-2">
 							<Users className="w-4 h-4 text-muted-foreground" />
-							<h3 className="font-semibold text-sm text-muted-foreground">Client</h3>
+							<h3 className="font-semibold text-sm text-muted-foreground">
+								Client
+							</h3>
 						</div>
 						<Link
 							href={`/clients/${project.client.id}`}
@@ -569,17 +622,25 @@ export default function ProjectDetailPage() {
 				<div className="border dark:border-border rounded-lg p-4 bg-card dark:bg-card">
 					<div className="flex items-center gap-2 mb-2">
 						<Calendar className="w-4 h-4 text-muted-foreground" />
-						<h3 className="font-semibold text-sm text-muted-foreground">Timeline</h3>
+						<h3 className="font-semibold text-sm text-muted-foreground">
+							Timeline
+						</h3>
 					</div>
 					<div className="space-y-1">
 						{project.startDate && (
 							<p className="text-sm">
-								Start: <span className="font-semibold">{formatDate(project.startDate)}</span>
+								Start:{' '}
+								<span className="font-semibold">
+									{formatDate(project.startDate)}
+								</span>
 							</p>
 						)}
 						{project.dueDate && (
 							<p className="text-sm">
-								Due: <span className="font-semibold">{formatDate(project.dueDate)}</span>
+								Due:{' '}
+								<span className="font-semibold">
+									{formatDate(project.dueDate)}
+								</span>
 							</p>
 						)}
 						{!project.startDate && !project.dueDate && (
@@ -593,14 +654,20 @@ export default function ProjectDetailPage() {
 					<div className="border dark:border-border rounded-lg p-4 bg-card dark:bg-card">
 						<div className="flex items-center gap-2 mb-2">
 							<DollarSign className="w-4 h-4 text-muted-foreground" />
-							<h3 className="font-semibold text-sm text-muted-foreground">Budget</h3>
+							<h3 className="font-semibold text-sm text-muted-foreground">
+								Budget
+							</h3>
 						</div>
 						<div className="space-y-1">
 							{project.budgetType === 'hours' && project.budgetHours && (
-								<p className="text-lg font-semibold">{project.budgetHours} hours</p>
+								<p className="text-lg font-semibold">
+									{project.budgetHours} hours
+								</p>
 							)}
 							{project.budgetType === 'amount' && project.budgetAmountCents && (
-								<p className="text-lg font-semibold">{formatCurrency(project.budgetAmountCents)}</p>
+								<p className="text-lg font-semibold">
+									{formatCurrency(project.budgetAmountCents)}
+								</p>
 							)}
 							{(!project.budgetType || project.budgetType === 'none') && (
 								<p className="text-sm text-muted-foreground">No budget set</p>
@@ -644,7 +711,10 @@ export default function ProjectDetailPage() {
 						</div>
 					) : (
 						project.tasks.nodes.map((task: any) => (
-							<div key={task.id} className="p-6 hover:bg-muted/30 dark:hover:bg-muted/30 group">
+							<div
+								key={task.id}
+								className="p-6 hover:bg-muted/30 dark:hover:bg-muted/30 group"
+							>
 								<div className="flex items-start gap-3">
 									<div className="mt-1">
 										{task.status === 'completed' ? (
@@ -678,19 +748,27 @@ export default function ProjectDetailPage() {
 											)}
 										</div>
 										{task.description && (
-											<p className="text-sm text-muted-foreground mb-2">{task.description}</p>
+											<p className="text-sm text-muted-foreground mb-2">
+												{task.description}
+											</p>
 										)}
 										{task.tags && task.tags.length > 0 && (
 											<div className="flex gap-1 mb-2">
 												{task.tags.map((tag: string, idx: number) => (
-													<Badge key={idx} variant="secondary" className="text-xs">
+													<Badge
+														key={idx}
+														variant="secondary"
+														className="text-xs"
+													>
 														{tag}
 													</Badge>
 												))}
 											</div>
 										)}
 										<div className="flex items-center gap-2">
-											<span className="text-xs text-muted-foreground">Assigned to:</span>
+											<span className="text-xs text-muted-foreground">
+												Assigned to:
+											</span>
 											{(() => {
 												const assignees = getDisplayTaskAssignees(task.id);
 												return assignees.length > 0 ? (
@@ -704,7 +782,12 @@ export default function ProjectDetailPage() {
 																{assignee.user.name}
 																{permissions.canAssignTasks && (
 																	<button
-																		onClick={() => handleRemoveTaskAssignee(assignee.id, task.id)}
+																		onClick={() =>
+																			handleRemoveTaskAssignee(
+																				assignee.id,
+																				task.id,
+																			)
+																		}
 																		className="ml-1 hover:text-destructive"
 																	>
 																		<X className="w-3 h-3" />
@@ -714,20 +797,23 @@ export default function ProjectDetailPage() {
 														))}
 													</div>
 												) : (
-													<span className="text-xs text-muted-foreground">None</span>
+													<span className="text-xs text-muted-foreground">
+														None
+													</span>
 												);
 											})()}
-											{permissions.canAssignTasks && getAvailableAssignees(task.id).length > 0 && (
-												<Button
-													size="sm"
-													variant="ghost"
-													className="h-6 px-2 text-xs"
-													onClick={() => setAssigneeModalTaskId(task.id)}
-												>
-													<UserPlus className="w-3 h-3 mr-1" />
-													Assign
-												</Button>
-											)}
+											{permissions.canAssignTasks &&
+												getAvailableAssignees(task.id).length > 0 && (
+													<Button
+														size="sm"
+														variant="ghost"
+														className="h-6 px-2 text-xs"
+														onClick={() => setAssigneeModalTaskId(task.id)}
+													>
+														<UserPlus className="w-3 h-3 mr-1" />
+														Assign
+													</Button>
+												)}
 										</div>
 									</div>
 								</div>
@@ -774,10 +860,15 @@ export default function ProjectDetailPage() {
 										<p className="font-semibold text-foreground dark:text-foreground">
 											{member.user.displayName || member.user.name}
 										</p>
-										<p className="text-sm text-muted-foreground">{member.user.email}</p>
+										<p className="text-sm text-muted-foreground">
+											{member.user.email}
+										</p>
 									</div>
 									<div className="flex items-center gap-2">
-										<Badge variant="outline" className={getRoleBadgeColor(member.role)}>
+										<Badge
+											variant="outline"
+											className={getRoleBadgeColor(member.role)}
+										>
 											{getRoleDisplayName(member.role)}
 										</Badge>
 										{permissions.canAddMembers && (
@@ -804,7 +895,9 @@ export default function ProjectDetailPage() {
 					<form onSubmit={handleCreateTask}>
 						<DialogHeader>
 							<DialogTitle>Create New Task</DialogTitle>
-							<DialogDescription>Add a new task to this project</DialogDescription>
+							<DialogDescription>
+								Add a new task to this project
+							</DialogDescription>
 						</DialogHeader>
 
 						<div className="space-y-4 py-4">
@@ -813,7 +906,9 @@ export default function ProjectDetailPage() {
 								<Input
 									id="task-name"
 									value={taskForm.name}
-									onChange={(e) => setTaskForm({ ...taskForm, name: e.target.value })}
+									onChange={(e) =>
+										setTaskForm({ ...taskForm, name: e.target.value })
+									}
 									placeholder="Task name"
 									required
 								/>
@@ -824,7 +919,9 @@ export default function ProjectDetailPage() {
 								<Textarea
 									id="task-description"
 									value={taskForm.description}
-									onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+									onChange={(e) =>
+										setTaskForm({ ...taskForm, description: e.target.value })
+									}
 									placeholder="Task description (optional)"
 									rows={3}
 								/>
@@ -835,14 +932,18 @@ export default function ProjectDetailPage() {
 								<Switch
 									id="task-billable"
 									checked={taskForm.billable}
-									onCheckedChange={(checked) => setTaskForm({ ...taskForm, billable: checked })}
+									onCheckedChange={(checked) =>
+										setTaskForm({ ...taskForm, billable: checked })
+									}
 								/>
 							</div>
 
 							<div>
 								<Label htmlFor="task-rate">Hourly Rate (USD)</Label>
 								<div className="relative">
-									<span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+									<span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+										$
+									</span>
 									<Input
 										id="task-rate"
 										type="number"
@@ -852,7 +953,9 @@ export default function ProjectDetailPage() {
 										onChange={(e) =>
 											setTaskForm({
 												...taskForm,
-												hourlyRateCents: Math.round(parseFloat(e.target.value || '0') * 100),
+												hourlyRateCents: Math.round(
+													parseFloat(e.target.value || '0') * 100,
+												),
 											})
 										}
 										className="pl-7"
@@ -876,16 +979,27 @@ export default function ProjectDetailPage() {
 										}}
 										placeholder="Add a tag"
 									/>
-									<Button type="button" variant="outline" onClick={handleAddTag}>
+									<Button
+										type="button"
+										variant="outline"
+										onClick={handleAddTag}
+									>
 										Add
 									</Button>
 								</div>
 								{taskForm.tags.length > 0 && (
 									<div className="flex gap-2 mt-2 flex-wrap">
 										{taskForm.tags.map((tag) => (
-											<Badge key={tag} variant="secondary" className="text-xs flex items-center gap-1">
+											<Badge
+												key={tag}
+												variant="secondary"
+												className="text-xs flex items-center gap-1"
+											>
 												{tag}
-												<button onClick={() => handleRemoveTag(tag)} className="ml-1">
+												<button
+													onClick={() => handleRemoveTag(tag)}
+													className="ml-1"
+												>
 													<X className="w-3 h-3" />
 												</button>
 											</Badge>
@@ -896,10 +1010,17 @@ export default function ProjectDetailPage() {
 						</div>
 
 						<DialogFooter>
-							<Button type="button" variant="outline" onClick={() => setShowTaskModal(false)}>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => setShowTaskModal(false)}
+							>
 								Cancel
 							</Button>
-							<Button type="submit" disabled={creatingTask || !taskForm.name.trim()}>
+							<Button
+								type="submit"
+								disabled={creatingTask || !taskForm.name.trim()}
+							>
 								{creatingTask ? 'Creating...' : 'Create Task'}
 							</Button>
 						</DialogFooter>
@@ -913,14 +1034,18 @@ export default function ProjectDetailPage() {
 					<form onSubmit={handleAddMember}>
 						<DialogHeader>
 							<DialogTitle>Add Team Member</DialogTitle>
-							<DialogDescription>Add a team member to this project</DialogDescription>
+							<DialogDescription>
+								Add a team member to this project
+							</DialogDescription>
 						</DialogHeader>
 
 						<div className="space-y-4 py-4">
 							<div>
 								<Label htmlFor="member-user">User *</Label>
 								{teamUsersResult.fetching ? (
-									<div className="text-sm text-muted-foreground p-2">Loading team members...</div>
+									<div className="text-sm text-muted-foreground p-2">
+										Loading team members...
+									</div>
 								) : teamMembers.length === 0 ? (
 									<div className="text-sm text-muted-foreground p-2">
 										No team members found. Add users to your team first.
@@ -930,14 +1055,22 @@ export default function ProjectDetailPage() {
 										All team members are already on this project
 									</div>
 								) : (
-									<Select value={selectedUserId} onValueChange={setSelectedUserId} required>
+									<Select
+										value={selectedUserId}
+										onValueChange={setSelectedUserId}
+										required
+									>
 										<SelectTrigger id="member-user">
 											<SelectValue placeholder="Select a user" />
 										</SelectTrigger>
 										<SelectContent>
 											{availableUsers.map((teamMember: any) => (
-												<SelectItem key={teamMember.user.id} value={teamMember.user.id}>
-													{teamMember.user.displayName || teamMember.user.name} ({teamMember.user.email})
+												<SelectItem
+													key={teamMember.user.id}
+													value={teamMember.user.id}
+												>
+													{teamMember.user.displayName || teamMember.user.name}{' '}
+													({teamMember.user.email})
 												</SelectItem>
 											))}
 										</SelectContent>
@@ -947,13 +1080,21 @@ export default function ProjectDetailPage() {
 
 							<div>
 								<Label htmlFor="member-role">Role *</Label>
-								<Select value={selectedRole} onValueChange={setSelectedRole} required>
+								<Select
+									value={selectedRole}
+									onValueChange={setSelectedRole}
+									required
+								>
 									<SelectTrigger id="member-role">
 										<SelectValue placeholder="Select a role" />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="MANAGER">Manager (full control)</SelectItem>
-										<SelectItem value="CONTRIBUTOR">Contributor (can log time)</SelectItem>
+										<SelectItem value="MANAGER">
+											Manager (full control)
+										</SelectItem>
+										<SelectItem value="CONTRIBUTOR">
+											Contributor (can log time)
+										</SelectItem>
 										<SelectItem value="VIEWER">Viewer (read-only)</SelectItem>
 									</SelectContent>
 								</Select>
@@ -961,12 +1102,21 @@ export default function ProjectDetailPage() {
 						</div>
 
 						<DialogFooter>
-							<Button type="button" variant="outline" onClick={() => setShowAddMemberModal(false)}>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => setShowAddMemberModal(false)}
+							>
 								Cancel
 							</Button>
 							<Button
 								type="submit"
-								disabled={addingMember || !selectedUserId || teamMembers.length === 0 || availableUsers.length === 0}
+								disabled={
+									addingMember ||
+									!selectedUserId ||
+									teamMembers.length === 0 ||
+									availableUsers.length === 0
+								}
 							>
 								{addingMember ? 'Adding...' : 'Add Member'}
 							</Button>
@@ -976,29 +1126,44 @@ export default function ProjectDetailPage() {
 			</Dialog>
 
 			{/* Add Task Assignee Modal */}
-			<Dialog open={assigneeModalTaskId !== null} onOpenChange={() => setAssigneeModalTaskId(null)}>
+			<Dialog
+				open={assigneeModalTaskId !== null}
+				onOpenChange={() => setAssigneeModalTaskId(null)}
+			>
 				<DialogContent className="sm:max-w-[425px]">
 					<DialogHeader>
 						<DialogTitle>Assign Team Member</DialogTitle>
-						<DialogDescription>Assign a team member to this task</DialogDescription>
+						<DialogDescription>
+							Assign a team member to this task
+						</DialogDescription>
 					</DialogHeader>
 
 					<div className="py-4">
-						{assigneeModalTaskId && getAvailableAssignees(assigneeModalTaskId).length > 0 ? (
+						{assigneeModalTaskId &&
+						getAvailableAssignees(assigneeModalTaskId).length > 0 ? (
 							<div className="space-y-2">
-								{getAvailableAssignees(assigneeModalTaskId).map((member: any) => (
-									<button
-										key={member.id}
-										onClick={() => handleAddTaskAssignee(assigneeModalTaskId, member.user.id)}
-										disabled={addingAssignee}
-										className="w-full p-3 border dark:border-border rounded-lg hover:bg-muted/30 dark:hover:bg-muted/30 text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-									>
-										<p className="font-semibold text-foreground dark:text-foreground">
-											{member.user.displayName || member.user.name}
-										</p>
-										<p className="text-sm text-muted-foreground">{member.user.email}</p>
-									</button>
-								))}
+								{getAvailableAssignees(assigneeModalTaskId).map(
+									(member: any) => (
+										<button
+											key={member.id}
+											onClick={() =>
+												handleAddTaskAssignee(
+													assigneeModalTaskId,
+													member.user.id,
+												)
+											}
+											disabled={addingAssignee}
+											className="w-full p-3 border dark:border-border rounded-lg hover:bg-muted/30 dark:hover:bg-muted/30 text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+										>
+											<p className="font-semibold text-foreground dark:text-foreground">
+												{member.user.displayName || member.user.name}
+											</p>
+											<p className="text-sm text-muted-foreground">
+												{member.user.email}
+											</p>
+										</button>
+									),
+								)}
 							</div>
 						) : (
 							<p className="text-sm text-muted-foreground text-center py-6">
@@ -1010,7 +1175,10 @@ export default function ProjectDetailPage() {
 					</div>
 
 					<DialogFooter>
-						<Button variant="outline" onClick={() => setAssigneeModalTaskId(null)}>
+						<Button
+							variant="outline"
+							onClick={() => setAssigneeModalTaskId(null)}
+						>
 							Close
 						</Button>
 					</DialogFooter>

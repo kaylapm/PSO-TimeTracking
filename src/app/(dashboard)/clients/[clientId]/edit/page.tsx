@@ -82,7 +82,7 @@ export default function EditClientPage() {
 	useEffect(() => {
 		if (result.data?.client) {
 			const client = result.data.client;
-			const billingAddress = client.billingAddress as any || {};
+			const billingAddress = (client.billingAddress as any) || {};
 
 			setFormData({
 				name: client.name || '',
@@ -124,18 +124,21 @@ export default function EditClientPage() {
 
 			// Add hourly rate if provided
 			if (formData.defaultHourlyRateCents) {
-				input.defaultHourlyRateCents = parseFloat(formData.defaultHourlyRateCents) * 100;
+				input.defaultHourlyRateCents =
+					parseFloat(formData.defaultHourlyRateCents) * 100;
 			}
 
 			// Add billing address if any field is filled
-			const hasAddress = Object.values(formData.billingAddress).some(v => v.trim() !== '');
+			const hasAddress = Object.values(formData.billingAddress).some(
+				(v) => v.trim() !== '',
+			);
 			if (hasAddress) {
 				input.billingAddress = formData.billingAddress;
 			}
 
 			const updateResult = await updateClientMutation({
 				id: clientId,
-				input
+				input,
 			});
 
 			if (updateResult.error) {
@@ -201,7 +204,9 @@ export default function EditClientPage() {
 			<form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
 				{/* Basic Information */}
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
-					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">Basic Information</h2>
+					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">
+						Basic Information
+					</h2>
 
 					<div className="space-y-4">
 						<div>
@@ -209,7 +214,9 @@ export default function EditClientPage() {
 							<Input
 								id="name"
 								value={formData.name}
-								onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, name: e.target.value })
+								}
 								required
 								placeholder="Acme Corporation"
 							/>
@@ -220,7 +227,9 @@ export default function EditClientPage() {
 							<Input
 								id="contactName"
 								value={formData.contactName}
-								onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, contactName: e.target.value })
+								}
 								placeholder="John Smith"
 							/>
 						</div>
@@ -232,7 +241,9 @@ export default function EditClientPage() {
 									id="email"
 									type="email"
 									value={formData.email}
-									onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+									onChange={(e) =>
+										setFormData({ ...formData, email: e.target.value })
+									}
 									placeholder="contact@acme.com"
 								/>
 							</div>
@@ -242,7 +253,9 @@ export default function EditClientPage() {
 								<Input
 									id="phone"
 									value={formData.phone}
-									onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+									onChange={(e) =>
+										setFormData({ ...formData, phone: e.target.value })
+									}
 									placeholder="+1 (555) 123-4567"
 								/>
 							</div>
@@ -256,7 +269,12 @@ export default function EditClientPage() {
 									type="number"
 									step="0.01"
 									value={formData.defaultHourlyRateCents}
-									onChange={(e) => setFormData({ ...formData, defaultHourlyRateCents: e.target.value })}
+									onChange={(e) =>
+										setFormData({
+											...formData,
+											defaultHourlyRateCents: e.target.value,
+										})
+									}
 									placeholder="150.00"
 								/>
 							</div>
@@ -266,7 +284,9 @@ export default function EditClientPage() {
 								<select
 									id="currency"
 									value={formData.currency}
-									onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+									onChange={(e) =>
+										setFormData({ ...formData, currency: e.target.value })
+									}
 									className="w-full px-3 py-2 border dark:border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-ring bg-background dark:bg-background text-foreground dark:text-foreground"
 								>
 									<option value="USD">USD</option>
@@ -282,7 +302,9 @@ export default function EditClientPage() {
 							<Input
 								id="taxId"
 								value={formData.taxId}
-								onChange={(e) => setFormData({ ...formData, taxId: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, taxId: e.target.value })
+								}
 								placeholder="12-3456789"
 							/>
 						</div>
@@ -292,7 +314,9 @@ export default function EditClientPage() {
 							<Textarea
 								id="notes"
 								value={formData.notes}
-								onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+								onChange={(e) =>
+									setFormData({ ...formData, notes: e.target.value })
+								}
 								placeholder="Additional notes about this client..."
 								rows={3}
 							/>
@@ -302,7 +326,9 @@ export default function EditClientPage() {
 
 				{/* Billing Address */}
 				<div className="border dark:border-border rounded-lg p-6 bg-card dark:bg-card">
-					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">Billing Address</h2>
+					<h2 className="text-lg font-semibold mb-4 dark:text-card-foreground">
+						Billing Address
+					</h2>
 
 					<div className="space-y-4">
 						<div>
@@ -313,7 +339,10 @@ export default function EditClientPage() {
 								onChange={(e) =>
 									setFormData({
 										...formData,
-										billingAddress: { ...formData.billingAddress, street: e.target.value },
+										billingAddress: {
+											...formData.billingAddress,
+											street: e.target.value,
+										},
 									})
 								}
 								placeholder="123 Main Street"
@@ -329,7 +358,10 @@ export default function EditClientPage() {
 									onChange={(e) =>
 										setFormData({
 											...formData,
-											billingAddress: { ...formData.billingAddress, city: e.target.value },
+											billingAddress: {
+												...formData.billingAddress,
+												city: e.target.value,
+											},
 										})
 									}
 									placeholder="New York"
@@ -344,7 +376,10 @@ export default function EditClientPage() {
 									onChange={(e) =>
 										setFormData({
 											...formData,
-											billingAddress: { ...formData.billingAddress, state: e.target.value },
+											billingAddress: {
+												...formData.billingAddress,
+												state: e.target.value,
+											},
 										})
 									}
 									placeholder="NY"
@@ -361,7 +396,10 @@ export default function EditClientPage() {
 									onChange={(e) =>
 										setFormData({
 											...formData,
-											billingAddress: { ...formData.billingAddress, postalCode: e.target.value },
+											billingAddress: {
+												...formData.billingAddress,
+												postalCode: e.target.value,
+											},
 										})
 									}
 									placeholder="10001"
@@ -376,7 +414,10 @@ export default function EditClientPage() {
 									onChange={(e) =>
 										setFormData({
 											...formData,
-											billingAddress: { ...formData.billingAddress, country: e.target.value },
+											billingAddress: {
+												...formData.billingAddress,
+												country: e.target.value,
+											},
 										})
 									}
 									placeholder="US"

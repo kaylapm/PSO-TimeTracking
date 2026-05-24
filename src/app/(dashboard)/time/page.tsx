@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from 'urql';
-import { useAuth, useCanManageTeam, useCanAccessFinancials } from '@/lib/auth-context';
+import {
+	useAuth,
+	useCanManageTeam,
+	useCanAccessFinancials,
+} from '@/lib/auth-context';
 import { gql } from '@/lib/gql';
 import { Timer } from '@/components/timer';
 import { TimeEntryModal } from '@/components/time-entry-modal';
@@ -10,7 +14,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import { formatDuration } from '@/lib/time-utils';
 import { List, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -234,7 +243,10 @@ export default function TimesheetsPage() {
 	// Always default to current user's entries
 	// Admins can optionally select another user
 	const effectiveUserId = selectedUserId || user?.id || undefined;
-	const weekRange = viewMode === 'calendar' ? getWeekDateRange() : { from: undefined, to: undefined };
+	const weekRange =
+		viewMode === 'calendar'
+			? getWeekDateRange()
+			: { from: undefined, to: undefined };
 
 	const [timeEntriesResult, refetchTimeEntries] = useQuery({
 		query: LIST_TIME_ENTRIES_QUERY,
@@ -323,7 +335,10 @@ export default function TimesheetsPage() {
 	};
 
 	const getDayTotal = (entries: any[]) => {
-		return entries.reduce((sum, entry) => sum + (entry.durationSeconds || 0), 0);
+		return entries.reduce(
+			(sum, entry) => sum + (entry.durationSeconds || 0),
+			0,
+		);
 	};
 
 	const handleAddTimeEntry = () => {
@@ -348,7 +363,9 @@ export default function TimesheetsPage() {
 		<div>
 			{/* Header with Title, User Dropdown, and Timer */}
 			<div className="flex items-center justify-between mb-6 gap-4">
-				<h1 className="text-3xl font-bold dark:text-foreground">Time Tracking</h1>
+				<h1 className="text-3xl font-bold dark:text-foreground">
+					Time Tracking
+				</h1>
 				<div className="flex items-center gap-4 flex-1 justify-end">
 					{/* User Selection Dropdown (for admins/owners only) */}
 					{canManageTeam && (
@@ -398,22 +415,36 @@ export default function TimesheetsPage() {
 
 				{viewMode === 'calendar' && (
 					<div className="flex items-center gap-2">
-						<Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => navigateWeek('prev')}
+						>
 							<ChevronLeft className="w-4 h-4" />
 						</Button>
 						<Button variant="outline" size="sm" onClick={goToToday}>
 							Today
 						</Button>
 						<span className="text-sm font-medium px-4">
-							{weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+							{weekStart.toLocaleDateString('en-US', {
+								month: 'short',
+								day: 'numeric',
+								year: 'numeric',
+							})}
 							{' - '}
-							{new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+							{new Date(
+								weekStart.getTime() + 6 * 24 * 60 * 60 * 1000,
+							).toLocaleDateString('en-US', {
 								month: 'short',
 								day: 'numeric',
 								year: 'numeric',
 							})}
 						</span>
-						<Button variant="outline" size="sm" onClick={() => navigateWeek('next')}>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => navigateWeek('next')}
+						>
 							<ChevronRight className="w-4 h-4" />
 						</Button>
 					</div>
@@ -482,7 +513,10 @@ export default function TimesheetsPage() {
 							<Button onClick={handleStartTimer} disabled={!selectedProjectId}>
 								Start Timer
 							</Button>
-							<Button variant="outline" onClick={() => setShowStartDialog(false)}>
+							<Button
+								variant="outline"
+								onClick={() => setShowStartDialog(false)}
+							>
 								Cancel
 							</Button>
 						</div>
@@ -502,7 +536,9 @@ export default function TimesheetsPage() {
 			{viewMode === 'calendar' ? (
 				<div className="border dark:border-border rounded-lg bg-card dark:bg-card overflow-hidden">
 					<div className="p-6 border-b dark:border-border flex items-center justify-between">
-						<h2 className="text-xl font-semibold dark:text-card-foreground">Weekly Calendar</h2>
+						<h2 className="text-xl font-semibold dark:text-card-foreground">
+							Weekly Calendar
+						</h2>
 						<Button size="sm" onClick={handleAddTimeEntry}>
 							Add Time Entry
 						</Button>
@@ -531,7 +567,9 @@ export default function TimesheetsPage() {
 										>
 											<div className="text-center">
 												<div className="text-xs font-medium text-muted-foreground uppercase">
-													{date.toLocaleDateString('en-US', { weekday: 'short' })}
+													{date.toLocaleDateString('en-US', {
+														weekday: 'short',
+													})}
 												</div>
 												<div
 													className={`text-lg font-semibold ${
@@ -575,7 +613,9 @@ export default function TimesheetsPage() {
 															)}
 														</span>
 														<span className="font-medium">
-															{entry.durationSeconds ? formatDuration(entry.durationSeconds) : 'Running'}
+															{entry.durationSeconds
+																? formatDuration(entry.durationSeconds)
+																: 'Running'}
 														</span>
 													</div>
 													{entry.note && (
@@ -596,7 +636,9 @@ export default function TimesheetsPage() {
 				/* List View */
 				<div className="border dark:border-border rounded-lg bg-card dark:bg-card overflow-hidden">
 					<div className="p-6 border-b dark:border-border flex items-center justify-between">
-						<h2 className="text-xl font-semibold dark:text-card-foreground">Recent Time Entries</h2>
+						<h2 className="text-xl font-semibold dark:text-card-foreground">
+							Recent Time Entries
+						</h2>
 						<Button size="sm" onClick={handleAddTimeEntry}>
 							Add Time Entry
 						</Button>
@@ -614,102 +656,125 @@ export default function TimesheetsPage() {
 							</Button>
 						</div>
 					) : (
-					<div className="overflow-x-auto">
-						<table className="w-full">
-							<thead className="bg-muted/50 dark:bg-muted/50 border-b dark:border-border">
-								<tr>
-									<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Project</th>
-									<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Task</th>
-									<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Note</th>
-									<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">User</th>
-									<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Date</th>
-									<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Time</th>
-									<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Duration</th>
-									{canAccessFinancials && (
-										<th className="text-right py-3 px-4 text-sm font-semibold text-muted-foreground">Amount</th>
-									)}
-								</tr>
-							</thead>
-							<tbody className="divide-y divide-border dark:divide-border">
-								{timeEntries.map((entry: any) => (
-									<tr
-										key={entry.id}
-										className="hover:bg-muted/30 dark:hover:bg-muted/30 cursor-pointer transition-colors"
-										onClick={() => handleEditTimeEntry(entry)}
-									>
-										<td className="py-4 px-4">
-											<div className="flex items-center gap-2">
-												<span className="font-semibold text-foreground dark:text-foreground">
-													{entry.project.name}
-												</span>
-												{entry.project.code && (
-													<Badge variant="outline" className="text-xs">
-														{entry.project.code}
-													</Badge>
-												)}
-											</div>
-										</td>
-										<td className="py-4 px-4">
-											{entry.task ? (
-												<span className="text-sm text-foreground dark:text-foreground">
-													{entry.task.name}
-												</span>
-											) : (
-												<span className="text-sm text-muted-foreground">-</span>
-											)}
-										</td>
-										<td className="py-4 px-4">
-											{entry.note ? (
-												<span className="text-sm text-muted-foreground truncate max-w-xs block">
-													{entry.note}
-												</span>
-											) : (
-												<span className="text-sm text-muted-foreground">-</span>
-											)}
-										</td>
-										<td className="py-4 px-4">
-											<span className="text-sm text-foreground dark:text-foreground">
-												{entry.user?.name || '-'}
-											</span>
-										</td>
-										<td className="py-4 px-4 whitespace-nowrap">
-											<span className="text-sm text-muted-foreground">
-												{formatDate(entry.startedAt)}
-											</span>
-										</td>
-										<td className="py-4 px-4 whitespace-nowrap">
-											<span className="text-sm text-muted-foreground">
-												{formatTime(entry.startedAt)}
-												{entry.stoppedAt && ` - ${formatTime(entry.stoppedAt)}`}
-											</span>
-										</td>
-										<td className="py-4 px-4 whitespace-nowrap">
-											{entry.durationSeconds ? (
-												<span className="text-sm font-semibold text-foreground dark:text-foreground">
-													{formatDuration(entry.durationSeconds)}
-												</span>
-											) : (
-												<span className="text-sm font-semibold text-green-600 dark:text-green-400">
-													Running...
-												</span>
-											)}
-										</td>
+						<div className="overflow-x-auto">
+							<table className="w-full">
+								<thead className="bg-muted/50 dark:bg-muted/50 border-b dark:border-border">
+									<tr>
+										<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+											Project
+										</th>
+										<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+											Task
+										</th>
+										<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+											Note
+										</th>
+										<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+											User
+										</th>
+										<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+											Date
+										</th>
+										<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+											Time
+										</th>
+										<th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">
+											Duration
+										</th>
 										{canAccessFinancials && (
-											<td className="py-4 px-4 text-right whitespace-nowrap">
-												{entry.amountCents ? (
-													<span className="text-sm font-semibold text-foreground dark:text-foreground">
-														{formatCurrency(entry.amountCents)}
-													</span>
-												) : (
-													<span className="text-sm text-muted-foreground">-</span>
-												)}
-											</td>
+											<th className="text-right py-3 px-4 text-sm font-semibold text-muted-foreground">
+												Amount
+											</th>
 										)}
 									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
+								</thead>
+								<tbody className="divide-y divide-border dark:divide-border">
+									{timeEntries.map((entry: any) => (
+										<tr
+											key={entry.id}
+											className="hover:bg-muted/30 dark:hover:bg-muted/30 cursor-pointer transition-colors"
+											onClick={() => handleEditTimeEntry(entry)}
+										>
+											<td className="py-4 px-4">
+												<div className="flex items-center gap-2">
+													<span className="font-semibold text-foreground dark:text-foreground">
+														{entry.project.name}
+													</span>
+													{entry.project.code && (
+														<Badge variant="outline" className="text-xs">
+															{entry.project.code}
+														</Badge>
+													)}
+												</div>
+											</td>
+											<td className="py-4 px-4">
+												{entry.task ? (
+													<span className="text-sm text-foreground dark:text-foreground">
+														{entry.task.name}
+													</span>
+												) : (
+													<span className="text-sm text-muted-foreground">
+														-
+													</span>
+												)}
+											</td>
+											<td className="py-4 px-4">
+												{entry.note ? (
+													<span className="text-sm text-muted-foreground truncate max-w-xs block">
+														{entry.note}
+													</span>
+												) : (
+													<span className="text-sm text-muted-foreground">
+														-
+													</span>
+												)}
+											</td>
+											<td className="py-4 px-4">
+												<span className="text-sm text-foreground dark:text-foreground">
+													{entry.user?.name || '-'}
+												</span>
+											</td>
+											<td className="py-4 px-4 whitespace-nowrap">
+												<span className="text-sm text-muted-foreground">
+													{formatDate(entry.startedAt)}
+												</span>
+											</td>
+											<td className="py-4 px-4 whitespace-nowrap">
+												<span className="text-sm text-muted-foreground">
+													{formatTime(entry.startedAt)}
+													{entry.stoppedAt &&
+														` - ${formatTime(entry.stoppedAt)}`}
+												</span>
+											</td>
+											<td className="py-4 px-4 whitespace-nowrap">
+												{entry.durationSeconds ? (
+													<span className="text-sm font-semibold text-foreground dark:text-foreground">
+														{formatDuration(entry.durationSeconds)}
+													</span>
+												) : (
+													<span className="text-sm font-semibold text-green-600 dark:text-green-400">
+														Running...
+													</span>
+												)}
+											</td>
+											{canAccessFinancials && (
+												<td className="py-4 px-4 text-right whitespace-nowrap">
+													{entry.amountCents ? (
+														<span className="text-sm font-semibold text-foreground dark:text-foreground">
+															{formatCurrency(entry.amountCents)}
+														</span>
+													) : (
+														<span className="text-sm text-muted-foreground">
+															-
+														</span>
+													)}
+												</td>
+											)}
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
 					)}
 				</div>
 			)}
