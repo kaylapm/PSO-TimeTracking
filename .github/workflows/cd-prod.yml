@@ -2,7 +2,7 @@ name: Continuous Development - Production (CD)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
 
 env:
   AZURE_CONTAINER_REGISTRY: 'registrytimetracking.azurecr.io'
@@ -113,9 +113,9 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           # Menentukan warna embed Discord (Merah jika ada yang gagal, Hijau jika semuanya sukses)
-          status: ${{ (contains(needs.Quality_Job.result, 'failure') || contains(needs.Test_Job.result, 'failure') || contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Production.result, 'failure')) && 'Failure' || 'Success' }}
+          status: "${{ (contains(needs.Quality_Job.result, 'failure') || contains(needs.Test_Job.result, 'failure') || contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Production.result, 'failure')) && 'Failure' || 'Success' }}"
           # Judul notifikasi berubah otomatis berdasarkan hasil seluruh job
-          title: ${{ (contains(needs.Quality_Job.result, 'failure') || contains(needs.Test_Job.result, 'failure') || contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Production.result, 'failure')) && '❌ ALARM: Pipeline Ardine Gagal!' || '✅ HORE: Pipeline Ardine Sukses!' }}
+          title: "${{ (contains(needs.Quality_Job.result, 'failure') || contains(needs.Test_Job.result, 'failure') || contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Production.result, 'failure')) && '❌ ALARM: Pipeline Ardine Gagal!' || '✅ HORE: Pipeline Ardine Sukses!' }}"
           description: |
             **Pemicu:** Push/Merge dari branch `${{ github.ref_name }}`
 

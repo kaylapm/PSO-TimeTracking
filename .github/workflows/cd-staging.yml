@@ -2,7 +2,7 @@ name: Continuous Development - Staging (CD)
 
 on:
   push:
-    branches: [ "staging" ]
+    branches: ['staging']
 
 env:
   AZURE_CONTAINER_REGISTRY: 'registrytimetracking.azurecr.io'
@@ -125,3 +125,29 @@ jobs:
           done
           echo "Smoke test failed! Staging site is not responding."
           exit 1
+
+  Notify_Discord:
+    name: Send Notification to Discord
+    needs: [Quality_Job, Test_Job, Build_Job, Deploy_Staging, Smoke_Test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord Channel
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          # Menentukan warna embed Discord (Merah jika ada yang gagal, Hijau jika semuanya sukses)
+          status: "${{ (contains(needs.Quality_Job.result, 'failure') || contains(needs.Test_Job.result, 'failure') || contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Staging.result, 'failure') || contains(needs.Smoke_Test.result, 'failure')) && 'Failure' || 'Success' }}"
+          # Judul notifikasi berubah otomatis berdasarkan hasil seluruh job
+          title: "${{ (contains(needs.Quality_Job.result, 'failure') || contains(needs.Test_Job.result, 'failure') || contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Staging.result, 'failure') || contains(needs.Smoke_Test.result, 'failure')) && '❌ ALARM: Pipeline Ardine Staging Gagal!' || '✅ HORE: Pipeline Ardine Staging Sukses!' }}"
+          description: |
+            **Pemicu:** Push/Merge dari branch `${{ github.ref_name }}`
+
+            **📊 Laporan Tiap Stage:**
+            - 🧹 **Quality Check:** `${{ needs.Quality_Job.result }}`
+            - 🧪 **Unit Testing:** `${{ needs.Test_Job.result }}`
+            - 🏗️ **Build Validation:** `${{ needs.Build_Job.result }}`
+            - 🐳 **Deploy to Staging:** `${{ needs.Deploy_Staging.result }}`
+            - 🔍 **Smoke Testing:** `${{ needs.Smoke_Test.result }}`
+
+            *(Jika ada yang bernilai 'failure', segera klik tombol di bawah untuk melihat log error di GitHub)*

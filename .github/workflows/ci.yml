@@ -2,7 +2,7 @@ name: Continuous Integration (CI)
 
 on:
   pull_request:
-    branches: [ "staging", "main" ]
+    branches: ['staging', 'main']
 
 jobs:
   Quality_Job:
