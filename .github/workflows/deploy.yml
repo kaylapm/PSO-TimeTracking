@@ -30,7 +30,7 @@ jobs:
       - name: Log in to Azure Container Registry (ACR)
         uses: azure/docker-login@v2
         with:
-          login-server: registryardine.azurecr.io
+          login-server: registrytimetracking.azurecr.io
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
@@ -40,5 +40,5 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: registryardine.azurecr.io/ardine-app:${{ steps.set-tag.outputs.tag }}
+          tags: registrytimetracking.azurecr.io/ardine-app:${{ steps.set-tag.outputs.tag }}
 
