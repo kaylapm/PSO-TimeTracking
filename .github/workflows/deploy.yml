@@ -100,22 +100,22 @@ jobs:
   Notify_Discord:
     name: Send Notification to Discord
     needs: [Continuous_Integration, Docker_Build_Push]
-    if: always() # Wajib ada agar Discord tetap dikirim walau stage atasnya error
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Notify Discord Channel
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          # Menentukan warna embed Discord (Merah jika gagal, Hijau jika sukses)
+          # Logika: Jika ada salah satu stage yang gagal, status Discord jadi merah (Failure). Jika tidak, hijau (Success).
           status: ${{ contains(needs.*.result, 'failure') && 'Failure' || 'Success' }}
-          # Judul notifikasi berubah otomatis
-          title: ${{ contains(needs.*.result, 'failure') && '❌ ALARM: Pipeline Ardine Gagal!' || '✅ HORE: Pipeline Ardine Sukses!' }}
+          title: '🚀 Laporan CI/CD Ardine'
           description: |
-            **Pemicu:** Push/Merge dari branch `${{ github.ref_name }}`
+            **Branch:** `${{ github.ref_name }}`
+            **Trigger:** `${{ github.event_name }}`
 
-            **📊 Laporan Tiap Stage:**
-            - 🧪 **Tahap Testing & Linting:** `${{ needs.Continuous_Integration.result }}`
-            - 🐳 **Tahap Build Docker (ACR):** `${{ needs.Docker_Build_Push.result }}`
+            **📊 Detail Status Stage:**
+            - 🧪 **Code Quality & Testing:** `${{ needs.Continuous_Integration.result }}`
+            - 🐳 **Docker Build & Push (ACR):** `${{ needs.Docker_Build_Push.result }}`
 
-            *(Jika ada yang bernilai 'failure', segera klik tombol di bawah untuk melihat log error di GitHub)*
+            *Klik tombol di bawah untuk melihat log error secara detail di GitHub.*
