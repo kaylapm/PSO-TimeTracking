@@ -212,6 +212,7 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
   };
 
   // Pre-fill form when invoice loads
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (invoice) {
       setInvoiceNumber(invoice.invoiceNumber);
@@ -231,6 +232,7 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
       );
     }
   }, [invoice]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Don't render if user doesn't have access
   if (!canAccessInvoices) {
