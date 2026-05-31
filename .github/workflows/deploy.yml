@@ -37,7 +37,7 @@ jobs:
           pwd
           echo "Listing files:"
           ls -la
-          echo "Running Next lint (explicit local binary with --dir)">
+          echo "Running Next lint (explicit local binary with --dir)"
           ./node_modules/.bin/next lint --dir . || npx --no-install next lint --dir .
         
       - name: Job 3 - Formatting Check
