@@ -21,7 +21,7 @@ export default function AdminTeams() {
     name: '',
     slug: '',
     generate_invite: true,
-    invite_email: ''
+    invite_email: '',
   });
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const router = useRouter();
@@ -65,7 +65,12 @@ export default function AdminTeams() {
           setInviteUrl(data.invite.url);
         } else {
           setShowCreateModal(false);
-          setFormData({ name: '', slug: '', generate_invite: true, invite_email: '' });
+          setFormData({
+            name: '',
+            slug: '',
+            generate_invite: true,
+            invite_email: '',
+          });
           alert('Team created successfully');
         }
       } else {
@@ -81,7 +86,12 @@ export default function AdminTeams() {
   const handleCloseModal = () => {
     setShowCreateModal(false);
     setInviteUrl(null);
-    setFormData({ name: '', slug: '', generate_invite: true, invite_email: '' });
+    setFormData({
+      name: '',
+      slug: '',
+      generate_invite: true,
+      invite_email: '',
+    });
   };
 
   const copyInviteLink = () => {
@@ -92,7 +102,11 @@ export default function AdminTeams() {
   };
 
   const handleDelete = async (teamId: string, teamName: string) => {
-    if (!confirm(`Are you sure you want to delete team "${teamName}"? This will delete all associated data. This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete team "${teamName}"? This will delete all associated data. This action cannot be undone.`
+      )
+    ) {
       return;
     }
 
@@ -115,7 +129,11 @@ export default function AdminTeams() {
   };
 
   const handleSwitchContext = async (teamId: string, teamName: string) => {
-    if (!confirm(`Switch your context to team "${teamName}"? You will be added as an ADMIN member if not already a member.`)) {
+    if (
+      !confirm(
+        `Switch your context to team "${teamName}"? You will be added as an ADMIN member if not already a member.`
+      )
+    ) {
       return;
     }
 
@@ -155,7 +173,8 @@ export default function AdminTeams() {
         <div className="sm:flex-auto">
           <h1 className="text-2xl font-semibold text-gray-900">Teams</h1>
           <p className="mt-2 text-sm text-gray-700">
-            Manage all teams in the instance. Create new teams, view details, and delete teams.
+            Manage all teams in the instance. Create new teams, view details,
+            and delete teams.
           </p>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
@@ -221,7 +240,9 @@ export default function AdminTeams() {
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                         <button
-                          onClick={() => handleSwitchContext(team.id, team.name)}
+                          onClick={() =>
+                            handleSwitchContext(team.id, team.name)
+                          }
                           className="text-blue-600 hover:text-blue-900 mr-4"
                         >
                           Switch
@@ -249,7 +270,9 @@ export default function AdminTeams() {
             {inviteUrl ? (
               // Show invite link after creation
               <div>
-                <h2 className="text-lg font-medium text-gray-900 mb-4">Team Created!</h2>
+                <h2 className="text-lg font-medium text-gray-900 mb-4">
+                  Team Created!
+                </h2>
                 <p className="text-sm text-gray-600 mb-4">
                   Share this invite link to add an owner to the team:
                 </p>
@@ -274,31 +297,43 @@ export default function AdminTeams() {
             ) : (
               // Show create form
               <>
-                <h2 className="text-lg font-medium text-gray-900 mb-4">Create New Team</h2>
+                <h2 className="text-lg font-medium text-gray-900 mb-4">
+                  Create New Team
+                </h2>
                 <form onSubmit={handleCreate}>
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700"
+                      >
                         Team Name
                       </label>
                       <input
                         type="text"
                         id="name"
                         value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="slug" className="block text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="slug"
+                        className="block text-sm font-medium text-gray-700"
+                      >
                         Team Slug
                       </label>
                       <input
                         type="text"
                         id="slug"
                         value={formData.slug}
-                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, slug: e.target.value })
+                        }
                         pattern="^[a-z0-9-]+$"
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                         placeholder="lowercase-with-dashes"
@@ -314,23 +349,39 @@ export default function AdminTeams() {
                           type="checkbox"
                           id="generate_invite"
                           checked={formData.generate_invite}
-                          onChange={(e) => setFormData({ ...formData, generate_invite: e.target.checked })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              generate_invite: e.target.checked,
+                            })
+                          }
                           className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <label htmlFor="generate_invite" className="ml-2 block text-sm text-gray-700">
+                        <label
+                          htmlFor="generate_invite"
+                          className="ml-2 block text-sm text-gray-700"
+                        >
                           Generate invite link with OWNER role
                         </label>
                       </div>
                       {formData.generate_invite && (
                         <div>
-                          <label htmlFor="invite_email" className="block text-sm font-medium text-gray-700">
+                          <label
+                            htmlFor="invite_email"
+                            className="block text-sm font-medium text-gray-700"
+                          >
                             Invite Email (optional)
                           </label>
                           <input
                             type="email"
                             id="invite_email"
                             value={formData.invite_email}
-                            onChange={(e) => setFormData({ ...formData, invite_email: e.target.value })}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                invite_email: e.target.value,
+                              })
+                            }
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                             placeholder="owner@example.com"
                           />

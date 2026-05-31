@@ -41,7 +41,9 @@ export default function AdminUsers() {
     const newRole = currentRole === 'ADMIN' ? 'USER' : 'ADMIN';
     const action = newRole === 'ADMIN' ? 'promote' : 'demote';
 
-    if (!confirm(`Are you sure you want to ${action} this user to ${newRole}?`)) {
+    if (
+      !confirm(`Are you sure you want to ${action} this user to ${newRole}?`)
+    ) {
       return;
     }
 
@@ -66,7 +68,11 @@ export default function AdminUsers() {
   };
 
   const handleDelete = async (userId: string, userName: string) => {
-    if (!confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete user "${userName}"? This action cannot be undone.`
+      )
+    ) {
       return;
     }
 
@@ -98,7 +104,8 @@ export default function AdminUsers() {
         <div className="sm:flex-auto">
           <h1 className="text-2xl font-semibold text-foreground">Users</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Manage all users in the instance. Promote/demote admins and delete users.
+            Manage all users in the instance. Promote/demote admins and delete
+            users.
           </p>
         </div>
       </div>
@@ -153,12 +160,18 @@ export default function AdminUsers() {
                       <td className="px-3 py-4 text-sm text-muted-foreground">
                         <div className="space-y-1">
                           {user.teams.length === 0 ? (
-                            <span className="text-muted-foreground">No teams</span>
+                            <span className="text-muted-foreground">
+                              No teams
+                            </span>
                           ) : (
                             user.teams.map((team) => (
                               <div key={team.team_id}>
-                                <span className="font-medium">{team.team_name}</span>
-                                <span className="text-muted-foreground ml-1">({team.role})</span>
+                                <span className="font-medium">
+                                  {team.team_name}
+                                </span>
+                                <span className="text-muted-foreground ml-1">
+                                  ({team.role})
+                                </span>
                               </div>
                             ))
                           )}
@@ -169,10 +182,14 @@ export default function AdminUsers() {
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                         <button
-                          onClick={() => handlePromote(user.id, user.instance_role)}
+                          onClick={() =>
+                            handlePromote(user.id, user.instance_role)
+                          }
                           className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-4"
                         >
-                          {user.instance_role === 'ADMIN' ? 'Demote' : 'Promote'}
+                          {user.instance_role === 'ADMIN'
+                            ? 'Demote'
+                            : 'Promote'}
                         </button>
                         <button
                           onClick={() => handleDelete(user.id, user.name)}

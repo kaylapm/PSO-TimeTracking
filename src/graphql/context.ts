@@ -4,7 +4,8 @@ import { createLoaders, Loaders } from './loaders';
 import { UnauthorizedError } from './errors';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET =
+  process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 export interface AuthContext {
   userId: string | null;
@@ -14,7 +15,10 @@ export interface AuthContext {
 }
 
 export interface DbContext {
-  query: <T extends QueryResultRow = any>(text: string, params?: any[]) => Promise<QueryResult<T>>;
+  query: <T extends QueryResultRow = any>(
+    text: string,
+    params?: any[]
+  ) => Promise<QueryResult<T>>;
 }
 
 export interface GraphQLContext {
@@ -32,11 +36,14 @@ async function extractAuth(request: Request): Promise<AuthContext> {
   let token: string | null = null;
 
   if (cookieHeader) {
-    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-      const [key, value] = cookie.trim().split('=');
-      acc[key] = value;
-      return acc;
-    }, {} as Record<string, string>);
+    const cookies = cookieHeader.split(';').reduce(
+      (acc, cookie) => {
+        const [key, value] = cookie.trim().split('=');
+        acc[key] = value;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
     token = cookies['auth_token'];
   }
 
@@ -52,8 +59,17 @@ async function extractAuth(request: Request): Promise<AuthContext> {
   if (!token) {
     const userId = request.headers.get('x-user-id');
     const teamId = request.headers.get('x-team-id');
-    const instanceRole = request.headers.get('x-instance-role') as 'USER' | 'ADMIN' | null;
-    const teamRole = request.headers.get('x-team-role') as 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER' | 'BILLING' | null;
+    const instanceRole = request.headers.get('x-instance-role') as
+      | 'USER'
+      | 'ADMIN'
+      | null;
+    const teamRole = request.headers.get('x-team-role') as
+      | 'OWNER'
+      | 'ADMIN'
+      | 'MEMBER'
+      | 'VIEWER'
+      | 'BILLING'
+      | null;
 
     if (userId) {
       return { userId, teamId, instanceRole, teamRole };
@@ -127,7 +143,9 @@ export async function createContext(request: Request): Promise<GraphQLContext> {
 /**
  * Ensures user is authenticated (requires both userId and teamId)
  */
-export function requireAuth(context: GraphQLContext): asserts context is GraphQLContext & { auth: Required<AuthContext> } {
+export function requireAuth(
+  context: GraphQLContext
+): asserts context is GraphQLContext & { auth: Required<AuthContext> } {
   if (!context.auth.userId || !context.auth.teamId) {
     throw new UnauthorizedError('Authentication required');
   }
@@ -137,7 +155,11 @@ export function requireAuth(context: GraphQLContext): asserts context is GraphQL
  * Ensures user has a valid userId (doesn't require teamId)
  * Use this for operations that don't require team context, like accepting invites
  */
-export function requireUserId(context: GraphQLContext): asserts context is GraphQLContext & { auth: AuthContext & { userId: string } } {
+export function requireUserId(
+  context: GraphQLContext
+): asserts context is GraphQLContext & {
+  auth: AuthContext & { userId: string };
+} {
   if (!context.auth.userId) {
     throw new UnauthorizedError('Authentication required');
   }
@@ -165,7 +187,9 @@ export function requireTeamManagement(context: GraphQLContext): void {
   requireAuth(context);
 
   if (context.auth.teamRole !== 'OWNER' && context.auth.teamRole !== 'ADMIN') {
-    throw new UnauthorizedError('Only team owners and admins can manage team resources');
+    throw new UnauthorizedError(
+      'Only team owners and admins can manage team resources'
+    );
   }
 }
 
@@ -190,7 +214,9 @@ export function requireInvoiceAccess(context: GraphQLContext): void {
     context.auth.teamRole !== 'ADMIN' &&
     context.auth.teamRole !== 'BILLING'
   ) {
-    throw new UnauthorizedError('Only team owners, admins, and billing managers can access invoices');
+    throw new UnauthorizedError(
+      'Only team owners, admins, and billing managers can access invoices'
+    );
   }
 }
 
@@ -204,7 +230,9 @@ export async function requireTeamAccess(
   requireAuth(context);
 
   if (context.auth.teamId !== entityTeamId) {
-    throw new UnauthorizedError('Access denied: entity belongs to a different team');
+    throw new UnauthorizedError(
+      'Access denied: entity belongs to a different team'
+    );
   }
 }
 
@@ -253,7 +281,9 @@ export async function getProjectMemberRole(
 ): Promise<'MANAGER' | 'CONTRIBUTOR' | 'VIEWER' | null> {
   requireAuth(context);
 
-  const result = await context.db.query<{ role: 'MANAGER' | 'CONTRIBUTOR' | 'VIEWER' }>(
+  const result = await context.db.query<{
+    role: 'MANAGER' | 'CONTRIBUTOR' | 'VIEWER';
+  }>(
     `SELECT role FROM project_members WHERE project_id = $1 AND user_id = $2`,
     [projectId, context.auth.userId]
   );

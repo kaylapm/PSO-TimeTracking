@@ -9,7 +9,21 @@ import { gql } from '@/lib/gql';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, Edit, Trash2, ChevronDown, ChevronRight, Clock, Plus, X, FileDown, Send, Link2, Check, MoreHorizontal } from 'lucide-react';
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Plus,
+  X,
+  FileDown,
+  Send,
+  Link2,
+  Check,
+  MoreHorizontal,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -163,7 +177,11 @@ const ADD_TIME_ENTRIES_TO_ITEM_MUTATION = gql(`
   }
 `);
 
-export default function InvoiceDetailPage({ params }: { params: { invoiceId: string } }) {
+export default function InvoiceDetailPage({
+  params,
+}: {
+  params: { invoiceId: string };
+}) {
   const { invoiceId } = params;
   const router = useRouter();
   const { currentTeam } = useAuth();
@@ -171,7 +189,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
   // Hooks declared upfront
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [showNewEntriesModal, setShowNewEntriesModal] = useState(false);
-  const [selectedNewEntries, setSelectedNewEntries] = useState<Set<string>>(new Set());
+  const [selectedNewEntries, setSelectedNewEntries] = useState<Set<string>>(
+    new Set()
+  );
 
   // Redirect if user doesn't have access to invoices
   useEffect(() => {
@@ -180,8 +200,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
     }
   }, [currentTeam, canAccessInvoices, router]);
 
-
-  const [dismissedInvoices, setDismissedInvoices] = useState<Set<string>>(new Set());
+  const [dismissedInvoices, setDismissedInvoices] = useState<Set<string>>(
+    new Set()
+  );
   const [showSendModal, setShowSendModal] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
 
@@ -207,7 +228,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
   const [, markSentMutation] = useMutation(MARK_SENT_MUTATION);
   const [, cancelInvoiceMutation] = useMutation(CANCEL_INVOICE_MUTATION);
   const [, addInvoiceItemMutation] = useMutation(ADD_INVOICE_ITEM_MUTATION);
-  const [, addTimeEntriesToItemMutation] = useMutation(ADD_TIME_ENTRIES_TO_ITEM_MUTATION);
+  const [, addTimeEntriesToItemMutation] = useMutation(
+    ADD_TIME_ENTRIES_TO_ITEM_MUTATION
+  );
 
   const { data, fetching, error } = result;
   const invoice = data?.invoice;
@@ -228,9 +251,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
     return null;
   }
 
-  const newTimeEntries = (newEntriesResult.data?.timeEntries.nodes || []).filter(
-    (entry: any) => entry.stoppedAt
-  );
+  const newTimeEntries = (
+    newEntriesResult.data?.timeEntries.nodes || []
+  ).filter((entry: any) => entry.stoppedAt);
 
   const toggleItemExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -301,7 +324,11 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
   };
 
   const handleDelete = async () => {
-    if (confirm('Are you sure you want to delete this invoice? This action cannot be undone.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete this invoice? This action cannot be undone.'
+      )
+    ) {
       const result = await deleteInvoiceMutation({ id: invoiceId });
       if (!result.error) {
         router.push('/invoices');
@@ -330,7 +357,10 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
       const newDismissed = new Set(dismissedInvoices);
       newDismissed.add(invoiceId);
       setDismissedInvoices(newDismissed);
-      localStorage.setItem('dismissedInvoiceAlerts', JSON.stringify(Array.from(newDismissed)));
+      localStorage.setItem(
+        'dismissedInvoiceAlerts',
+        JSON.stringify(Array.from(newDismissed))
+      );
     } catch (err) {
       console.error('Failed to save dismissed invoice:', err);
     }
@@ -430,11 +460,14 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
         // Find existing item with matching description and rate
         const existingItem = invoice?.items.find(
           (item: any) =>
-            item.description === description &&
-            item.rateCents === group.rate
+            item.description === description && item.rateCents === group.rate
         );
 
-        if (existingItem && existingItem.timeEntries && existingItem.timeEntries.length > 0) {
+        if (
+          existingItem &&
+          existingItem.timeEntries &&
+          existingItem.timeEntries.length > 0
+        ) {
           // Add to existing line item using the new mutation
           const newEntryIds = group.entries.map((e: any) => e.id);
 
@@ -471,7 +504,10 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
       const newDismissed = new Set(dismissedInvoices);
       newDismissed.delete(invoiceId);
       setDismissedInvoices(newDismissed);
-      localStorage.setItem('dismissedInvoiceAlerts', JSON.stringify(Array.from(newDismissed)));
+      localStorage.setItem(
+        'dismissedInvoiceAlerts',
+        JSON.stringify(Array.from(newDismissed))
+      );
     } catch (err: any) {
       alert('Failed to add time entries: ' + err.message);
     }
@@ -514,7 +550,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
             <h1 className="text-3xl font-bold mb-2 dark:text-foreground">
               Invoice {invoice.invoiceNumber}
             </h1>
-            <Badge className={getStatusColor(invoice.status)}>{invoice.status}</Badge>
+            <Badge className={getStatusColor(invoice.status)}>
+              {invoice.status}
+            </Badge>
           </div>
 
           <div className="flex gap-2">
@@ -547,7 +585,10 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                     Cancel Invoice
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                <DropdownMenuItem
+                  onClick={handleDelete}
+                  className="text-destructive"
+                >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete Invoice
                 </DropdownMenuItem>
@@ -558,44 +599,47 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
       </div>
 
       {/* Alert for new time entries */}
-      {invoice.status === 'draft' && newTimeEntries.length > 0 && !dismissedInvoices.has(invoiceId) && (
-        <div className="mb-6 p-4 border border-blue-200 dark:border-blue-900 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-1">
-                New Time Entries Available
-              </h3>
-              <p className="text-sm text-blue-800 dark:text-blue-400">
-                There {newTimeEntries.length === 1 ? 'is' : 'are'} {newTimeEntries.length} new{' '}
-                {newTimeEntries.length === 1 ? 'time entry' : 'time entries'} for this client since this invoice was created.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 ml-4 mt-1">
-              <Button
-                size="sm"
-                onClick={() => setShowNewEntriesModal(true)}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add to Invoice
-              </Button>
-              <button
-                onClick={handleDismissAlert}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30"
-                title="Dismiss this alert"
-              >
-                <X className="w-4 h-4" />
-              </button>
+      {invoice.status === 'draft' &&
+        newTimeEntries.length > 0 &&
+        !dismissedInvoices.has(invoiceId) && (
+          <div className="mb-6 p-4 border border-blue-200 dark:border-blue-900 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-1">
+                  New Time Entries Available
+                </h3>
+                <p className="text-sm text-blue-800 dark:text-blue-400">
+                  There {newTimeEntries.length === 1 ? 'is' : 'are'}{' '}
+                  {newTimeEntries.length} new{' '}
+                  {newTimeEntries.length === 1 ? 'time entry' : 'time entries'}{' '}
+                  for this client since this invoice was created.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 ml-4 mt-1">
+                <Button size="sm" onClick={() => setShowNewEntriesModal(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add to Invoice
+                </Button>
+                <button
+                  onClick={handleDismissAlert}
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                  title="Dismiss this alert"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Modal for adding new time entries */}
       {showNewEntriesModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-background dark:bg-card border dark:border-border rounded-lg max-w-3xl w-full max-h-[80vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between p-6 border-b dark:border-border">
-              <h2 className="text-xl font-semibold">Add Time Entries to Invoice</h2>
+              <h2 className="text-xl font-semibold">
+                Add Time Entries to Invoice
+              </h2>
               <button
                 onClick={() => {
                   setShowNewEntriesModal(false);
@@ -635,7 +679,11 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                           {entry.project.code ? `[${entry.project.code}] ` : ''}
                           {entry.project.name}
                         </span>
-                        {entry.task && <span className="text-muted-foreground">- {entry.task.name}</span>}
+                        {entry.task && (
+                          <span className="text-muted-foreground">
+                            - {entry.task.name}
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 text-muted-foreground text-xs">
                         <span className="font-medium text-foreground">
@@ -644,11 +692,18 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                         <span>•</span>
                         <span>{formatDate(entry.startedAt)}</span>
                         <span>•</span>
-                        <span>{formatTime(entry.startedAt)} → {formatTime(entry.stoppedAt)}</span>
+                        <span>
+                          {formatTime(entry.startedAt)} →{' '}
+                          {formatTime(entry.stoppedAt)}
+                        </span>
                         <span>•</span>
                         <span>{formatDuration(entry.durationSeconds)}</span>
                       </div>
-                      {entry.note && <div className="mt-1 text-xs text-foreground/70">{entry.note}</div>}
+                      {entry.note && (
+                        <div className="mt-1 text-xs text-foreground/70">
+                          {entry.note}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -668,8 +723,15 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                 >
                   Cancel
                 </Button>
-                <Button onClick={handleAddNewEntries} disabled={selectedNewEntries.size === 0}>
-                  Add {selectedNewEntries.size > 0 ? `(${selectedNewEntries.size})` : ''} to Invoice
+                <Button
+                  onClick={handleAddNewEntries}
+                  disabled={selectedNewEntries.size === 0}
+                >
+                  Add{' '}
+                  {selectedNewEntries.size > 0
+                    ? `(${selectedNewEntries.size})`
+                    : ''}{' '}
+                  to Invoice
                 </Button>
               </div>
             </div>
@@ -706,7 +768,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">Download PDF</p>
-                  <p className="text-sm text-muted-foreground">Download invoice as PDF file</p>
+                  <p className="text-sm text-muted-foreground">
+                    Download invoice as PDF file
+                  </p>
                 </div>
               </button>
 
@@ -722,9 +786,13 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium">{urlCopied ? 'URL Copied!' : 'Copy Public Link'}</p>
+                  <p className="font-medium">
+                    {urlCopied ? 'URL Copied!' : 'Copy Public Link'}
+                  </p>
                   <p className="text-sm text-muted-foreground">
-                    {urlCopied ? 'Link copied to clipboard' : 'Share public invoice URL'}
+                    {urlCopied
+                      ? 'Link copied to clipboard'
+                      : 'Share public invoice URL'}
                   </p>
                 </div>
               </button>
@@ -778,7 +846,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
             <div>
               <p className="font-semibold text-lg">{invoice.client.name}</p>
               {invoice.client.email && (
-                <p className="text-sm text-muted-foreground">{invoice.client.email}</p>
+                <p className="text-sm text-muted-foreground">
+                  {invoice.client.email}
+                </p>
               )}
               {invoice.client.billingAddress && (
                 <div className="mt-2 text-sm text-muted-foreground">
@@ -808,11 +878,15 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
         {/* Dates */}
         <div className="grid grid-cols-2 gap-8 max-w-4xl">
           <div>
-            <p className="text-sm font-semibold text-muted-foreground mb-1">Issued Date</p>
+            <p className="text-sm font-semibold text-muted-foreground mb-1">
+              Issued Date
+            </p>
             <p className="text-base">{formatDate(invoice.issuedDate)}</p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-muted-foreground mb-1">Due Date</p>
+            <p className="text-sm font-semibold text-muted-foreground mb-1">
+              Due Date
+            </p>
             <p className="text-base">{formatDate(invoice.dueDate)}</p>
           </div>
         </div>
@@ -842,7 +916,8 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
               </thead>
               <tbody className="divide-y divide-border">
                 {invoice.items.map((item: any) => {
-                  const hasTimeEntries = item.timeEntries && item.timeEntries.length > 0;
+                  const hasTimeEntries =
+                    item.timeEntries && item.timeEntries.length > 0;
                   const isExpanded = expandedItems.has(item.id);
 
                   return (
@@ -865,7 +940,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                             <span>{item.description}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-sm text-right">{item.quantity}</td>
+                        <td className="px-4 py-3 text-sm text-right">
+                          {item.quantity}
+                        </td>
                         <td className="px-4 py-3 text-sm text-right">
                           {formatCurrency(item.rateCents)}
                         </td>
@@ -891,7 +968,9 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                                   <div className="flex items-center gap-1 min-w-[100px]">
                                     <Clock className="w-3 h-3" />
                                     <span>
-                                      {new Date(entry.startedAt).toLocaleDateString('en-US', {
+                                      {new Date(
+                                        entry.startedAt
+                                      ).toLocaleDateString('en-US', {
                                         month: 'short',
                                         day: 'numeric',
                                       })}
@@ -900,7 +979,11 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
                                   <div className="flex items-center gap-2 min-w-[180px]">
                                     <span>{formatTime(entry.startedAt)}</span>
                                     <span>→</span>
-                                    <span>{entry.stoppedAt ? formatTime(entry.stoppedAt) : 'Running'}</span>
+                                    <span>
+                                      {entry.stoppedAt
+                                        ? formatTime(entry.stoppedAt)
+                                        : 'Running'}
+                                    </span>
                                   </div>
                                   <div className="font-medium min-w-[60px]">
                                     {formatDuration(entry.durationSeconds)}

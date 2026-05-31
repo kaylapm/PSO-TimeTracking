@@ -4,7 +4,12 @@ import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from 'urql';
 import { gql } from '@/lib/gql';
 import { useAuth } from '@/lib/auth-context';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -270,7 +275,11 @@ export function TimeEntryModal({
   const handleDelete = async () => {
     if (!isEditMode || !timeEntry) return;
 
-    if (confirm('Are you sure you want to delete this time entry? This action cannot be undone.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete this time entry? This action cannot be undone.'
+      )
+    ) {
       const result = await deleteTimeEntryMutation({
         timeEntryId: timeEntry.id,
       });
@@ -286,7 +295,9 @@ export function TimeEntryModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit Time Entry' : 'Add Time Entry'}</DialogTitle>
+          <DialogTitle>
+            {isEditMode ? 'Edit Time Entry' : 'Add Time Entry'}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -389,15 +400,26 @@ export function TimeEntryModal({
 
           <div className="flex items-center justify-between gap-3 pt-4">
             <div className="flex gap-3">
-              <Button type="submit" disabled={!projectId || !date || !startTime || !endTime}>
+              <Button
+                type="submit"
+                disabled={!projectId || !date || !startTime || !endTime}
+              >
                 {isEditMode ? 'Update' : 'Create'} Time Entry
               </Button>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
             </div>
             {isEditMode && (
-              <Button type="button" variant="destructive" onClick={handleDelete}>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+              >
                 Delete
               </Button>
             )}

@@ -2,7 +2,8 @@ import { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { query as db } from '@/db';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET =
+  process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 interface JWTPayload {
   userId: string;
@@ -20,7 +21,9 @@ export interface AdminAuthContext {
 /**
  * Extract and verify JWT token from request
  */
-export async function extractAdminAuth(request: NextRequest): Promise<AdminAuthContext | null> {
+export async function extractAdminAuth(
+  request: NextRequest
+): Promise<AdminAuthContext | null> {
   try {
     // Try to get token from cookie first
     let token = request.cookies.get('auth_token')?.value;
@@ -56,7 +59,9 @@ export async function extractAdminAuth(request: NextRequest): Promise<AdminAuthC
  * Middleware to require admin authentication
  * Returns 401 if not authenticated, 403 if not admin
  */
-export async function requireAdminAuth(request: NextRequest): Promise<
+export async function requireAdminAuth(
+  request: NextRequest
+): Promise<
   | { success: true; auth: AdminAuthContext }
   | { success: false; error: string; status: number }
 > {

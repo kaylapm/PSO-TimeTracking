@@ -1,9 +1,9 @@
-import { PageLayout } from "@/components/navigation";
+import { PageLayout } from '@/components/navigation';
 
 export default function DashboardLayout({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-	return <PageLayout>{children}</PageLayout>;
+  return <PageLayout>{children}</PageLayout>;
 }

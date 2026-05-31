@@ -221,8 +221,10 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
                     </Text>
                     <Text style={styles.clientDetail}>
                       {team.billing_address.city}
-                      {team.billing_address.state && `, ${team.billing_address.state}`}
-                      {team.billing_address.postalCode && ` ${team.billing_address.postalCode}`}
+                      {team.billing_address.state &&
+                        `, ${team.billing_address.state}`}
+                      {team.billing_address.postalCode &&
+                        ` ${team.billing_address.postalCode}`}
                     </Text>
                     {team.billing_address.country && (
                       <Text style={styles.clientDetail}>
@@ -250,8 +252,10 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
                   </Text>
                   <Text style={styles.clientDetail}>
                     {client.billing_address.city}
-                    {client.billing_address.state && `, ${client.billing_address.state}`}
-                    {client.billing_address.postalCode && ` ${client.billing_address.postalCode}`}
+                    {client.billing_address.state &&
+                      `, ${client.billing_address.state}`}
+                    {client.billing_address.postalCode &&
+                      ` ${client.billing_address.postalCode}`}
                   </Text>
                   {client.billing_address.country && (
                     <Text style={styles.clientDetail}>
@@ -285,9 +289,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
             <Text style={[styles.tableCol2, styles.tableHeaderText]}>
               Quantity
             </Text>
-            <Text style={[styles.tableCol3, styles.tableHeaderText]}>
-              Rate
-            </Text>
+            <Text style={[styles.tableCol3, styles.tableHeaderText]}>Rate</Text>
             <Text style={[styles.tableCol4, styles.tableHeaderText]}>
               Amount
             </Text>

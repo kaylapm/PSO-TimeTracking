@@ -28,10 +28,7 @@ export async function DELETE(
     );
 
     if (clientResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Client not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
 
     // Delete client (cascading deletes should handle related records)

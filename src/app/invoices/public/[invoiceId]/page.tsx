@@ -49,7 +49,11 @@ const GET_PUBLIC_INVOICE_QUERY = gql(`
   }
 `);
 
-export default function PublicInvoicePage({ params }: { params: { invoiceId: string } }) {
+export default function PublicInvoicePage({
+  params,
+}: {
+  params: { invoiceId: string };
+}) {
   const { invoiceId } = params;
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
@@ -172,7 +176,9 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
               <h1 className="text-3xl font-bold mb-2 dark:text-foreground">
                 Invoice {invoice.invoiceNumber}
               </h1>
-              <Badge className={getStatusColor(invoice.status)}>{invoice.status}</Badge>
+              <Badge className={getStatusColor(invoice.status)}>
+                {invoice.status}
+              </Badge>
             </div>
 
             <Button onClick={handleDownloadPDF}>
@@ -227,7 +233,9 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
               <div>
                 <p className="font-semibold text-lg">{invoice.client.name}</p>
                 {invoice.client.email && (
-                  <p className="text-sm text-muted-foreground">{invoice.client.email}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {invoice.client.email}
+                  </p>
                 )}
                 {invoice.client.billingAddress && (
                   <div className="mt-2 text-sm text-muted-foreground">
@@ -257,11 +265,15 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
           {/* Dates */}
           <div className="grid grid-cols-2 gap-8 max-w-4xl">
             <div>
-              <p className="text-sm font-semibold text-muted-foreground mb-1">Issued Date</p>
+              <p className="text-sm font-semibold text-muted-foreground mb-1">
+                Issued Date
+              </p>
               <p className="text-base">{formatDate(invoice.issuedDate)}</p>
             </div>
             <div>
-              <p className="text-sm font-semibold text-muted-foreground mb-1">Due Date</p>
+              <p className="text-sm font-semibold text-muted-foreground mb-1">
+                Due Date
+              </p>
               <p className="text-base">{formatDate(invoice.dueDate)}</p>
             </div>
           </div>
@@ -291,7 +303,8 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
                 </thead>
                 <tbody className="divide-y divide-border">
                   {invoice.items.map((item: any) => {
-                    const hasTimeEntries = item.timeEntries && item.timeEntries.length > 0;
+                    const hasTimeEntries =
+                      item.timeEntries && item.timeEntries.length > 0;
                     const isExpanded = expandedItems.has(item.id);
 
                     return (
@@ -314,7 +327,9 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
                               <span>{item.description}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-sm text-right">{item.quantity}</td>
+                          <td className="px-4 py-3 text-sm text-right">
+                            {item.quantity}
+                          </td>
                           <td className="px-4 py-3 text-sm text-right">
                             {formatCurrency(item.rateCents)}
                           </td>
@@ -337,7 +352,9 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
                                     <div className="flex items-center gap-1 min-w-[120px]">
                                       <Clock className="w-3 h-3" />
                                       <span>
-                                        {new Date(entry.startedAt).toLocaleDateString('en-US', {
+                                        {new Date(
+                                          entry.startedAt
+                                        ).toLocaleDateString('en-US', {
                                           month: 'short',
                                           day: 'numeric',
                                         })}
@@ -346,7 +363,11 @@ export default function PublicInvoicePage({ params }: { params: { invoiceId: str
                                     <div className="flex items-center gap-2 min-w-[180px]">
                                       <span>{formatTime(entry.startedAt)}</span>
                                       <span>→</span>
-                                      <span>{entry.stoppedAt ? formatTime(entry.stoppedAt) : 'Running'}</span>
+                                      <span>
+                                        {entry.stoppedAt
+                                          ? formatTime(entry.stoppedAt)
+                                          : 'Running'}
+                                      </span>
                                     </div>
                                     <div className="font-medium min-w-[60px]">
                                       {formatDuration(entry.durationSeconds)}

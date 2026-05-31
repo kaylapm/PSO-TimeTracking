@@ -10,7 +10,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, Plus, Trash2, ChevronDown, ChevronRight, Clock, X } from 'lucide-react';
+import {
+  ArrowLeft,
+  Plus,
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  X,
+} from 'lucide-react';
 
 const GET_INVOICE_QUERY = gql(`
   query GetInvoiceForEdit($id: ID!) {
@@ -114,7 +122,11 @@ interface LineItem {
   isDeleted?: boolean;
 }
 
-export default function EditInvoicePage({ params }: { params: { invoiceId: string } }) {
+export default function EditInvoicePage({
+  params,
+}: {
+  params: { invoiceId: string };
+}) {
   const { invoiceId } = params;
   const router = useRouter();
   const { currentTeam } = useAuth();
@@ -152,9 +164,15 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
 
   const [, updateInvoiceMutation] = useMutation(UPDATE_INVOICE_MUTATION);
   const [, addInvoiceItemMutation] = useMutation(ADD_INVOICE_ITEM_MUTATION);
-  const [, updateInvoiceItemMutation] = useMutation(UPDATE_INVOICE_ITEM_MUTATION);
-  const [, removeInvoiceItemMutation] = useMutation(REMOVE_INVOICE_ITEM_MUTATION);
-  const [, removeTimeEntryMutation] = useMutation(REMOVE_TIME_ENTRY_FROM_INVOICE_MUTATION);
+  const [, updateInvoiceItemMutation] = useMutation(
+    UPDATE_INVOICE_ITEM_MUTATION
+  );
+  const [, removeInvoiceItemMutation] = useMutation(
+    REMOVE_INVOICE_ITEM_MUTATION
+  );
+  const [, removeTimeEntryMutation] = useMutation(
+    REMOVE_TIME_ENTRY_FROM_INVOICE_MUTATION
+  );
 
   const invoice = invoiceResult.data?.invoice;
 
@@ -164,7 +182,6 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
       router.push('/dashboard');
     }
   }, [currentTeam, canAccessInvoices, router]);
-
 
   const toggleItemExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -177,7 +194,11 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
   };
 
   const handleRemoveTimeEntry = async (timeEntryId: string) => {
-    if (!confirm('Remove this time entry from the invoice? This will make it available for other invoices.')) {
+    if (
+      !confirm(
+        'Remove this time entry from the invoice? This will make it available for other invoices.'
+      )
+    ) {
       return;
     }
 
@@ -268,7 +289,9 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
 
   const updateLineItem = (id: string, field: keyof LineItem, value: string) => {
     setLineItems(
-      lineItems.map((item) => (item.id === id ? { ...item, [field]: value } : item))
+      lineItems.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
     );
   };
 
@@ -370,7 +393,9 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
     return (
       <div className="p-12 text-center">
         <p className="text-red-600 dark:text-red-400 mb-4">
-          {invoiceResult.error ? invoiceResult.error.message : 'Invoice not found'}
+          {invoiceResult.error
+            ? invoiceResult.error.message
+            : 'Invoice not found'}
         </p>
         <Link href="/invoices">
           <Button variant="outline">Back to Invoices</Button>
@@ -401,7 +426,9 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
             Back to Invoice
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold dark:text-foreground">Edit Invoice</h1>
+        <h1 className="text-3xl font-bold dark:text-foreground">
+          Edit Invoice
+        </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -482,7 +509,12 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Line Items</h2>
-            <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addLineItem}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Item
             </Button>
@@ -492,15 +524,24 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
             {lineItems
               .filter((item) => !item.isDeleted)
               .map((item) => {
-                const invoiceItem = invoice?.items?.find((i: any) => i.id === item.id);
-                const hasTimeEntries = invoiceItem?.timeEntries && invoiceItem.timeEntries.length > 0;
+                const invoiceItem = invoice?.items?.find(
+                  (i: any) => i.id === item.id
+                );
+                const hasTimeEntries =
+                  invoiceItem?.timeEntries &&
+                  invoiceItem.timeEntries.length > 0;
                 const isExpanded = expandedItems.has(item.id);
 
                 return (
-                  <div key={item.id} className="border dark:border-border rounded-lg">
+                  <div
+                    key={item.id}
+                    className="border dark:border-border rounded-lg"
+                  >
                     <div className="grid grid-cols-12 gap-4 p-4">
                       <div className="col-span-5">
-                        <Label htmlFor={`description-${item.id}`}>Description *</Label>
+                        <Label htmlFor={`description-${item.id}`}>
+                          Description *
+                        </Label>
                         <div className="flex items-center gap-2">
                           {hasTimeEntries && (
                             <button
@@ -519,7 +560,11 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
                             id={`description-${item.id}`}
                             value={item.description}
                             onChange={(e) =>
-                              updateLineItem(item.id, 'description', e.target.value)
+                              updateLineItem(
+                                item.id,
+                                'description',
+                                e.target.value
+                              )
                             }
                             placeholder="Item description"
                             required
@@ -600,7 +645,9 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
                                 <div className="flex items-center gap-1 min-w-[100px]">
                                   <Clock className="w-3 h-3" />
                                   <span>
-                                    {new Date(entry.startedAt).toLocaleDateString('en-US', {
+                                    {new Date(
+                                      entry.startedAt
+                                    ).toLocaleDateString('en-US', {
                                       month: 'short',
                                       day: 'numeric',
                                     })}
@@ -609,7 +656,11 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
                                 <div className="flex items-center gap-2 min-w-[180px]">
                                   <span>{formatTime(entry.startedAt)}</span>
                                   <span>→</span>
-                                  <span>{entry.stoppedAt ? formatTime(entry.stoppedAt) : 'Running'}</span>
+                                  <span>
+                                    {entry.stoppedAt
+                                      ? formatTime(entry.stoppedAt)
+                                      : 'Running'}
+                                  </span>
                                 </div>
                                 <div className="font-medium min-w-[60px]">
                                   {formatDuration(entry.durationSeconds)}

@@ -16,16 +16,16 @@ export interface ProjectMember {
 
 export interface ProjectPermissions {
   role: ProjectRole | null;
-  effectiveRole: ProjectRole | null;  // Effective role considering team-level permissions
-  canManageProject: boolean;  // Edit project details, status
-  canAddMembers: boolean;      // Add/remove project members
-  canUpdateMembers: boolean;   // Change member roles
-  canCreateTasks: boolean;     // Create new tasks
-  canUpdateTasks: boolean;     // Edit task details
-  canDeleteTasks: boolean;     // Delete tasks
-  canAssignTasks: boolean;     // Assign users to tasks
-  canLogTime: boolean;         // Create time entries
-  canViewProject: boolean;     // View project details
+  effectiveRole: ProjectRole | null; // Effective role considering team-level permissions
+  canManageProject: boolean; // Edit project details, status
+  canAddMembers: boolean; // Add/remove project members
+  canUpdateMembers: boolean; // Change member roles
+  canCreateTasks: boolean; // Create new tasks
+  canUpdateTasks: boolean; // Edit task details
+  canDeleteTasks: boolean; // Delete tasks
+  canAssignTasks: boolean; // Assign users to tasks
+  canLogTime: boolean; // Create time entries
+  canViewProject: boolean; // View project details
   isManager: boolean;
   isContributor: boolean;
   isViewer: boolean;
@@ -73,7 +73,9 @@ function getEffectiveProjectRole(
  * @param members - Array of project members with roles
  * @returns ProjectPermissions object with role and permission flags
  */
-export function useProjectPermissions(members: ProjectMember[] | undefined): ProjectPermissions {
+export function useProjectPermissions(
+  members: ProjectMember[] | undefined
+): ProjectPermissions {
   const { user, currentTeam } = useAuth();
 
   // Find the current user's role in this project

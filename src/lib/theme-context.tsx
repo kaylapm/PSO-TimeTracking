@@ -34,7 +34,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
         if (stored === 'dark' || stored === 'light') return stored;
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+          return 'dark';
       }
     } catch (e) {
       // ignore and fall through
@@ -43,7 +44,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const [theme, setThemeState] = useState<Theme>(() => getInitialTheme());
-  
 
   // Apply the `dark` class to <html> whenever the theme changes
   useEffect(() => {

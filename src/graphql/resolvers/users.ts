@@ -127,7 +127,9 @@ builder.mutationFields((t) => ({
 
       // Validate new password strength
       if (args.newPassword.length < 8) {
-        throw new ValidationError('New password must be at least 8 characters long');
+        throw new ValidationError(
+          'New password must be at least 8 characters long'
+        );
       }
 
       // Get current user with password hash
@@ -143,7 +145,10 @@ builder.mutationFields((t) => ({
       const user = userResult.rows[0];
 
       // Verify current password
-      const isValidPassword = await bcrypt.compare(args.currentPassword, user.password_hash);
+      const isValidPassword = await bcrypt.compare(
+        args.currentPassword,
+        user.password_hash
+      );
       if (!isValidPassword) {
         throw new ValidationError('Current password is incorrect');
       }

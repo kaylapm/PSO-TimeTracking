@@ -52,18 +52,25 @@ export default function AdminDashboard() {
 
   return (
     <div className="px-4 sm:px-0">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Instance Overview</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        Instance Overview
+      </h2>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <dt className="text-sm font-medium text-gray-500 truncate">Total Users</dt>
+            <dt className="text-sm font-medium text-gray-500 truncate">
+              Total Users
+            </dt>
             <dd className="mt-1 text-3xl font-semibold text-gray-900">
               {stats?.users || 0}
             </dd>
           </div>
           <div className="bg-gray-50 px-4 py-4 sm:px-6">
-            <a href="/admin/users" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+            <a
+              href="/admin/users"
+              className="text-sm font-medium text-blue-600 hover:text-blue-500"
+            >
               View all users →
             </a>
           </div>
@@ -71,13 +78,18 @@ export default function AdminDashboard() {
 
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <dt className="text-sm font-medium text-gray-500 truncate">Total Teams</dt>
+            <dt className="text-sm font-medium text-gray-500 truncate">
+              Total Teams
+            </dt>
             <dd className="mt-1 text-3xl font-semibold text-gray-900">
               {stats?.teams || 0}
             </dd>
           </div>
           <div className="bg-gray-50 px-4 py-4 sm:px-6">
-            <a href="/admin/teams" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+            <a
+              href="/admin/teams"
+              className="text-sm font-medium text-blue-600 hover:text-blue-500"
+            >
               View all teams →
             </a>
           </div>
@@ -85,13 +97,18 @@ export default function AdminDashboard() {
 
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <dt className="text-sm font-medium text-gray-500 truncate">Total Clients</dt>
+            <dt className="text-sm font-medium text-gray-500 truncate">
+              Total Clients
+            </dt>
             <dd className="mt-1 text-3xl font-semibold text-gray-900">
               {stats?.clients || 0}
             </dd>
           </div>
           <div className="bg-gray-50 px-4 py-4 sm:px-6">
-            <a href="/admin/clients" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+            <a
+              href="/admin/clients"
+              className="text-sm font-medium text-blue-600 hover:text-blue-500"
+            >
               View all clients →
             </a>
           </div>
@@ -99,13 +116,18 @@ export default function AdminDashboard() {
 
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <dt className="text-sm font-medium text-gray-500 truncate">Total Projects</dt>
+            <dt className="text-sm font-medium text-gray-500 truncate">
+              Total Projects
+            </dt>
             <dd className="mt-1 text-3xl font-semibold text-gray-900">
               {stats?.projects || 0}
             </dd>
           </div>
           <div className="bg-gray-50 px-4 py-4 sm:px-6">
-            <a href="/admin/projects" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+            <a
+              href="/admin/projects"
+              className="text-sm font-medium text-blue-600 hover:text-blue-500"
+            >
               View all projects →
             </a>
           </div>
@@ -113,7 +135,9 @@ export default function AdminDashboard() {
       </div>
 
       <div className="mt-8 bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Quick Actions
+        </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <a
             href="/admin/teams?action=create"

@@ -17,7 +17,9 @@ import { query } from '@/db';
 /**
  * Helper to create mock context for testing
  */
-function createMockContext(overrides?: Partial<GraphQLContext>): GraphQLContext {
+function createMockContext(
+  overrides?: Partial<GraphQLContext>
+): GraphQLContext {
   return {
     db: { query },
     auth: {

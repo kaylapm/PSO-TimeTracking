@@ -2,13 +2,13 @@ name: Ardine CI/CD Pipeline
 
 on:
   push:
-    branches: [ "staging", "main" ]
+    branches: ['staging', 'main']
   pull_request:
-    branches: [ "staging", "main" ]
+    branches: ['staging', 'main']
 
 env:
-  AZURE_CONTAINER_REGISTRY: "registrytimetracking.azurecr.io"
-  CONTAINER_NAME: "ardine-app"
+  AZURE_CONTAINER_REGISTRY: 'registrytimetracking.azurecr.io'
+  CONTAINER_NAME: 'ardine-app'
 
 jobs:
   # -------------------------------------------------------------
@@ -17,7 +17,7 @@ jobs:
   Continuous_Integration:
     name: Code Quality and Testing
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -30,28 +30,18 @@ jobs:
 
       - name: Job 1 - Install Dependencies
         run: npm ci
-        
+
       - name: Job 2 - Linting
         run: |
-          echo "Working directory:"
-          pwd
-          echo "Listing files:"
-          ls -la
-          echo "Running ESLint directly to avoid Next CLI parsing issues"
-          npx --no-install eslint --version || npm run -s lint -- --version || true
-          # Run ESLint over project files. Fall back to `npm run lint` if ESLint binary missing.
-          if [ -x ./node_modules/.bin/eslint ]; then
-            ./node_modules/.bin/eslint . --ext .ts,.tsx,.js,.jsx
-          else
-            npx eslint . --ext .ts,.tsx,.js,.jsx
-          fi
-        
+          echo "Running ESLint"
+          npx eslint .
+
       - name: Job 3 - Formatting Check
         run: npm run format:check
-        
+
       - name: Job 4 - Type Checking
         run: npx tsc --noEmit
-        
+
       - name: Job 5 - Unit Testing
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
@@ -59,7 +49,7 @@ jobs:
           POSTGRES_DB: ${{ secrets.POSTGRES_DB_STAGING }}
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
         run: npm test
-        
+
       - name: Job 6 - Build Validation
         run: npm run build
 
@@ -71,7 +61,7 @@ jobs:
     needs: Continuous_Integration
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -118,5 +108,5 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
-          title: "Deploy Ardine"
-          description: "Branch: ${{ github.ref_name }}"
+          title: 'Deploy Ardine'
+          description: 'Branch: ${{ github.ref_name }}'

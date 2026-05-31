@@ -1,6 +1,10 @@
 import { builder } from '../schema/builder';
 import { TeamRef, TeamMemberRef } from '../schema/types';
-import { withErrorMapping, ValidationError, UnauthorizedError } from '../errors';
+import {
+  withErrorMapping,
+  ValidationError,
+  UnauthorizedError,
+} from '../errors';
 import { requireAuth, requireUserId, requireTeamAccess } from '../context';
 import { Team, TeamMembership } from '../types';
 import crypto from 'crypto';
@@ -64,7 +68,9 @@ builder.queryFields((t) => ({
 
       // Only admins and owners can view invites
       if (ctx.auth.teamRole !== 'OWNER' && ctx.auth.teamRole !== 'ADMIN') {
-        throw new UnauthorizedError('Only team owners and admins can view invitations');
+        throw new UnauthorizedError(
+          'Only team owners and admins can view invitations'
+        );
       }
 
       const result = await ctx.db.query(
@@ -88,7 +94,9 @@ builder.queryFields((t) => ({
     resolve: async (_parent, args, ctx) => {
       // Anyone can view an invite by token (no auth required)
       // If includeAccepted is true, show accepted invites too (for checking status)
-      const acceptedFilter = args.includeAccepted ? '' : 'AND i.accepted_at IS NULL';
+      const acceptedFilter = args.includeAccepted
+        ? ''
+        : 'AND i.accepted_at IS NULL';
 
       const result = await ctx.db.query(
         `SELECT i.*, t.name as team_name
@@ -155,7 +163,9 @@ builder.mutationFields((t) => ({
 
       // Only owners and admins can update team
       if (ctx.auth.teamRole !== 'OWNER' && ctx.auth.teamRole !== 'ADMIN') {
-        throw new UnauthorizedError('Only team owners and admins can update team information');
+        throw new UnauthorizedError(
+          'Only team owners and admins can update team information'
+        );
       }
 
       const updates: string[] = [];
@@ -218,11 +228,16 @@ builder.mutationFields((t) => ({
       // Only owners can update roles
       // Admins can update roles for non-owner members
       if (ctx.auth.teamRole !== 'OWNER' && ctx.auth.teamRole !== 'ADMIN') {
-        throw new UnauthorizedError('Only team owners and admins can update member roles');
+        throw new UnauthorizedError(
+          'Only team owners and admins can update member roles'
+        );
       }
 
       // Prevent non-owners from changing owner roles
-      if (ctx.auth.teamRole === 'ADMIN' && membership.rows[0].role === 'OWNER') {
+      if (
+        ctx.auth.teamRole === 'ADMIN' &&
+        membership.rows[0].role === 'OWNER'
+      ) {
         throw new UnauthorizedError('Only team owners can modify owner roles');
       }
 
@@ -280,11 +295,16 @@ builder.mutationFields((t) => ({
 
       // Only owners and admins can remove members
       if (ctx.auth.teamRole !== 'OWNER' && ctx.auth.teamRole !== 'ADMIN') {
-        throw new UnauthorizedError('Only team owners and admins can remove members');
+        throw new UnauthorizedError(
+          'Only team owners and admins can remove members'
+        );
       }
 
       // Prevent non-owners from removing owners
-      if (ctx.auth.teamRole === 'ADMIN' && membership.rows[0].role === 'OWNER') {
+      if (
+        ctx.auth.teamRole === 'ADMIN' &&
+        membership.rows[0].role === 'OWNER'
+      ) {
         throw new UnauthorizedError('Only team owners can remove other owners');
       }
 
@@ -301,10 +321,9 @@ builder.mutationFields((t) => ({
       }
 
       return withErrorMapping(async () => {
-        await ctx.db.query(
-          'DELETE FROM team_memberships WHERE id = $1',
-          [args.membershipId]
-        );
+        await ctx.db.query('DELETE FROM team_memberships WHERE id = $1', [
+          args.membershipId,
+        ]);
 
         return true;
       });
@@ -324,13 +343,17 @@ builder.mutationFields((t) => ({
 
       // Only owners and admins can create invites
       if (ctx.auth.teamRole !== 'OWNER' && ctx.auth.teamRole !== 'ADMIN') {
-        throw new UnauthorizedError('Only team owners and admins can create invitations');
+        throw new UnauthorizedError(
+          'Only team owners and admins can create invitations'
+        );
       }
 
       // Validate role (invites can't create owners)
       const validRoles = ['ADMIN', 'MEMBER', 'VIEWER', 'BILLING'];
       if (!validRoles.includes(args.role)) {
-        throw new ValidationError('Invalid role. Valid roles: ADMIN, MEMBER, VIEWER, BILLING');
+        throw new ValidationError(
+          'Invalid role. Valid roles: ADMIN, MEMBER, VIEWER, BILLING'
+        );
       }
 
       // Validate email
@@ -359,7 +382,9 @@ builder.mutationFields((t) => ({
       );
 
       if (existingInvite.rows.length > 0) {
-        throw new ValidationError('An invitation has already been sent to this email');
+        throw new ValidationError(
+          'An invitation has already been sent to this email'
+        );
       }
 
       // Generate unique token
@@ -391,10 +416,9 @@ builder.mutationFields((t) => ({
       requireAuth(ctx);
 
       // Get the invite to check team access
-      const invite = await ctx.db.query(
-        'SELECT * FROM invites WHERE id = $1',
-        [args.inviteId]
-      );
+      const invite = await ctx.db.query('SELECT * FROM invites WHERE id = $1', [
+        args.inviteId,
+      ]);
 
       if (invite.rows.length === 0) {
         throw new ValidationError('Invitation not found');
@@ -404,11 +428,15 @@ builder.mutationFields((t) => ({
 
       // Only owners and admins can cancel invites
       if (ctx.auth.teamRole !== 'OWNER' && ctx.auth.teamRole !== 'ADMIN') {
-        throw new UnauthorizedError('Only team owners and admins can cancel invitations');
+        throw new UnauthorizedError(
+          'Only team owners and admins can cancel invitations'
+        );
       }
 
       return withErrorMapping(async () => {
-        await ctx.db.query('DELETE FROM invites WHERE id = $1', [args.inviteId]);
+        await ctx.db.query('DELETE FROM invites WHERE id = $1', [
+          args.inviteId,
+        ]);
         return true;
       });
     },
@@ -446,7 +474,9 @@ builder.mutationFields((t) => ({
 
       // Verify the email matches (case-insensitive)
       if (userEmail.toLowerCase() !== invite.email.toLowerCase()) {
-        throw new ValidationError('This invitation was sent to a different email address');
+        throw new ValidationError(
+          'This invitation was sent to a different email address'
+        );
       }
 
       // Check if user is already a member

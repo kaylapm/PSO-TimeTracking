@@ -17,7 +17,10 @@ const { handleRequest } = createYoga({
   plugins: [],
   // CORS configuration
   cors: {
-    origin: process.env.NODE_ENV === 'development' ? '*' : process.env.ALLOWED_ORIGINS?.split(',') || [],
+    origin:
+      process.env.NODE_ENV === 'development'
+        ? '*'
+        : process.env.ALLOWED_ORIGINS?.split(',') || [],
     credentials: true,
   },
   // Logging

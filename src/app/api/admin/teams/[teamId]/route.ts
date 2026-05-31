@@ -22,16 +22,10 @@ export async function GET(
 
   try {
     // Get team info
-    const teamResult = await db(
-      'SELECT * FROM teams WHERE id = $1',
-      [teamId]
-    );
+    const teamResult = await db('SELECT * FROM teams WHERE id = $1', [teamId]);
 
     if (teamResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Team not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
     // Get team members
@@ -85,16 +79,12 @@ export async function DELETE(
 
   try {
     // Check if team exists
-    const teamResult = await db(
-      'SELECT id, name FROM teams WHERE id = $1',
-      [teamId]
-    );
+    const teamResult = await db('SELECT id, name FROM teams WHERE id = $1', [
+      teamId,
+    ]);
 
     if (teamResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Team not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
     // Delete team (cascading deletes should handle related records)

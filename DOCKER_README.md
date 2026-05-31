@@ -10,11 +10,13 @@ This document explains how to run Ardine using Docker and Docker Compose.
 ## Quick Start
 
 1. **Copy the environment file:**
+
    ```bash
    cp .env.example .env
    ```
 
 2. **Edit `.env` file and set your configuration:**
+
    ```bash
    # Update these values in .env
    POSTGRES_PASSWORD=your_secure_password
@@ -22,6 +24,7 @@ This document explains how to run Ardine using Docker and Docker Compose.
    ```
 
 3. **Start the application:**
+
    ```bash
    docker-compose up -d
    ```
@@ -40,12 +43,14 @@ This document explains how to run Ardine using Docker and Docker Compose.
 ## Services
 
 ### Database (PostgreSQL)
+
 - **Container:** `ardine-db`
 - **Port:** 5432 (configurable via `POSTGRES_PORT` in `.env`)
 - **Database:** `ardine`
 - **Data Persistence:** Data is stored in a Docker volume named `postgres_data`
 
 ### Application (Next.js)
+
 - **Container:** `ardine-app`
 - **Port:** 3000 (configurable via `APP_PORT` in `.env`)
 - **Built with:** Node.js 20 Alpine
@@ -53,6 +58,7 @@ This document explains how to run Ardine using Docker and Docker Compose.
 ## Environment Variables
 
 ### Database Configuration
+
 - `POSTGRES_USER` - Database user (default: `postgres`)
 - `POSTGRES_PASSWORD` - Database password (default: `postgres`)
 - `POSTGRES_DB` - Database name (default: `ardine`)
@@ -60,6 +66,7 @@ This document explains how to run Ardine using Docker and Docker Compose.
 - `POSTGRES_PORT` - Database port (default: `5432`)
 
 ### Application Configuration
+
 - `JWT_SECRET` - Secret key for JWT token generation (change in production!)
 - `NODE_ENV` - Environment mode (`development` or `production`)
 - `APP_PORT` - Port for the application to run on (default: `3000`)
@@ -67,27 +74,32 @@ This document explains how to run Ardine using Docker and Docker Compose.
 ## Common Commands
 
 ### Start services
+
 ```bash
 docker-compose up -d
 ```
 
 ### Stop services
+
 ```bash
 docker-compose down
 ```
 
 ### Stop services and remove volumes (deletes database data)
+
 ```bash
 docker-compose down -v
 ```
 
 ### Rebuild the application
+
 ```bash
 docker-compose build app
 docker-compose up -d app
 ```
 
 ### View logs
+
 ```bash
 # All services
 docker-compose logs -f
@@ -100,11 +112,13 @@ docker-compose logs -f db
 ```
 
 ### Access the database
+
 ```bash
 docker-compose exec db psql -U postgres -d ardine
 ```
 
 ### Restart services
+
 ```bash
 docker-compose restart
 ```
@@ -116,6 +130,7 @@ The database is automatically initialized with the schema from `ardine_ddl.sql` 
 If you need to reinitialize the database:
 
 1. Stop and remove the database volume:
+
    ```bash
    docker-compose down -v
    ```
@@ -128,6 +143,7 @@ If you need to reinitialize the database:
 ## Development vs Production
 
 ### Development (Local)
+
 For local development without Docker:
 
 1. Ensure PostgreSQL is running locally
@@ -136,6 +152,7 @@ For local development without Docker:
 4. Run `npm run dev`
 
 ### Production (Docker)
+
 For production deployment:
 
 1. Set strong passwords in `.env`:
@@ -147,20 +164,24 @@ For production deployment:
 ## Troubleshooting
 
 ### Database connection errors
+
 - Ensure the database is healthy: `docker-compose ps`
 - Check database logs: `docker-compose logs db`
 - Verify environment variables are set correctly in `.env`
 
 ### App won't start
+
 - Check app logs: `docker-compose logs app`
 - Ensure the database is ready (the app waits for database health check)
 - Try rebuilding: `docker-compose build app`
 
 ### Port already in use
+
 - Change `APP_PORT` or `POSTGRES_PORT` in `.env`
 - Or stop the service using that port
 
 ### Fresh start
+
 ```bash
 docker-compose down -v
 docker-compose build --no-cache

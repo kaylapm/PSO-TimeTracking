@@ -148,8 +148,6 @@ export default function NewInvoicePage() {
     }
   }, [currentTeam, canAccessInvoices, router]);
 
-
-
   // Form state
   const [clientId, setClientId] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState(
@@ -167,7 +165,9 @@ export default function NewInvoicePage() {
   const [notes, setNotes] = useState('');
   const [lineItems, setLineItems] = useState<LineItem[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
-  const [selectedEntries, setSelectedEntries] = useState<Set<string>>(new Set());
+  const [selectedEntries, setSelectedEntries] = useState<Set<string>>(
+    new Set()
+  );
   const [groupRates, setGroupRates] = useState<Map<string, number>>(new Map());
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -203,7 +203,8 @@ export default function NewInvoicePage() {
 
   const clients = clientsResult.data?.clients.nodes || [];
   const selectedClient = clients.find((c: any) => c.id === clientId);
-  const timeEntries = (timeEntriesResult.data?.timeEntries.nodes || []) as TimeEntry[];
+  const timeEntries = (timeEntriesResult.data?.timeEntries.nodes ||
+    []) as TimeEntry[];
 
   // Filter for stopped time entries only (server already filters for unbilled & billable)
   const unbilledTimeEntries = timeEntries.filter((entry) => entry.stoppedAt);
@@ -224,46 +225,52 @@ export default function NewInvoicePage() {
   };
 
   // Group time entries by project, task, and rate
-  const groupedEntries: GroupedEntry[] = unbilledTimeEntries.reduce((acc, entry) => {
-    const effectiveRate = getEffectiveRate(entry);
-    const groupKey = `${entry.project.id}-${entry.task?.id || 'no-task'}-${effectiveRate}`;
+  const groupedEntries: GroupedEntry[] = unbilledTimeEntries.reduce(
+    (acc, entry) => {
+      const effectiveRate = getEffectiveRate(entry);
+      const groupKey = `${entry.project.id}-${entry.task?.id || 'no-task'}-${effectiveRate}`;
 
-    let group = acc.find((g) => g.groupKey === groupKey);
-    if (!group) {
-      const totalHours = entry.durationSeconds / 3600;
-      group = {
-        groupKey,
-        projectName: entry.project.name,
-        projectCode: entry.project.code,
-        taskName: entry.task?.name || null,
-        hourlyRateCents: effectiveRate,
-        entries: [entry],
-        totalHours,
-        totalAmount: (totalHours * effectiveRate) / 100,
-      };
-      acc.push(group);
-    } else {
-      group.entries.push(entry);
-      const hours = entry.durationSeconds / 3600;
-      group.totalHours += hours;
-      group.totalAmount += (hours * effectiveRate) / 100;
-    }
+      let group = acc.find((g) => g.groupKey === groupKey);
+      if (!group) {
+        const totalHours = entry.durationSeconds / 3600;
+        group = {
+          groupKey,
+          projectName: entry.project.name,
+          projectCode: entry.project.code,
+          taskName: entry.task?.name || null,
+          hourlyRateCents: effectiveRate,
+          entries: [entry],
+          totalHours,
+          totalAmount: (totalHours * effectiveRate) / 100,
+        };
+        acc.push(group);
+      } else {
+        group.entries.push(entry);
+        const hours = entry.durationSeconds / 3600;
+        group.totalHours += hours;
+        group.totalAmount += (hours * effectiveRate) / 100;
+      }
 
-    return acc;
-  }, [] as GroupedEntry[]);
+      return acc;
+    },
+    [] as GroupedEntry[]
+  );
 
   // Group by project for display
-  const groupedByProject = groupedEntries.reduce((acc, group) => {
-    const projectKey = group.entries[0].project.id;
-    if (!acc[projectKey]) {
-      acc[projectKey] = {
-        project: group.entries[0].project,
-        groups: [],
-      };
-    }
-    acc[projectKey].groups.push(group);
-    return acc;
-  }, {} as Record<string, { project: any; groups: GroupedEntry[] }>);
+  const groupedByProject = groupedEntries.reduce(
+    (acc, group) => {
+      const projectKey = group.entries[0].project.id;
+      if (!acc[projectKey]) {
+        acc[projectKey] = {
+          project: group.entries[0].project,
+          groups: [],
+        };
+      }
+      acc[projectKey].groups.push(group);
+      return acc;
+    },
+    {} as Record<string, { project: any; groups: GroupedEntry[] }>
+  );
 
   const toggleGroup = (groupKey: string) => {
     const newSelectedGroups = new Set(selectedGroups);
@@ -291,7 +298,9 @@ export default function NewInvoicePage() {
     if (newSelectedEntries.has(entryId)) {
       newSelectedEntries.delete(entryId);
       // If no entries in this group are selected, deselect the group
-      const anySelected = group?.entries.some((e) => newSelectedEntries.has(e.id));
+      const anySelected = group?.entries.some((e) =>
+        newSelectedEntries.has(e.id)
+      );
       if (!anySelected) {
         newSelectedGroups.delete(groupKey);
       }
@@ -307,7 +316,9 @@ export default function NewInvoicePage() {
 
   const selectAllGroups = () => {
     const allKeys = groupedEntries.map((g) => g.groupKey);
-    const allEntryIds = groupedEntries.flatMap((g) => g.entries.map((e) => e.id));
+    const allEntryIds = groupedEntries.flatMap((g) =>
+      g.entries.map((e) => e.id)
+    );
     setSelectedGroups(new Set(allKeys));
     setSelectedEntries(new Set(allEntryIds));
     // Initialize rates for all groups
@@ -350,13 +361,11 @@ export default function NewInvoicePage() {
     setLineItems(lineItems.filter((item) => item.id !== id));
   };
 
-  const updateLineItem = (
-    id: string,
-    field: keyof LineItem,
-    value: string
-  ) => {
+  const updateLineItem = (id: string, field: keyof LineItem, value: string) => {
     setLineItems(
-      lineItems.map((item) => (item.id === id ? { ...item, [field]: value } : item))
+      lineItems.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
     );
   };
 
@@ -376,22 +385,25 @@ export default function NewInvoicePage() {
     }, 0);
 
     // Calculate from selected individual entries only
-    const timeEntryTotal = Array.from(selectedGroups).reduce((sum, groupKey) => {
-      const group = groupedEntries.find((g) => g.groupKey === groupKey);
-      if (group) {
-        const rate = getGroupRate(group);
-        // Only count selected entries in this group
-        const selectedEntriesInGroup = group.entries.filter((entry) =>
-          selectedEntries.has(entry.id)
-        );
-        const totalHours = selectedEntriesInGroup.reduce(
-          (hours, entry) => hours + entry.durationSeconds / 3600,
-          0
-        );
-        return sum + (totalHours * rate) / 100;
-      }
-      return sum;
-    }, 0);
+    const timeEntryTotal = Array.from(selectedGroups).reduce(
+      (sum, groupKey) => {
+        const group = groupedEntries.find((g) => g.groupKey === groupKey);
+        if (group) {
+          const rate = getGroupRate(group);
+          // Only count selected entries in this group
+          const selectedEntriesInGroup = group.entries.filter((entry) =>
+            selectedEntries.has(entry.id)
+          );
+          const totalHours = selectedEntriesInGroup.reduce(
+            (hours, entry) => hours + entry.durationSeconds / 3600,
+            0
+          );
+          return sum + (totalHours * rate) / 100;
+        }
+        return sum;
+      },
+      0
+    );
 
     return manualTotal + timeEntryTotal;
   };
@@ -616,7 +628,8 @@ export default function NewInvoicePage() {
                   Time Entries ({selectedGroups.size} groups selected)
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Entries are grouped by project, task, and rate. You can adjust rates before adding to invoice.
+                  Entries are grouped by project, task, and rate. You can adjust
+                  rates before adding to invoice.
                 </p>
               </div>
               {groupedEntries.length > 0 && (
@@ -652,7 +665,10 @@ export default function NewInvoicePage() {
             ) : (
               <div className="space-y-4">
                 {Object.values(groupedByProject).map(({ project, groups }) => (
-                  <div key={project.id} className="border dark:border-border rounded-lg p-4">
+                  <div
+                    key={project.id}
+                    className="border dark:border-border rounded-lg p-4"
+                  >
                     <h3 className="font-semibold mb-3">
                       {project.code ? `[${project.code}] ` : ''}
                       {project.name}
@@ -660,8 +676,8 @@ export default function NewInvoicePage() {
                     <div className="space-y-3">
                       {groups.map((group) => {
                         const currentRate = getGroupRate(group);
-                        const selectedEntriesInGroup = group.entries.filter((entry) =>
-                          selectedEntries.has(entry.id)
+                        const selectedEntriesInGroup = group.entries.filter(
+                          (entry) => selectedEntries.has(entry.id)
                         );
                         const selectedHours = selectedEntriesInGroup.reduce(
                           (sum, entry) => sum + entry.durationSeconds / 3600,
@@ -677,25 +693,34 @@ export default function NewInvoicePage() {
                             <div className="pt-1">
                               <Checkbox
                                 checked={selectedGroups.has(group.groupKey)}
-                                onCheckedChange={() => toggleGroup(group.groupKey)}
+                                onCheckedChange={() =>
+                                  toggleGroup(group.groupKey)
+                                }
                               />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 {group.taskName && (
-                                  <span className="text-sm font-medium">{group.taskName}</span>
+                                  <span className="text-sm font-medium">
+                                    {group.taskName}
+                                  </span>
                                 )}
                                 {!group.taskName && (
-                                  <span className="text-sm text-muted-foreground">No specific task</span>
+                                  <span className="text-sm text-muted-foreground">
+                                    No specific task
+                                  </span>
                                 )}
                                 <span className="text-xs text-muted-foreground">
-                                  ({selectedEntriesInGroup.length} of {group.entries.length} selected)
+                                  ({selectedEntriesInGroup.length} of{' '}
+                                  {group.entries.length} selected)
                                 </span>
                               </div>
                               <div className="flex items-center gap-4 text-sm">
                                 <div className="flex items-center gap-1">
                                   <Clock className="w-3 h-3" />
-                                  <span>{selectedHours.toFixed(2)} hrs selected</span>
+                                  <span>
+                                    {selectedHours.toFixed(2)} hrs selected
+                                  </span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <Label className="text-xs mb-0">Rate:</Label>
@@ -705,13 +730,18 @@ export default function NewInvoicePage() {
                                     min="0"
                                     value={(currentRate / 100).toFixed(2)}
                                     onChange={(e) => {
-                                      const newRate = Math.round(parseFloat(e.target.value) * 100) || 0;
+                                      const newRate =
+                                        Math.round(
+                                          parseFloat(e.target.value) * 100
+                                        ) || 0;
                                       updateGroupRate(group.groupKey, newRate);
                                     }}
                                     className="w-24 h-7 text-xs"
                                     placeholder="0.00"
                                   />
-                                  <span className="text-xs text-muted-foreground">/hr</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    /hr
+                                  </span>
                                 </div>
                               </div>
                               {/* Show individual entries in group with checkboxes */}
@@ -721,22 +751,32 @@ export default function NewInvoicePage() {
                                 </summary>
                                 <div className="mt-2 space-y-2 pl-4 border-l-2 dark:border-border">
                                   {group.entries.map((entry) => (
-                                    <div key={entry.id} className="flex items-start gap-2">
+                                    <div
+                                      key={entry.id}
+                                      className="flex items-start gap-2"
+                                    >
                                       <Checkbox
                                         checked={selectedEntries.has(entry.id)}
-                                        onCheckedChange={() => toggleEntry(entry.id, group.groupKey)}
+                                        onCheckedChange={() =>
+                                          toggleEntry(entry.id, group.groupKey)
+                                        }
                                         className="mt-0.5"
                                       />
                                       <div className="text-xs text-muted-foreground flex-1">
                                         <div className="flex items-center gap-2">
                                           <span className="font-medium text-foreground">
-                                            {entry.user.displayName || entry.user.name}
+                                            {entry.user.displayName ||
+                                              entry.user.name}
                                           </span>
                                           <span>•</span>
-                                          <span>{formatDate(entry.startedAt)}</span>
+                                          <span>
+                                            {formatDate(entry.startedAt)}
+                                          </span>
                                           <span>•</span>
                                           <span>
-                                            {new Date(entry.startedAt).toLocaleTimeString('en-US', {
+                                            {new Date(
+                                              entry.startedAt
+                                            ).toLocaleTimeString('en-US', {
                                               hour: 'numeric',
                                               minute: '2-digit',
                                               hour12: true,
@@ -745,17 +785,25 @@ export default function NewInvoicePage() {
                                           <span>→</span>
                                           <span>
                                             {entry.stoppedAt &&
-                                              new Date(entry.stoppedAt).toLocaleTimeString('en-US', {
+                                              new Date(
+                                                entry.stoppedAt
+                                              ).toLocaleTimeString('en-US', {
                                                 hour: 'numeric',
                                                 minute: '2-digit',
                                                 hour12: true,
                                               })}
                                           </span>
                                           <span>•</span>
-                                          <span>{formatDuration(entry.durationSeconds)}</span>
+                                          <span>
+                                            {formatDuration(
+                                              entry.durationSeconds
+                                            )}
+                                          </span>
                                         </div>
                                         {entry.note && (
-                                          <div className="mt-1 text-foreground/70">{entry.note}</div>
+                                          <div className="mt-1 text-foreground/70">
+                                            {entry.note}
+                                          </div>
                                         )}
                                       </div>
                                     </div>
@@ -788,7 +836,12 @@ export default function NewInvoicePage() {
                 Add custom items not tied to time entries
               </p>
             </div>
-            <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addLineItem}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Item
             </Button>
@@ -806,7 +859,9 @@ export default function NewInvoicePage() {
                   className="grid grid-cols-12 gap-4 p-4 border dark:border-border rounded-lg"
                 >
                   <div className="col-span-5">
-                    <Label htmlFor={`description-${item.id}`}>Description *</Label>
+                    <Label htmlFor={`description-${item.id}`}>
+                      Description *
+                    </Label>
                     <Input
                       id={`description-${item.id}`}
                       value={item.description}

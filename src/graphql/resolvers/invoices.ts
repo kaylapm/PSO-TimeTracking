@@ -1,9 +1,18 @@
 import { builder } from '../schema/builder';
 import { InvoiceRef, InvoiceConnection, InvoiceItemRef } from '../schema/types';
-import { InvoiceInput, InvoicePatch, InvoiceItemInput, InvoiceItemPatch } from '../schema/inputs';
+import {
+  InvoiceInput,
+  InvoicePatch,
+  InvoiceItemInput,
+  InvoiceItemPatch,
+} from '../schema/inputs';
 import { parseOffsetLimit, buildQuery, calculatePageInfo } from '../utils';
 import { NotFoundError, ConflictError, withErrorMapping } from '../errors';
-import { requireAuth, requireTeamAccess, requireInvoiceAccess } from '../context';
+import {
+  requireAuth,
+  requireTeamAccess,
+  requireInvoiceAccess,
+} from '../context';
 import { Invoice, InvoiceItem } from '../types';
 
 /**
@@ -30,28 +39,41 @@ builder.queryFields((t) => ({
 
       const { offset, limit } = parseOffsetLimit(args.offset, args.limit, 100);
 
-      const filters = [
-        { sql: 'team_id = $1', params: [args.teamId] },
-      ];
+      const filters = [{ sql: 'team_id = $1', params: [args.teamId] }];
 
       let paramIndex = 2;
 
       if (args.clientId) {
-        filters.push({ sql: `client_id = $${paramIndex++}`, params: [args.clientId] });
+        filters.push({
+          sql: `client_id = $${paramIndex++}`,
+          params: [args.clientId],
+        });
       }
 
       if (args.status) {
-        filters.push({ sql: `status = $${paramIndex++}`, params: [args.status] });
+        filters.push({
+          sql: `status = $${paramIndex++}`,
+          params: [args.status],
+        });
       }
 
       const { query, countQuery, params } = buildQuery({
         baseSelect: 'SELECT *',
         baseFrom: 'FROM invoices',
         filters,
-        dateRange: args.from || args.to ? { from: args.from, to: args.to, field: 'issued_date' } : undefined,
+        dateRange:
+          args.from || args.to
+            ? { from: args.from, to: args.to, field: 'issued_date' }
+            : undefined,
         orderBy: args.orderBy,
         order: (args.order as 'asc' | 'desc') || 'desc',
-        allowedOrderBy: ['invoice_number', 'issued_date', 'due_date', 'total_cents', 'created_at'],
+        allowedOrderBy: [
+          'invoice_number',
+          'issued_date',
+          'due_date',
+          'total_cents',
+          'created_at',
+        ],
         defaultOrderBy: 'issued_date',
         offset,
         limit,
@@ -87,7 +109,8 @@ builder.queryFields((t) => ({
       }
 
       // Check if invoice is public (sent or paid status)
-      const isPublicInvoice = invoice.status === 'sent' || invoice.status === 'paid';
+      const isPublicInvoice =
+        invoice.status === 'sent' || invoice.status === 'paid';
 
       // If user is authenticated and invoice belongs to their team, verify permissions
       if (ctx.auth.userId && ctx.auth.teamId === invoice.team_id) {
@@ -290,7 +313,9 @@ builder.mutationFields((t) => ({
 
       // Only allow marking as sent if currently draft
       if (invoice.status !== 'draft') {
-        throw new ConflictError('Invoice must be in draft status to mark as sent');
+        throw new ConflictError(
+          'Invoice must be in draft status to mark as sent'
+        );
       }
 
       const result = await ctx.db.query<Invoice>(
@@ -377,7 +402,9 @@ builder.mutationFields((t) => ({
         }
 
         // Calculate amount
-        const amountCents = Math.round(args.input.quantity * args.input.rateCents);
+        const amountCents = Math.round(
+          args.input.quantity * args.input.rateCents
+        );
 
         // Insert invoice item (without linking to specific time entry in invoice_items table)
         const result = await ctx.db.query<InvoiceItem>(
@@ -400,9 +427,9 @@ builder.mutationFields((t) => ({
 
         // Link all time entries to this invoice and invoice item in the junction table
         if (args.input.timeEntryIds && args.input.timeEntryIds.length > 0) {
-          const values = args.input.timeEntryIds.map((_, i) =>
-            `($1, $${i + 3}, $2)`
-          ).join(', ');
+          const values = args.input.timeEntryIds
+            .map((_, i) => `($1, $${i + 3}, $2)`)
+            .join(', ');
 
           await ctx.db.query(
             `
@@ -459,7 +486,10 @@ builder.mutationFields((t) => ({
 
         if (updates.length > 0) {
           // Recalculate amount if quantity or rate changed
-          if (args.input.quantity !== undefined || args.input.rateCents !== undefined) {
+          if (
+            args.input.quantity !== undefined ||
+            args.input.rateCents !== undefined
+          ) {
             const quantity = args.input.quantity ?? existing.quantity;
             const rateCents = args.input.rateCents ?? existing.rate_cents;
             const amountCents = Math.round(quantity * rateCents);
@@ -561,7 +591,8 @@ builder.mutationFields((t) => ({
         // Recalculate the invoice item quantity if it has an associated item
         if (invoiceItemId) {
           // Get the invoice item to get the rate
-          const invoiceItem = await ctx.loaders.invoiceItemById.load(invoiceItemId);
+          const invoiceItem =
+            await ctx.loaders.invoiceItemById.load(invoiceItemId);
 
           if (invoiceItem) {
             // Calculate new total hours from remaining time entries
@@ -577,7 +608,9 @@ builder.mutationFields((t) => ({
 
             const totalSeconds = remainingEntries.rows[0]?.total_seconds || 0;
             const totalHours = totalSeconds / 3600;
-            const newAmountCents = Math.round(totalHours * invoiceItem.rate_cents);
+            const newAmountCents = Math.round(
+              totalHours * invoiceItem.rate_cents
+            );
 
             // Update the invoice item
             await ctx.db.query(
@@ -611,7 +644,9 @@ builder.mutationFields((t) => ({
     resolve: async (_parent, args, ctx) => {
       requireAuth(ctx);
 
-      const invoiceItem = await ctx.loaders.invoiceItemById.load(args.invoiceItemId);
+      const invoiceItem = await ctx.loaders.invoiceItemById.load(
+        args.invoiceItemId
+      );
       if (!invoiceItem) {
         throw new NotFoundError('Invoice item not found');
       }
@@ -639,9 +674,9 @@ builder.mutationFields((t) => ({
         }
 
         // Insert new time entries into junction table
-        const values = args.timeEntryIds.map((_, i) =>
-          `($1, $${i + 3}, $2)`
-        ).join(', ');
+        const values = args.timeEntryIds
+          .map((_, i) => `($1, $${i + 3}, $2)`)
+          .join(', ');
 
         await ctx.db.query(
           `

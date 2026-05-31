@@ -3,7 +3,12 @@ import { TaskRef, TaskConnection, TaskAssigneeRef } from '../schema/types';
 import { TaskInput, TaskPatch } from '../schema/inputs';
 import { parseOffsetLimit, buildQuery, calculatePageInfo } from '../utils';
 import { NotFoundError, withErrorMapping } from '../errors';
-import { requireAuth, requireTeamAccess, requireProjectRole, canViewProject } from '../context';
+import {
+  requireAuth,
+  requireTeamAccess,
+  requireProjectRole,
+  canViewProject,
+} from '../context';
 import { ProjectTask, TaskAssignee } from '../types';
 
 /**
@@ -71,12 +76,13 @@ builder.queryFields((t) => ({
 
       const { offset, limit } = parseOffsetLimit(args.offset, args.limit, 100);
 
-      const filters = [
-        { sql: 'project_id = $1', params: [args.projectId] },
-      ];
+      const filters = [{ sql: 'project_id = $1', params: [args.projectId] }];
 
       if (args.status) {
-        filters.push({ sql: `status = $${filters.length + 1}`, params: [args.status] });
+        filters.push({
+          sql: `status = $${filters.length + 1}`,
+          params: [args.status],
+        });
       }
 
       const { query, countQuery, params } = buildQuery({

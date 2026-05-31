@@ -23,16 +23,12 @@ export async function POST(
 
   try {
     // Check if team exists
-    const teamResult = await db(
-      'SELECT id, name FROM teams WHERE id = $1',
-      [teamId]
-    );
+    const teamResult = await db('SELECT id, name FROM teams WHERE id = $1', [
+      teamId,
+    ]);
 
     if (teamResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Team not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
     // Check if already a member
@@ -56,9 +52,6 @@ export async function POST(
     });
   } catch (error) {
     console.error('Error joining team:', error);
-    return NextResponse.json(
-      { error: 'Failed to join team' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to join team' }, { status: 500 });
   }
 }

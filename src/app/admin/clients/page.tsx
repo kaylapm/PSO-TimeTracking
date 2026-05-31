@@ -38,7 +38,11 @@ export default function AdminClients() {
   };
 
   const handleDelete = async (clientId: string, clientName: string) => {
-    if (!confirm(`Are you sure you want to delete client "${clientName}"? This will delete all associated projects and data. This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete client "${clientName}"? This will delete all associated projects and data. This action cannot be undone.`
+      )
+    ) {
       return;
     }
 
