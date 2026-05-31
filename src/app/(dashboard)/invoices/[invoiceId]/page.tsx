@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, Fragment, useEffect } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from 'urql';
@@ -163,12 +163,8 @@ const ADD_TIME_ENTRIES_TO_ITEM_MUTATION = gql(`
   }
 `);
 
-export default function InvoiceDetailPage({
-  params,
-}: {
-  params: Promise<{ invoiceId: string }>;
-}) {
-  const { invoiceId } = use(params);
+export default function InvoiceDetailPage({ params }: { params: { invoiceId: string } }) {
+  const { invoiceId } = params;
   const router = useRouter();
   const { currentTeam } = useAuth();
   const canAccessInvoices = useCanAccessInvoices();

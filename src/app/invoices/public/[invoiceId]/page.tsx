@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, Fragment } from 'react';
+import { useState, Fragment } from 'react';
 import { useQuery } from 'urql';
 import { gql } from '@/lib/gql';
 import { Badge } from '@/components/ui/badge';
@@ -49,12 +49,8 @@ const GET_PUBLIC_INVOICE_QUERY = gql(`
   }
 `);
 
-export default function PublicInvoicePage({
-  params,
-}: {
-  params: Promise<{ invoiceId: string }>;
-}) {
-  const { invoiceId } = use(params);
+export default function PublicInvoicePage({ params }: { params: { invoiceId: string } }) {
+  const { invoiceId } = params;
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const [result] = useQuery({

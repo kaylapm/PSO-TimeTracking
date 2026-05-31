@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from 'urql';
@@ -114,12 +114,8 @@ interface LineItem {
   isDeleted?: boolean;
 }
 
-export default function EditInvoicePage({
-  params,
-}: {
-  params: Promise<{ invoiceId: string }>;
-}) {
-  const { invoiceId } = use(params);
+export default function EditInvoicePage({ params }: { params: { invoiceId: string } }) {
+  const { invoiceId } = params;
   const router = useRouter();
   const { currentTeam } = useAuth();
   const canAccessInvoices = useCanAccessInvoices();
