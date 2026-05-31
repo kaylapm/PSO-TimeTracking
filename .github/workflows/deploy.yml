@@ -32,7 +32,12 @@ jobs:
         run: npm ci
         
       - name: Job 2 - Linting
-        run: npm run lint
+        run: |
+          echo "Working directory:"
+          pwd
+          echo "Listing files:"
+          ls -la
+          npx next lint .
         
       - name: Job 3 - Formatting Check
         run: npm run format:check
