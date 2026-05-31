@@ -3,6 +3,15 @@ name: Continuous Development - Staging (CD)
 on:
   push:
     branches: ['staging']
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.dockerignore'
+      - 'LICENSE'
+      - 'ardine_ddl.sql'
+      - '.idea/**'
+      - '.vscode/**'
+      - '.qodo/**'
 
 env:
   AZURE_CONTAINER_REGISTRY: 'registrytimetracking.azurecr.io'
@@ -151,3 +160,16 @@ jobs:
             - 🔍 **Smoke Testing:** `${{ needs.Smoke_Test.result }}`
 
             *(Jika ada yang bernilai 'failure', segera klik tombol di bawah untuk melihat log error di GitHub)*
+
+      - name: Write Summary
+        if: always()
+        run: |
+          echo "## 🚀 Staging Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** \`$GITHUB_REF_NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`$(echo "$GITHUB_SHA" | cut -c1-7)\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 🧹 **Quality Check:** \`${{ needs.Quality_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 🧪 **Unit Testing:** \`${{ needs.Test_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 🏗️ **Build Validation:** \`${{ needs.Build_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 🐳 **Deploy to Staging:** \`${{ needs.Deploy_Staging.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔍 **Smoke Testing:** \`${{ needs.Smoke_Test.result }}\`" >> $GITHUB_STEP_SUMMARY
