@@ -37,11 +37,13 @@ jobs:
           pwd
           echo "Listing files:"
           ls -la
-          echo "Running Next lint (use local binary if available)"
-          if [ -x ./node_modules/.bin/next ]; then
-            ./node_modules/.bin/next lint
+          echo "Running ESLint directly to avoid Next CLI parsing issues"
+          npx --no-install eslint --version || npm run -s lint -- --version || true
+          # Run ESLint over project files. Fall back to `npm run lint` if ESLint binary missing.
+          if [ -x ./node_modules/.bin/eslint ]; then
+            ./node_modules/.bin/eslint . --ext .ts,.tsx,.js,.jsx --ignore-path .gitignore
           else
-            npm run lint
+            npx eslint . --ext .ts,.tsx,.js,.jsx --ignore-path .gitignore
           fi
         
       - name: Job 3 - Formatting Check
