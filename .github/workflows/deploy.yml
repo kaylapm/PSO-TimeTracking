@@ -107,6 +107,15 @@ jobs:
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          status: ${{ job.status }}
-          title: 'Deploy Ardine'
-          description: 'Branch: ${{ github.ref_name }}'
+          # Logika: Jika ada salah satu stage yang gagal, status Discord jadi merah (Failure). Jika tidak, hijau (Success).
+          status: ${{ contains(needs.*.result, 'failure') && 'Failure' || 'Success' }}
+          title: '🚀 Laporan CI/CD Ardine'
+          description: |
+            **Branch:** `${{ github.ref_name }}`
+            **Trigger:** `${{ github.event_name }}`
+
+            **📊 Detail Status Stage:**
+            - 🧪 **Code Quality & Testing:** `${{ needs.Continuous_Integration.result }}`
+            - 🐳 **Docker Build & Push (ACR):** `${{ needs.Docker_Build_Push.result }}`
+
+            *Klik tombol di bawah untuk melihat log error secara detail di GitHub.*
