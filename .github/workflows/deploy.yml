@@ -41,9 +41,9 @@ jobs:
           npx --no-install eslint --version || npm run -s lint -- --version || true
           # Run ESLint over project files. Fall back to `npm run lint` if ESLint binary missing.
           if [ -x ./node_modules/.bin/eslint ]; then
-            ./node_modules/.bin/eslint . --ext .ts,.tsx,.js,.jsx --ignore-path .gitignore
+            ./node_modules/.bin/eslint . --ext .ts,.tsx,.js,.jsx
           else
-            npx eslint . --ext .ts,.tsx,.js,.jsx --ignore-path .gitignore
+            npx eslint . --ext .ts,.tsx,.js,.jsx
           fi
         
       - name: Job 3 - Formatting Check
