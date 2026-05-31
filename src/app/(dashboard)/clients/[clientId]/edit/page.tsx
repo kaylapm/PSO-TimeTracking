@@ -84,6 +84,7 @@ export default function EditClientPage() {
 			const client = result.data.client;
 			const billingAddress = client.billingAddress as any || {};
 
+			// eslint-disable-next-line react-hooks/set-state-in-effect -- intentionally populating controlled form from fetched data on mount
 			setFormData({
 				name: client.name || '',
 				email: client.email || '',

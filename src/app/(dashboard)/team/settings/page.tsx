@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'urql';
 import { useAuth, useCanManageTeam } from '@/lib/auth-context';
 import { gql } from '@/lib/gql';
@@ -105,6 +105,7 @@ export default function TeamSettingsPage() {
 	const [inviteEmail, setInviteEmail] = useState('');
 	const [inviteRole, setInviteRole] = useState('MEMBER');
 	const [inviteMode, setInviteMode] = useState<'email' | 'link'>('email');
+	const inviteCounterRef = useRef(0);
 	const [generatedInvite, setGeneratedInvite] = useState<any>(null);
 	const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
@@ -223,7 +224,7 @@ export default function TeamSettingsPage() {
 		}
 
 		// For link mode, use a placeholder email
-		const email = inviteMode === 'link' ? `invite-${Date.now()}@placeholder.local` : inviteEmail;
+		const email = inviteMode === 'link' ? `invite-${++inviteCounterRef.current}@placeholder.local` : inviteEmail;
 
 		const response = await createInvite({
 			teamId: currentTeam?.id || '',

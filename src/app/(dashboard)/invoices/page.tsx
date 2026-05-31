@@ -65,18 +65,7 @@ export default function InvoicesPage() {
 	const canAccessInvoices = useCanAccessInvoices();
 	const router = useRouter();
 
-	// Redirect if user doesn't have access to invoices
-	useEffect(() => {
-		if (currentTeam && !canAccessInvoices) {
-			router.push('/dashboard');
-		}
-	}, [currentTeam, canAccessInvoices, router]);
-
-	// Don't render if user doesn't have access
-	if (!canAccessInvoices) {
-		return null;
-	}
-
+	// Hooks must be declared before early returns
 	const [result, refetchInvoices] = useQuery({
 		query: LIST_INVOICES_QUERY,
 		variables: {
@@ -88,6 +77,18 @@ export default function InvoicesPage() {
 		pause: !currentTeam?.id,
 		requestPolicy: 'cache-and-network',
 	});
+
+	// Redirect if user doesn't have access to invoices
+	useEffect(() => {
+		if (currentTeam && !canAccessInvoices) {
+			router.push('/dashboard');
+		}
+	}, [currentTeam, canAccessInvoices, router]);
+
+	// Don't render if user doesn't have access
+	if (!canAccessInvoices) {
+		return null;
+	}
 
 	const { data, fetching, error } = result;
 	const invoices = data?.invoices.nodes || [];

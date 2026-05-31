@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Plus, Calendar, DollarSign, Users, CheckCircle2, Circle, X, UserPlus } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -186,6 +186,7 @@ export default function ProjectDetailPage() {
 	const [selectedUserId, setSelectedUserId] = useState('');
 	const [selectedRole, setSelectedRole] = useState('CONTRIBUTOR');
 	const [addingMember, setAddingMember] = useState(false);
+	const tempIdCounter = useRef(0);
 
 	// Task assignee state
 	const [assigneeModalTaskId, setAssigneeModalTaskId] = useState<string | null>(null);
@@ -319,7 +320,7 @@ export default function ProjectDetailPage() {
 		// Get current display state (optimistic if exists, otherwise server data)
 		const currentMembers = optimisticMembers.length > 0 ? optimisticMembers : project.members;
 
-		const tempId = 'temp-' + Date.now();
+		const tempId = 'temp-' + (++tempIdCounter.current);
 		const tempMember = {
 			id: tempId,
 			role: selectedRole,
@@ -384,7 +385,7 @@ export default function ProjectDetailPage() {
 			return;
 		}
 
-		const tempId = 'temp-' + Date.now();
+		const tempId = 'temp-' + (++tempIdCounter.current);
 		const tempAssignee = {
 			id: tempId,
 			user: member.user,

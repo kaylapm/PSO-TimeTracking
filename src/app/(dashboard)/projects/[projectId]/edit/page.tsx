@@ -119,6 +119,7 @@ export default function EditProjectPage() {
 		if (result.data?.project) {
 			const project = result.data.project;
 
+			// eslint-disable-next-line react-hooks/set-state-in-effect -- populate controlled form from fetched data
 			setFormData({
 				name: project.name || '',
 				code: project.code || '',

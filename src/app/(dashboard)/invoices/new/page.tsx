@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from 'urql';
@@ -165,6 +165,14 @@ export default function NewInvoicePage() {
     const date = new Date();
     date.setDate(date.getDate() + 30);
     return date.toISOString().split('T')[0];
+  
+    // Hooks must be declared at top to avoid conditional hook calls
+    const [clientId, setClientId] = useState('');
+    const idCounterRef = useRef(0);
+    const [invoiceNumber, setInvoiceNumber] = useState('');
+    const [issuedDate, setIssuedDate] = useState('');
+    const [dueDate, setDueDate] = useState('');
+  
   });
   const [taxRatePercent, setTaxRatePercent] = useState('0');
   const [notes, setNotes] = useState('');
@@ -178,18 +186,21 @@ export default function NewInvoicePage() {
   const [clientsResult] = useQuery({
     query: LIST_CLIENTS_QUERY,
     variables: {
-      args: {
-        teamId: currentTeam?.id || '',
-        limit: 100,
-        offset: 0,
-      },
-    },
-    pause: !currentTeam?.id,
-  });
-
-  const [timeEntriesResult] = useQuery({
-    query: LIST_UNBILLED_TIME_ENTRIES_QUERY,
-    variables: {
+  
+    // Initialize default dates on mount to avoid impure calls during render
+    useEffect(() => {
+      if (!issuedDate) {
+        setIssuedDate(new Date().toISOString().split('T')[0]);
+      }
+      if (!invoiceNumber) {
+        setInvoiceNumber(new Date().toISOString().split('T')[0]);
+      }
+      if (!dueDate) {
+        const date = new Date();
+        date.setDate(date.getDate() + 30);
+        setDueDate(date.toISOString().split('T')[0]);
+      }
+    }, []);
       teamId: currentTeam?.id || '',
       clientId: clientId || '',
     },
@@ -335,7 +346,7 @@ export default function NewInvoicePage() {
     setLineItems([
       ...lineItems,
       {
-        id: Date.now().toString(),
+        id: `temp-${++idCounterRef.current}`,
         description: '',
         quantity: '1',
         rateCents: '0',

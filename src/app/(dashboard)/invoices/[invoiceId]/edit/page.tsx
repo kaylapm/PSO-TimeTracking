@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from 'urql';
@@ -120,20 +120,9 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
   const { currentTeam } = useAuth();
   const canAccessInvoices = useCanAccessInvoices();
 
-  // Redirect if user doesn't have access to invoices
-  useEffect(() => {
-    if (currentTeam && !canAccessInvoices) {
-      router.push('/dashboard');
-    }
-  }, [currentTeam, canAccessInvoices, router]);
-
-  // Don't render if user doesn't have access
-  if (!canAccessInvoices) {
-    return null;
-  }
-
-  // Form state
+  // Form state (hooks must be declared unconditionally at top)
   const [invoiceNumber, setInvoiceNumber] = useState('');
+  const idCounterRef = useRef(0);
   const [issuedDate, setIssuedDate] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [taxRatePercent, setTaxRatePercent] = useState('0');
@@ -146,6 +135,7 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
   const [invoiceResult, refetchInvoice] = useQuery({
     query: GET_INVOICE_QUERY,
     variables: { id: invoiceId },
+    // ensure hook order stable; pause will be handled by server response availability
   });
 
   const [clientsResult] = useQuery({
@@ -167,6 +157,18 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
   const [, removeTimeEntryMutation] = useMutation(REMOVE_TIME_ENTRY_FROM_INVOICE_MUTATION);
 
   const invoice = invoiceResult.data?.invoice;
+
+  // Redirect if user doesn't have access to invoices
+  useEffect(() => {
+    if (currentTeam && !canAccessInvoices) {
+      router.push('/dashboard');
+    }
+  }, [currentTeam, canAccessInvoices, router]);
+
+  // Don't render if user doesn't have access
+  if (!canAccessInvoices) {
+    return null;
+  }
 
   const toggleItemExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -238,7 +240,7 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
     setLineItems([
       ...lineItems,
       {
-        id: `new-${Date.now()}`,
+        id: `new-${++idCounterRef.current}`,
         description: '',
         quantity: '1',
         rateCents: '0',

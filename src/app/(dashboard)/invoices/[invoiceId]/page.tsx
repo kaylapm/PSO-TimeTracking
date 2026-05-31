@@ -168,6 +168,7 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
   const router = useRouter();
   const { currentTeam } = useAuth();
   const canAccessInvoices = useCanAccessInvoices();
+  // Hooks declared upfront
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [showNewEntriesModal, setShowNewEntriesModal] = useState(false);
   const [selectedNewEntries, setSelectedNewEntries] = useState<Set<string>>(new Set());
