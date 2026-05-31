@@ -165,10 +165,6 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
     }
   }, [currentTeam, canAccessInvoices, router]);
 
-  // Don't render if user doesn't have access
-  if (!canAccessInvoices) {
-    return null;
-  }
 
   const toggleItemExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -235,6 +231,11 @@ export default function EditInvoicePage({ params }: { params: { invoiceId: strin
       );
     }
   }, [invoice]);
+
+  // Don't render if user doesn't have access
+  if (!canAccessInvoices) {
+    return null;
+  }
 
   const addLineItem = () => {
     setLineItems([

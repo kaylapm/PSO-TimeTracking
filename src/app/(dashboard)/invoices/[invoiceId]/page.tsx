@@ -180,10 +180,7 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
     }
   }, [currentTeam, canAccessInvoices, router]);
 
-  // Don't render if user doesn't have access
-  if (!canAccessInvoices) {
-    return null;
-  }
+
   const [dismissedInvoices, setDismissedInvoices] = useState<Set<string>>(new Set());
   const [showSendModal, setShowSendModal] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
@@ -225,6 +222,11 @@ export default function InvoiceDetailPage({ params }: { params: { invoiceId: str
     },
     pause: !invoice || invoice.status !== 'draft' || !currentTeam?.id,
   });
+
+  // Don't render if user doesn't have access
+  if (!canAccessInvoices) {
+    return null;
+  }
 
   const newTimeEntries = (newEntriesResult.data?.timeEntries.nodes || []).filter(
     (entry: any) => entry.stoppedAt

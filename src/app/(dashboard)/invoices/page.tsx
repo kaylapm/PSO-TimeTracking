@@ -85,10 +85,7 @@ export default function InvoicesPage() {
 		}
 	}, [currentTeam, canAccessInvoices, router]);
 
-	// Don't render if user doesn't have access
-	if (!canAccessInvoices) {
-		return null;
-	}
+
 
 	const { data, fetching, error } = result;
 	const invoices = data?.invoices.nodes || [];
@@ -110,6 +107,11 @@ export default function InvoicesPage() {
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
 	}, [refetchInvoices]);
+
+	// Don't render if user doesn't have access
+	if (!canAccessInvoices) {
+		return null;
+	}
 
 	const formatCurrency = (cents: number) => {
 		return new Intl.NumberFormat('en-US', {

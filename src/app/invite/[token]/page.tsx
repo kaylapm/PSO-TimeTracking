@@ -156,7 +156,7 @@ export default function InvitePage() {
 						<CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
 						<h1 className="text-2xl font-bold mb-2">Welcome to the Team!</h1>
 						<p className="text-muted-foreground mb-6">
-							You've successfully joined the team. Redirecting you to the dashboard...
+							You&apos;ve successfully joined the team. Redirecting you to the dashboard...
 						</p>
 					</div>
 				</div>
@@ -258,7 +258,7 @@ export default function InvitePage() {
 						<div className="border border-yellow-500 rounded-lg p-4 bg-yellow-50 dark:bg-yellow-900/20">
 							<p className="text-yellow-700 dark:text-yellow-400 font-medium mb-2">Email Mismatch</p>
 							<p className="text-sm text-yellow-600 dark:text-yellow-400">
-								This invitation was sent to <strong>{invite.email}</strong>, but you're signed in as{' '}
+								This invitation was sent to <strong>{invite.email}</strong>, but you&apos;re signed in as{' '}
 								<strong>{user?.email}</strong>.
 							</p>
 							<p className="text-sm text-yellow-600 dark:text-yellow-400 mt-2">

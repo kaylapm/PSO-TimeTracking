@@ -129,6 +129,7 @@ export default function TeamSettingsPage() {
 	// Initialize form when data loads
 	useEffect(() => {
 		if (result.data?.team) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
 			setTeamName(result.data.team.name);
 			const addr = result.data.team.billingAddress;
 			if (addr) {
