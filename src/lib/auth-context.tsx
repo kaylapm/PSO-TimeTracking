@@ -36,29 +36,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AUTH_STORAGE_KEY = 'ardine_auth';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    currentTeam: null,
-    teams: [],
-    instanceRole: null,
+  const [state, setState] = useState<AuthState>(() => {
+    // Initialize from localStorage synchronously to avoid setting state in an effect
+    try {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (stored) {
+          return JSON.parse(stored) as AuthState;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse stored auth during init:', e);
+      try {
+        if (typeof window !== 'undefined') localStorage.removeItem(AUTH_STORAGE_KEY);
+      } catch {}
+    }
+    return {
+      user: null,
+      currentTeam: null,
+      teams: [],
+      instanceRole: null,
+    };
   });
   const [isLoading, setIsLoading] = useState(true);
 
   // Load auth state from server on mount
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
-    // Try to load from localStorage first for quick render
-    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setState(parsed);
-      } catch (e) {
-        console.error('Failed to parse stored auth:', e);
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-      }
-    }
 
     // Then verify with server
     fetch('/api/auth/me', {

@@ -79,8 +79,11 @@ export default function SettingsPage() {
   // Initialize form with current user data
   useEffect(() => {
     if (meResult.data?.me) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- initializing form fields from fetched user data
       setName(meResult.data.me.name || '');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayName(meResult.data.me.displayName || '');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail(meResult.data.me.email || '');
     }
   }, [meResult.data]);

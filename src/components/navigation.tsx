@@ -38,7 +38,7 @@ export function Navigation() {
       if (!currentTeam?.role) return false;
       return item.requiresRoles.includes(currentTeam.role);
     });
-  }, [currentTeam?.role]);
+  }, [currentTeam]);
 
   return (
     <div className="flex gap-4">

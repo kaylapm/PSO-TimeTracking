@@ -169,12 +169,17 @@ export function TimeEntryModal({
   // Initialize form with existing time entry data
   useEffect(() => {
     if (timeEntry) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- populate form from fetched timeEntry
       setProjectId(timeEntry.projectId);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTaskId(timeEntry.taskId || '');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNote(timeEntry.note || '');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBillable(timeEntry.billable);
 
       const startDate = new Date(timeEntry.startedAt);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDate(startDate.toISOString().split('T')[0]);
       setStartTime(
         startDate.toLocaleTimeString('en-US', {

@@ -169,6 +169,7 @@ export default function TimesheetsPage() {
 	// Update selectedUserId when user loads
 	useEffect(() => {
 		if (user?.id && !selectedUserId) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect -- initialize selected user from auth on mount
 			setSelectedUserId(user.id);
 		}
 	}, [user?.id, selectedUserId]);

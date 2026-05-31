@@ -30,7 +30,7 @@ export function GraphQLProvider({ children }: { children: ReactNode }) {
         };
       },
     });
-  }, [auth.currentTeam?.id]);
+  }, [auth.currentTeam]);
 
   return <Provider value={client}>{children}</Provider>;
 }

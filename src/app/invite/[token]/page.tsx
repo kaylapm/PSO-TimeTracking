@@ -117,7 +117,7 @@ export default function InvitePage() {
 								<CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
 								<h1 className="text-2xl font-bold mb-2">Already Accepted</h1>
 								<p className="text-muted-foreground mb-6">
-									You've already accepted this invitation and are part of the team!
+									You&apos;ve already accepted this invitation and are part of the team!
 								</p>
 								<Link href="/dashboard">
 									<Button>Go to Dashboard</Button>
@@ -126,11 +126,11 @@ export default function InvitePage() {
 						) : (
 							<>
 								<XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-								<h1 className="text-2xl font-bold mb-2">Invalid Invitation</h1>
-								<p className="text-muted-foreground mb-6">
-									This invitation link is invalid or has expired. Please contact your team administrator for a
-									new invitation.
-								</p>
+																<h1 className="text-2xl font-bold mb-2">Invalid Invitation</h1>
+																<p className="text-muted-foreground mb-6">
+																	This invitation link is invalid or has expired. Please contact your team administrator for a
+																	new invitation.
+																</p>
 								{isAuthenticated ? (
 									<Link href="/dashboard">
 										<Button>Go to Dashboard</Button>
@@ -186,13 +186,13 @@ export default function InvitePage() {
 		<div className="min-h-screen flex items-center justify-center bg-background">
 			<div className="max-w-md w-full mx-4">
 				<div className="border dark:border-border rounded-lg bg-card p-8">
-					<div className="text-center mb-6">
-						<div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 mx-auto mb-4">
-							<Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+						<div className="text-center mb-6">
+							<div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 mx-auto mb-4">
+								<Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+							</div>
+							<h1 className="text-2xl font-bold mb-2">Team Invitation</h1>
+							<p className="text-muted-foreground">You&apos;ve been invited to join a team</p>
 						</div>
-						<h1 className="text-2xl font-bold mb-2">Team Invitation</h1>
-						<p className="text-muted-foreground">You've been invited to join a team</p>
-					</div>
 
 					<div className="space-y-4 mb-6">
 						<div className="border dark:border-border rounded-lg p-4 bg-muted/30">

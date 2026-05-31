@@ -97,6 +97,7 @@ export function Timer({ onStart, onStop, variant = "full", className }: TimerPro
 	// Sync elapsed time with active timer - runs independently of refetch
 	useEffect(() => {
 		if (!activeTimer) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect -- reset elapsed time when no active timer
 			setElapsedSeconds(0);
 			return;
 		}
