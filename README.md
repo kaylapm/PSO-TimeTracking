@@ -20,7 +20,7 @@ This repository is forked and developed by **Kelompok 5 PSO A** for the PSO cour
 
 ## Project Presentation
 Canva Presentation:  
-https://canva.link/ardinepso-kelompok5
+https://canva.link/6j7r89nu8dvceho
 
 ---
 
