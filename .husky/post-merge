@@ -1,0 +1,9 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+if echo "$changed_files" | grep -E 'package(-lock)?\.json' > /dev/null; then
+  echo "package.json changed, running npm install..."
+  npm install
+fi

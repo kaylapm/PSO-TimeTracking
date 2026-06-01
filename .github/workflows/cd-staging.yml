@@ -88,6 +88,9 @@ jobs:
     name: Deploy to Staging App Service
     needs: [Quality_Job, Test_Job, Build_Job]
     runs-on: ubuntu-latest
+    environment:
+      name: Staging
+      url: https://timetracking-app-staging.azurewebsites.net/
 
     steps:
       - name: Checkout Code
