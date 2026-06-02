@@ -12,6 +12,17 @@ on:
       - '.idea/**'
       - '.vscode/**'
       - '.qodo/**'
+  push:
+    branches: ['staging', 'main']
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.dockerignore'
+      - 'LICENSE'
+      - 'ardine_ddl.sql'
+      - '.idea/**'
+      - '.vscode/**'
+      - '.qodo/**'
 
 jobs:
   Quality_Job:
@@ -90,11 +101,11 @@ jobs:
     steps:
       - name: Write Summary
         run: |
-          echo "## 📊 CI Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## CI Run Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Event:** \`$GITHUB_EVENT_NAME\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Target Branch:** \`$GITHUB_REF_NAME\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit SHA:** \`$(echo "$GITHUB_SHA" | cut -c1-7)\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 🧹 **Quality Check:** \`${{ needs.Quality_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 🧪 **Unit Testing:** \`${{ needs.Test_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 🏗️ **Build Validation:** \`${{ needs.Build_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Quality Check:** \`${{ needs.Quality_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unit Testing:** \`${{ needs.Test_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Validation:** \`${{ needs.Build_Job.result }}\`" >> $GITHUB_STEP_SUMMARY

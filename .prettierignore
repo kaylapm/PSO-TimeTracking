@@ -9,6 +9,7 @@ node_modules
 
 # Generated files
 graphql/generated
+coverage
 
 # Lockfiles and system files
 package-lock.json

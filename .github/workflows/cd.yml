@@ -1,0 +1,136 @@
+name: Continuous Development (CD)
+
+on:
+  workflow_run:
+    workflows: ['Continuous Integration (CI)']
+    types: [completed]
+    branches: ['staging', 'main']
+  workflow_dispatch:
+
+env:
+  AZURE_CONTAINER_REGISTRY: 'registrytimetracking.azurecr.io'
+  CONTAINER_NAME: 'ardine-app'
+
+jobs:
+  validate-prerequisites:
+    name: Validate Prerequisites & Set Environment
+    runs-on: ubuntu-latest
+    outputs:
+      env_name: ${{ steps.set-env.outputs.env_name }}
+      image_tag: ${{ steps.set-env.outputs.image_tag }}
+      app_url: ${{ steps.set-env.outputs.app_url }}
+    steps:
+      - name: Check CI Status
+        if: github.event_name == 'workflow_run'
+        run: |
+          if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
+            echo "CI workflow did not complete successfully"
+            echo "CI Status: ${{ github.event.workflow_run.conclusion }}"
+            exit 1
+          fi
+          echo "CI workflow passed successfully"
+
+      - name: Set Environment Variables
+        id: set-env
+        run: |
+          BRANCH_NAME="${{ github.event.workflow_run.head_branch || github.ref_name }}"
+          if [ "$BRANCH_NAME" == "main" ]; then
+            echo "env_name=Production" >> "$GITHUB_OUTPUT"
+            echo "image_tag=latest" >> "$GITHUB_OUTPUT"
+            echo "app_url=https://timetracking-app-prod.azurewebsites.net/" >> "$GITHUB_OUTPUT"
+            echo "Deployment triggered for Production"
+          else
+            echo "env_name=Staging" >> "$GITHUB_OUTPUT"
+            echo "image_tag=staging" >> "$GITHUB_OUTPUT"
+            echo "app_url=https://timetracking-app-staging.azurewebsites.net/" >> "$GITHUB_OUTPUT"
+            echo "Deployment triggered for Staging"
+          fi
+
+  Deploy:
+    name: Deploy to Azure App Service
+    needs: validate-prerequisites
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.validate-prerequisites.outputs.env_name }}
+      url: ${{ needs.validate-prerequisites.outputs.app_url }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Azure Container Registry (ACR)
+        uses: azure/docker-login@v2
+        with:
+          login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate-prerequisites.outputs.image_tag }}
+
+  Smoke_Test:
+    name: Staging Smoke Test
+    needs: [validate-prerequisites, Deploy]
+    if: needs.validate-prerequisites.outputs.env_name == 'Staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Staging Web App is Alive
+        run: |
+          echo "Waiting 60 seconds for Azure App Service to pull the new container..."
+          sleep 60
+          echo "Pinging Staging URL..."
+          for i in {1..10}; do
+            if curl -s -f -I ${{ needs.validate-prerequisites.outputs.app_url }} > /dev/null; then
+              echo "Smoke test passed! Staging site is up."
+              exit 0
+            else
+              echo "Site not ready yet. Retrying in 15 seconds..."
+              sleep 15
+            fi
+          done
+          echo "Smoke test failed! Staging site is not responding."
+          exit 1
+
+  Notify_Discord:
+    name: Send Notification to Discord
+    needs: [validate-prerequisites, Deploy, Smoke_Test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord Channel
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: "${{ (contains(needs.validate-prerequisites.result, 'failure') || contains(needs.Deploy.result, 'failure') || contains(needs.Smoke_Test.result, 'failure')) && 'Failure' || 'Success' }}"
+          title: "${{ (contains(needs.validate-prerequisites.result, 'failure') || contains(needs.Deploy.result, 'failure') || contains(needs.Smoke_Test.result, 'failure')) && format('ALARM: Pipeline Ardine {0} Gagal!', needs.validate-prerequisites.outputs.env_name || 'Deployment') || format('SUCCESS: Pipeline Ardine {0} Sukses!', needs.validate-prerequisites.outputs.env_name || 'Deployment') }}"
+          description: |
+            **Pemicu:** Push/Merge dari branch `${{ github.event.workflow_run.head_branch || github.ref_name }}`
+            **Target Environment:** `${{ needs.validate-prerequisites.outputs.env_name || 'Unknown' }}`
+
+            **Laporan Tiap Stage:**
+            - **CI Prerequisites:** `${{ needs.validate-prerequisites.result }}`
+            - **Deploy to App Service:** `${{ needs.Deploy.result }}`
+            ${{ needs.validate-prerequisites.outputs.env_name == 'Staging' && format('- **Smoke Testing:** `{0}`', needs.Smoke_Test.result) || '' }}
+
+            *(Jika ada yang bernilai 'failure', segera klik tombol di bawah untuk melihat log error di GitHub)*
+
+      - name: Write Summary
+        if: always()
+        run: |
+          echo "## Deployment Summary (${{ needs.validate-prerequisites.outputs.env_name }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** \`${{ github.event.workflow_run.head_branch || github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`$(echo "${{ github.event.workflow_run.head_sha || github.sha }}" | cut -c1-7)\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **CI Prerequisites:** \`${{ needs.validate-prerequisites.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deploy to App Service:** \`${{ needs.Deploy.result }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.validate-prerequisites.outputs.env_name }}" == "Staging" ]; then
+            echo "- **Smoke Testing:** \`${{ needs.Smoke_Test.result }}\`" >> $GITHUB_STEP_SUMMARY
+          fi
