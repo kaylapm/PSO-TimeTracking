@@ -12,7 +12,7 @@ env:
   CONTAINER_NAME: 'ardine-app'
 
 jobs:
-  validate-prerequisites:
+  validate_prerequisites:
     name: Validate Prerequisites & Set Environment
     runs-on: ubuntu-latest
     outputs:
@@ -48,11 +48,11 @@ jobs:
 
   Deploy:
     name: Deploy to Azure App Service
-    needs: validate-prerequisites
+    needs: validate_prerequisites
     runs-on: ubuntu-latest
     environment:
-      name: ${{ needs.validate-prerequisites.outputs.env_name }}
-      url: ${{ needs.validate-prerequisites.outputs.app_url }}
+      name: ${{ needs.validate_prerequisites.outputs.env_name }}
+      url: ${{ needs.validate_prerequisites.outputs.app_url }}
 
     steps:
       - name: Checkout Code
@@ -76,12 +76,12 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate-prerequisites.outputs.image_tag }}
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}
 
   Smoke_Test:
     name: Staging Smoke Test
-    needs: [validate-prerequisites, Deploy]
-    if: needs.validate-prerequisites.outputs.env_name == 'Staging'
+    needs: [validate_prerequisites, Deploy]
+    if: needs.validate_prerequisites.outputs.env_name == 'Staging'
     runs-on: ubuntu-latest
     steps:
       - name: Verify Staging Web App is Alive
@@ -90,7 +90,7 @@ jobs:
           sleep 60
           echo "Pinging Staging URL..."
           for i in {1..10}; do
-            if curl -s -f -I ${{ needs.validate-prerequisites.outputs.app_url }} > /dev/null; then
+            if curl -s -f -I ${{ needs.validate_prerequisites.outputs.app_url }} > /dev/null; then
               echo "Smoke test passed! Staging site is up."
               exit 0
             else
@@ -103,7 +103,7 @@ jobs:
 
   Notify_Discord:
     name: Send Notification to Discord
-    needs: [validate-prerequisites, Deploy, Smoke_Test]
+    needs: [validate_prerequisites, Deploy, Smoke_Test]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -111,28 +111,28 @@ jobs:
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          status: "${{ (contains(needs.validate-prerequisites.result, 'failure') || contains(needs.Deploy.result, 'failure') || contains(needs.Smoke_Test.result, 'failure')) && 'Failure' || 'Success' }}"
-          title: "${{ (contains(needs.validate-prerequisites.result, 'failure') || contains(needs.Deploy.result, 'failure') || contains(needs.Smoke_Test.result, 'failure')) && format('ALARM: Pipeline Ardine {0} Gagal!', needs.validate-prerequisites.outputs.env_name || 'Deployment') || format('SUCCESS: Pipeline Ardine {0} Sukses!', needs.validate-prerequisites.outputs.env_name || 'Deployment') }}"
+          status: "${{ (contains(needs.validate_prerequisites.result, 'failure') || contains(needs.Deploy.result, 'failure') || contains(needs.Smoke_Test.result, 'failure')) && 'Failure' || 'Success' }}"
+          title: "${{ (contains(needs.validate_prerequisites.result, 'failure') || contains(needs.Deploy.result, 'failure') || contains(needs.Smoke_Test.result, 'failure')) && format('ALARM: Pipeline Ardine {0} Gagal!', needs.validate_prerequisites.outputs.env_name || 'Deployment') || format('SUCCESS: Pipeline Ardine {0} Sukses!', needs.validate_prerequisites.outputs.env_name || 'Deployment') }}"
           description: |
             **Pemicu:** Push/Merge dari branch `${{ github.event.workflow_run.head_branch || github.ref_name }}`
-            **Target Environment:** `${{ needs.validate-prerequisites.outputs.env_name || 'Unknown' }}`
+            **Target Environment:** `${{ needs.validate_prerequisites.outputs.env_name || 'Unknown' }}`
 
             **Laporan Tiap Stage:**
-            - **CI Prerequisites:** `${{ needs.validate-prerequisites.result }}`
+            - **CI Prerequisites:** `${{ needs.validate_prerequisites.result }}`
             - **Deploy to App Service:** `${{ needs.Deploy.result }}`
-            ${{ needs.validate-prerequisites.outputs.env_name == 'Staging' && format('- **Smoke Testing:** `{0}`', needs.Smoke_Test.result) || '' }}
+            ${{ needs.validate_prerequisites.outputs.env_name == 'Staging' && format('- **Smoke Testing:** `{0}`', needs.Smoke_Test.result) || '' }}
 
             *(Jika ada yang bernilai 'failure', segera klik tombol di bawah untuk melihat log error di GitHub)*
 
       - name: Write Summary
         if: always()
         run: |
-          echo "## Deployment Summary (${{ needs.validate-prerequisites.outputs.env_name }})" >> $GITHUB_STEP_SUMMARY
+          echo "## Deployment Summary (${{ needs.validate_prerequisites.outputs.env_name }})" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** \`${{ github.event.workflow_run.head_branch || github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit:** \`$(echo "${{ github.event.workflow_run.head_sha || github.sha }}" | cut -c1-7)\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **CI Prerequisites:** \`${{ needs.validate-prerequisites.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **CI Prerequisites:** \`${{ needs.validate_prerequisites.result }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Deploy to App Service:** \`${{ needs.Deploy.result }}\`" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ needs.validate-prerequisites.outputs.env_name }}" == "Staging" ]; then
+          if [ "${{ needs.validate_prerequisites.outputs.env_name }}" == "Staging" ]; then
             echo "- **Smoke Testing:** \`${{ needs.Smoke_Test.result }}\`" >> $GITHUB_STEP_SUMMARY
           fi
