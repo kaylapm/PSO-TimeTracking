@@ -1,9 +1,20 @@
 import { builder } from '../schema/builder';
-import { ProjectRef, ProjectConnection, ProjectMemberRef, TaskAssigneeRef } from '../schema/types';
+import {
+  ProjectRef,
+  ProjectConnection,
+  ProjectMemberRef,
+  TaskAssigneeRef,
+} from '../schema/types';
 import { ProjectInput, ProjectPatch, ListArgsInput } from '../schema/inputs';
 import { parseOffsetLimit, buildQuery, calculatePageInfo } from '../utils';
 import { NotFoundError, withErrorMapping } from '../errors';
-import { requireAuth, requireTeamAccess, requireProjectRole, canViewProject, requireTeamManagement } from '../context';
+import {
+  requireAuth,
+  requireTeamAccess,
+  requireProjectRole,
+  canViewProject,
+  requireTeamManagement,
+} from '../context';
 import { Project, ProjectMember, TaskAssignee } from '../types';
 
 /**
@@ -18,46 +29,72 @@ builder.queryFields((t) => ({
     resolve: async (_parent, args, ctx) => {
       requireAuth(ctx);
 
-      const { teamId, offset: rawOffset, limit: rawLimit, search, status, from, to, orderBy, order } = args.args;
+      const {
+        teamId,
+        offset: rawOffset,
+        limit: rawLimit,
+        search,
+        status,
+        from,
+        to,
+        orderBy,
+        order,
+      } = args.args;
       await requireTeamAccess(ctx, teamId);
 
       const { offset, limit } = parseOffsetLimit(rawOffset, rawLimit, 100);
 
       // Base filter: projects must belong to the team
-      const filters = [
-        { sql: 'team_id = $1', params: [teamId] },
-      ];
+      const filters = [{ sql: 'team_id = $1', params: [teamId] }];
 
       // OWNER, ADMIN, VIEWER, and BILLING can see all projects in the team
       // MEMBER can only see projects where they are explicitly assigned
       if (ctx.auth.teamRole === 'MEMBER') {
         filters.push({
           sql: 'EXISTS (SELECT 1 FROM project_members WHERE project_id = projects.id AND user_id = $2)',
-          params: [ctx.auth.userId!] // Non-null assertion: requireAuth ensures userId is not null
+          params: [ctx.auth.userId!], // Non-null assertion: requireAuth ensures userId is not null
         });
-      } else if (ctx.auth.teamRole !== 'OWNER' && ctx.auth.teamRole !== 'ADMIN' && ctx.auth.teamRole !== 'VIEWER' && ctx.auth.teamRole !== 'BILLING') {
+      } else if (
+        ctx.auth.teamRole !== 'OWNER' &&
+        ctx.auth.teamRole !== 'ADMIN' &&
+        ctx.auth.teamRole !== 'VIEWER' &&
+        ctx.auth.teamRole !== 'BILLING'
+      ) {
         // Users without a team role can only see projects where they are a member
         filters.push({
           sql: 'EXISTS (SELECT 1 FROM project_members WHERE project_id = projects.id AND user_id = $2)',
-          params: [ctx.auth.userId!]
+          params: [ctx.auth.userId!],
         });
       }
 
       if (status === 'archived') {
         filters.push({ sql: 'archived_at IS NOT NULL', params: [] });
       } else if (status) {
-        filters.push({ sql: `status = $${filters.length + 1}`, params: [status] });
+        filters.push({
+          sql: `status = $${filters.length + 1}`,
+          params: [status],
+        });
       }
 
       const { query, countQuery, params } = buildQuery({
         baseSelect: 'SELECT *',
         baseFrom: 'FROM projects',
         filters,
-        search: search ? { term: search, columns: ['name', 'code', 'description'] } : undefined,
+        search: search
+          ? { term: search, columns: ['name', 'code', 'description'] }
+          : undefined,
         dateRange: from || to ? { from, to, field: 'created_at' } : undefined,
         orderBy,
-        order: (order as 'asc' | 'desc'),
-        allowedOrderBy: ['name', 'code', 'status', 'created_at', 'updated_at', 'start_date', 'due_date'],
+        order: order as 'asc' | 'desc',
+        allowedOrderBy: [
+          'name',
+          'code',
+          'status',
+          'created_at',
+          'updated_at',
+          'start_date',
+          'due_date',
+        ],
         defaultOrderBy: 'created_at',
         offset,
         limit,

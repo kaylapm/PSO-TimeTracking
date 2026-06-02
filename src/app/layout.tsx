@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
-import "@/app/globals.css";
-import { GraphQLProvider } from "@/lib/graphql-client";
-import { AuthProvider } from "@/lib/auth-context";
-import { TeamProvider } from "@/lib/team-context";
-import { ThemeProvider } from "@/lib/theme-context";
+import type { Metadata } from 'next';
+import '@/app/globals.css';
+import { GraphQLProvider } from '@/lib/graphql-client';
+import { AuthProvider } from '@/lib/auth-context';
+import { TeamProvider } from '@/lib/team-context';
+import { ThemeProvider } from '@/lib/theme-context';
 
 export const metadata: Metadata = {
-	title: "Ardine - Time Tracking & Invoicing",
-	description: "Self-hosted time tracking and invoicing for freelancers and teams",
+  title: 'Ardine - Time Tracking & Invoicing',
+  description:
+    'Self-hosted time tracking and invoicing for freelancers and teams',
 };
 
 /**
@@ -27,27 +28,25 @@ const themeInitScript = `
 `;
 
 export default function RootLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<html lang="en" suppressHydrationWarning>
-			<head>
-				{/* Prevent flash of unstyled content (FOUC) for dark mode */}
-				<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-			</head>
-			<body className="antialiased bg-background text-foreground transition-colors duration-200">
-				<ThemeProvider>
-					<AuthProvider>
-						<TeamProvider>
-							<GraphQLProvider>
-								{children}
-							</GraphQLProvider>
-						</TeamProvider>
-					</AuthProvider>
-				</ThemeProvider>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Prevent flash of unstyled content (FOUC) for dark mode */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="antialiased bg-background text-foreground transition-colors duration-200">
+        <ThemeProvider>
+          <AuthProvider>
+            <TeamProvider>
+              <GraphQLProvider>{children}</GraphQLProvider>
+            </TeamProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }

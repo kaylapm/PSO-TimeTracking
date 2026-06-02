@@ -1,4 +1,5 @@
 # Ardine
+
 Beta v0.1.0
 
 A modern, full-featured time tracking and project management platform built with Next.js and PostgreSQL.
@@ -13,12 +14,14 @@ A modern, full-featured time tracking and project management platform built with
 This repository is forked and developed by **Kelompok 5 PSO A** for the PSO course assignment based on the original Ardine project.
 
 ## Team Members
+
 - Nicholas Evan Sitanggang (5026231146)
 - Kayla Nathania (5026231151)
 - Kayla Putri Maharani (5026231158)
 - Tahhiyah Muhfimah (5026231170)
 
 ## Project Presentation
+
 Canva Presentation:  
 https://canva.link/6j7r89nu8dvceho
 
@@ -31,6 +34,7 @@ Ardine is a comprehensive solution for freelancers and small teams to manage the
 ## Features
 
 ### Core Features
+
 - **Time Tracking** - Start/stop timers, manual time entry, and detailed time logs
 - **Project Management** - Organize work by projects and tasks with custom statuses
 - **Client Management** - Track client information, billing rates, and contact details
@@ -40,6 +44,7 @@ Ardine is a comprehensive solution for freelancers and small teams to manage the
 - **Reporting** - Dashboard with revenue analytics and time summaries
 
 ### Advanced Features
+
 - **Multi-level Pricing** - Hourly rates at client, project, and task levels
 - **Team Workspaces** - Isolated data spaces for different organizations
 - **Role-Based Access Control** - Instance, team, and project-level permissions
@@ -48,6 +53,7 @@ Ardine is a comprehensive solution for freelancers and small teams to manage the
 ## Technology Stack
 
 ### Frontend
+
 - **Next.js 16** - React framework with App Router
 - **React 19** - UI library with React Compiler
 - **TypeScript** - Type-safe development
@@ -55,23 +61,27 @@ Ardine is a comprehensive solution for freelancers and small teams to manage the
 - **Shadcn/ui** - Re-usable component library
 
 ### Backend
+
 - **Next.js API Routes** - Serverless API endpoints
 - **PostgreSQL 17** - Primary database
 - **GraphQL** - Query language with Pothos Schema Builder
 - **JWT** - Token-based authentication
 
 ### Infrastructure
+
 - **Docker** - Containerization
 - **Docker Compose** - Multi-container orchestration
 
 ## Prerequisites
 
 ### For Local Development
+
 - Node.js 20.x or higher
 - PostgreSQL 15+ (or use Docker)
 - npm or yarn
 
 ### For Docker Deployment
+
 - Docker 20.10+
 - Docker Compose 2.0+
 
@@ -110,6 +120,7 @@ npm install
 ### 2. Set Up PostgreSQL
 
 #### Option A: Use Docker for Database Only
+
 ```bash
 docker run -d \
   --name ardine-postgres \
@@ -121,6 +132,7 @@ docker run -d \
 ```
 
 #### Option B: Use Local PostgreSQL
+
 Ensure PostgreSQL is installed and running, then create the database:
 
 ```bash
@@ -160,36 +172,40 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `POSTGRES_USER` | Database user | `postgres` |
-| `POSTGRES_PASSWORD` | Database password | `postgres` |
-| `POSTGRES_DB` | Database name | `ardine` |
-| `POSTGRES_HOST` | Database host | `localhost` |
-| `POSTGRES_PORT` | Database port | `5432` |
-| `JWT_SECRET` | Secret for JWT tokens | Required in production |
-| `NODE_ENV` | Environment mode | `development` |
+| Variable            | Description           | Default                |
+| ------------------- | --------------------- | ---------------------- |
+| `POSTGRES_USER`     | Database user         | `postgres`             |
+| `POSTGRES_PASSWORD` | Database password     | `postgres`             |
+| `POSTGRES_DB`       | Database name         | `ardine`               |
+| `POSTGRES_HOST`     | Database host         | `localhost`            |
+| `POSTGRES_PORT`     | Database port         | `5432`                 |
+| `JWT_SECRET`        | Secret for JWT tokens | Required in production |
+| `NODE_ENV`          | Environment mode      | `development`          |
 
 ⚠️ **Security Note**: Always use strong, unique values for `POSTGRES_PASSWORD` and `JWT_SECRET` in production!
 
 ## Development
 
 ### Running Tests
+
 ```bash
 npm test
 ```
 
 ### Building for Production
+
 ```bash
 npm run build
 ```
 
 ### Type Checking
+
 ```bash
 npx tsc --noEmit
 ```
 
 ### Code Generation (GraphQL)
+
 ```bash
 npm run codegen
 ```
@@ -197,19 +213,23 @@ npm run codegen
 ## Common Tasks
 
 ### Creating a New User (Admin)
+
 1. Navigate to `/admin/users`
 2. Users can self-register via `/register`
 3. First user automatically becomes ADMIN
 
 ### Inviting Users to a Team
+
 Since email sending is not yet implemented, team invitations work via shareable links.
 
 ### Setting Up a Team
+
 1. Register as the first user
 2. Create a team
 3. Invite team members using invite links
 
 ### Creating Invoices
+
 1. Track billable time
 2. Navigate to Invoices
 3. Create and manage invoices
@@ -217,9 +237,11 @@ Since email sending is not yet implemented, team invitations work via shareable 
 ## Known Limitations
 
 ### No Email Sending (Currently)
+
 Ardine does not currently send automated emails.
 
 Affected features:
+
 - Team Invitations
 - Password Resets
 - Notifications
@@ -239,16 +261,19 @@ Affected features:
 ## Troubleshooting
 
 ### Database Connection Issues
+
 ```bash
 docker-compose ps
 ```
 
 ### Build Errors
+
 ```bash
 rm -rf .next node_modules && npm install
 ```
 
 ### Authentication Issues
+
 - Verify `JWT_SECRET`
 - Clear cookies
 - Retry login
@@ -266,6 +291,7 @@ Contributions are welcome!
 ## Security
 
 ### Security Features
+
 - bcrypt password hashing
 - HTTP-only JWT cookies
 - SQL injection protection
@@ -278,17 +304,20 @@ MIT License. See [LICENSE](./LICENSE) for details.
 ## Support
 
 For issues and questions:
+
 - Open an issue on GitHub
 - Check `DOCKER_README.md`
 
 ## Roadmap
 
 ### Priority Features
+
 - Email Support
 - Better Onboarding
 - Mobile UI Improvements
 
 ### Future Enhancements
+
 - Real-time collaboration
 - Mobile apps
 - Advanced analytics
@@ -297,6 +326,7 @@ For issues and questions:
 ## Acknowledgments
 
 Built with:
+
 - Next.js
 - React
 - PostgreSQL

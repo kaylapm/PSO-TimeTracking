@@ -28,10 +28,7 @@ export async function DELETE(
     );
 
     if (projectResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
     // Delete project (cascading deletes should handle related records)

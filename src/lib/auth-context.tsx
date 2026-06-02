@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from 'react';
 
 export interface User {
   id: string;
@@ -24,7 +30,12 @@ interface AuthState {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, inviteToken?: string | null) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    inviteToken?: string | null
+  ) => Promise<void>;
   logout: () => Promise<void>;
   switchTeam: (teamId: string) => void;
   isAuthenticated: boolean;
@@ -36,29 +47,34 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AUTH_STORAGE_KEY = 'ardine_auth';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    currentTeam: null,
-    teams: [],
-    instanceRole: null,
+  const [state, setState] = useState<AuthState>(() => {
+    // Initialize from localStorage synchronously to avoid setting state in an effect
+    try {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (stored) {
+          return JSON.parse(stored) as AuthState;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse stored auth during init:', e);
+      try {
+        if (typeof window !== 'undefined')
+          localStorage.removeItem(AUTH_STORAGE_KEY);
+      } catch {}
+    }
+    return {
+      user: null,
+      currentTeam: null,
+      teams: [],
+      instanceRole: null,
+    };
   });
   const [isLoading, setIsLoading] = useState(true);
 
   // Load auth state from server on mount
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
-    // Try to load from localStorage first for quick render
-    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setState(parsed);
-      } catch (e) {
-        console.error('Failed to parse stored auth:', e);
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-      }
-    }
 
     // Then verify with server
     fetch('/api/auth/me', {
@@ -72,7 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           let currentTeam = data.teams[0] || null;
           const storedTeamId = localStorage.getItem('ardine_current_team_id');
           if (storedTeamId) {
-            const storedTeam = data.teams.find((t: Team) => t.id === storedTeamId);
+            const storedTeam = data.teams.find(
+              (t: Team) => t.id === storedTeamId
+            );
             if (storedTeam) {
               currentTeam = storedTeam;
             }
@@ -147,7 +165,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(newState);
   };
 
-  const register = async (name: string, email: string, password: string, inviteToken?: string | null) => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    inviteToken?: string | null
+  ) => {
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: {
@@ -202,9 +225,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const switchTeam = (teamId: string) => {
-    const team = state.teams.find(t => t.id === teamId);
+    const team = state.teams.find((t) => t.id === teamId);
     if (team) {
-      setState(prev => ({ ...prev, currentTeam: team }));
+      setState((prev) => ({ ...prev, currentTeam: team }));
       // Persist the selected team ID to localStorage
       if (typeof window !== 'undefined') {
         localStorage.setItem('ardine_current_team_id', teamId);
@@ -248,7 +271,11 @@ export function useCanManageTeam(): boolean {
  */
 export function useCanAccessInvoices(): boolean {
   const { currentTeam } = useAuth();
-  return currentTeam?.role === 'OWNER' || currentTeam?.role === 'ADMIN' || currentTeam?.role === 'BILLING';
+  return (
+    currentTeam?.role === 'OWNER' ||
+    currentTeam?.role === 'ADMIN' ||
+    currentTeam?.role === 'BILLING'
+  );
 }
 
 /**
@@ -257,5 +284,9 @@ export function useCanAccessInvoices(): boolean {
  */
 export function useCanAccessFinancials(): boolean {
   const { currentTeam } = useAuth();
-  return currentTeam?.role === 'OWNER' || currentTeam?.role === 'ADMIN' || currentTeam?.role === 'BILLING';
+  return (
+    currentTeam?.role === 'OWNER' ||
+    currentTeam?.role === 'ADMIN' ||
+    currentTeam?.role === 'BILLING'
+  );
 }

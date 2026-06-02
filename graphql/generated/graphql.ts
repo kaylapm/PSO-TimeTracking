@@ -1,24 +1,55 @@
-import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import type { Team, User, Client, Project, ProjectTask, TimeEntry, Invoice, InvoiceItem, ProjectMember, TaskAssignee, PageInfo } from '@/graphql/types';
+import type {
+  GraphQLResolveInfo,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig,
+} from 'graphql';
+import type {
+  Team,
+  User,
+  Client,
+  Project,
+  ProjectTask,
+  TimeEntry,
+  Invoice,
+  InvoiceItem,
+  ProjectMember,
+  TaskAssignee,
+  PageInfo,
+} from '@/graphql/types';
 import type { GraphQLContext } from '@/graphql/context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
+export type MakeEmpty<
+  T extends { [key: string]: unknown },
+  K extends keyof T,
+> = { [_ in K]?: never };
+export type Incremental<T> =
+  | T
+  | {
+      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
+    };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]-?: NonNullable<T[P]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  DateTime: { input: Date; output: Date; }
-  JSON: { input: any; output: any; }
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
+  DateTime: { input: Date; output: Date };
+  JSON: { input: any; output: any };
 };
 
 export type Client = {
@@ -41,7 +72,6 @@ export type Client = {
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
-
 export type ClientInvoicesArgs = {
   from?: InputMaybe<Scalars['DateTime']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -51,7 +81,6 @@ export type ClientInvoicesArgs = {
   status?: InputMaybe<InvoiceStatus>;
   to?: InputMaybe<Scalars['DateTime']['input']>;
 };
-
 
 export type ClientProjectsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -95,7 +124,7 @@ export type ClientPatch = {
 
 export enum InstanceRole {
   Admin = 'ADMIN',
-  User = 'USER'
+  User = 'USER',
 }
 
 export type Invoice = {
@@ -176,7 +205,7 @@ export enum InvoiceStatus {
   Cancelled = 'cancelled',
   Draft = 'draft',
   Paid = 'paid',
-  Sent = 'sent'
+  Sent = 'sent',
 }
 
 export type ListArgs = {
@@ -230,12 +259,10 @@ export type Mutation = {
   updateUserProfile?: Maybe<User>;
 };
 
-
 export type MutationAddInvoiceItemArgs = {
   input: InvoiceItemInput;
   invoiceId: Scalars['ID']['input'];
 };
-
 
 export type MutationAddProjectMemberArgs = {
   projectId: Scalars['ID']['input'];
@@ -243,49 +270,40 @@ export type MutationAddProjectMemberArgs = {
   userId: Scalars['ID']['input'];
 };
 
-
 export type MutationAddTaskAssigneeArgs = {
   taskId: Scalars['ID']['input'];
   userId: Scalars['ID']['input'];
 };
-
 
 export type MutationAddTimeEntriesToInvoiceItemArgs = {
   invoiceItemId: Scalars['ID']['input'];
   timeEntryIds: Array<Scalars['ID']['input']>;
 };
 
-
 export type MutationArchiveClientArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type MutationCancelInvoiceArgs = {
   id: Scalars['ID']['input'];
 };
 
-
 export type MutationCreateClientArgs = {
   input: ClientInput;
 };
-
 
 export type MutationCreateInvoiceArgs = {
   input: InvoiceInput;
 };
 
-
 export type MutationCreateProjectArgs = {
   input: ProjectInput;
 };
-
 
 export type MutationCreateTaskArgs = {
   input: TaskInput;
   projectId: Scalars['ID']['input'];
 };
-
 
 export type MutationCreateTimeEntryArgs = {
   billable?: InputMaybe<Scalars['Boolean']['input']>;
@@ -296,69 +314,56 @@ export type MutationCreateTimeEntryArgs = {
   taskId?: InputMaybe<Scalars['ID']['input']>;
 };
 
-
 export type MutationDeleteClientArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type MutationDeleteInvoiceArgs = {
   id: Scalars['ID']['input'];
 };
 
-
 export type MutationDeleteTaskArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type MutationDeleteTimeEntryArgs = {
   timeEntryId: Scalars['ID']['input'];
 };
 
-
 export type MutationMarkInvoicePaidArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type MutationMarkInvoiceSentArgs = {
   id: Scalars['ID']['input'];
 };
 
-
 export type MutationRemoveInvoiceItemArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type MutationRemoveProjectMemberArgs = {
   id: Scalars['ID']['input'];
 };
 
-
 export type MutationRemoveTaskAssigneeArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type MutationRemoveTimeEntryFromInvoiceArgs = {
   invoiceId: Scalars['ID']['input'];
   timeEntryId: Scalars['ID']['input'];
 };
 
-
 export type MutationReorderTasksArgs = {
   order: Array<Scalars['ID']['input']>;
   projectId: Scalars['ID']['input'];
 };
 
-
 export type MutationSetProjectStatusArgs = {
   id: Scalars['ID']['input'];
   status: Scalars['String']['input'];
 };
-
 
 export type MutationStartTimerArgs = {
   billable?: InputMaybe<Scalars['Boolean']['input']>;
@@ -367,52 +372,43 @@ export type MutationStartTimerArgs = {
   taskId?: InputMaybe<Scalars['ID']['input']>;
 };
 
-
 export type MutationStopTimerArgs = {
   timeEntryId: Scalars['ID']['input'];
 };
 
-
 export type MutationUnarchiveClientArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type MutationUpdateClientArgs = {
   id: Scalars['ID']['input'];
   input: ClientPatch;
 };
 
-
 export type MutationUpdateInvoiceArgs = {
   id: Scalars['ID']['input'];
   input: InvoicePatch;
 };
-
 
 export type MutationUpdateInvoiceItemArgs = {
   id: Scalars['ID']['input'];
   input: InvoiceItemPatch;
 };
 
-
 export type MutationUpdateProjectArgs = {
   id: Scalars['ID']['input'];
   input: ProjectPatch;
 };
-
 
 export type MutationUpdateProjectMemberArgs = {
   id: Scalars['ID']['input'];
   role: Scalars['String']['input'];
 };
 
-
 export type MutationUpdateTaskArgs = {
   id: Scalars['ID']['input'];
   input: TaskPatch;
 };
-
 
 export type MutationUpdateTimeEntryArgs = {
   billable?: InputMaybe<Scalars['Boolean']['input']>;
@@ -424,12 +420,10 @@ export type MutationUpdateTimeEntryArgs = {
   timeEntryId: Scalars['ID']['input'];
 };
 
-
 export type MutationUpdateUserPasswordArgs = {
   currentPassword: Scalars['String']['input'];
   newPassword: Scalars['String']['input'];
 };
-
 
 export type MutationUpdateUserProfileArgs = {
   displayName?: InputMaybe<Scalars['String']['input']>;
@@ -439,7 +433,7 @@ export type MutationUpdateUserProfileArgs = {
 
 export enum Order {
   Asc = 'asc',
-  Desc = 'desc'
+  Desc = 'desc',
 }
 
 export type PageInfo = {
@@ -472,7 +466,6 @@ export type Project = {
   teamId?: Maybe<Scalars['ID']['output']>;
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
-
 
 export type ProjectTasksArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -534,7 +527,7 @@ export type ProjectPatch = {
 export enum ProjectRole {
   Contributor = 'CONTRIBUTOR',
   Manager = 'MANAGER',
-  Viewer = 'VIEWER'
+  Viewer = 'VIEWER',
 }
 
 export type Query = {
@@ -553,22 +546,18 @@ export type Query = {
   timeEntries?: Maybe<TimeEntryConnection>;
 };
 
-
 export type QueryClientArgs = {
   id: Scalars['ID']['input'];
   teamId?: InputMaybe<Scalars['ID']['input']>;
 };
 
-
 export type QueryClientsArgs = {
   args: ListArgs;
 };
 
-
 export type QueryInvoiceArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type QueryInvoicesArgs = {
   clientId?: InputMaybe<Scalars['ID']['input']>;
@@ -582,16 +571,13 @@ export type QueryInvoicesArgs = {
   to?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
-
 export type QueryProjectArgs = {
   id: Scalars['ID']['input'];
 };
 
-
 export type QueryProjectsArgs = {
   args: ListArgs;
 };
-
 
 export type QuerySearchClientsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -599,11 +585,9 @@ export type QuerySearchClientsArgs = {
   teamId: Scalars['ID']['input'];
 };
 
-
 export type QueryTaskArgs = {
   id: Scalars['ID']['input'];
 };
-
 
 export type QueryTasksArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -614,11 +598,9 @@ export type QueryTasksArgs = {
   status?: InputMaybe<Scalars['String']['input']>;
 };
 
-
 export type QueryTeamMembersArgs = {
   teamId: Scalars['ID']['input'];
 };
-
 
 export type QueryTimeEntriesArgs = {
   billable?: InputMaybe<Scalars['Boolean']['input']>;
@@ -640,7 +622,7 @@ export enum Status {
   Active = 'active',
   Archived = 'archived',
   Completed = 'completed',
-  OnHold = 'on_hold'
+  OnHold = 'on_hold',
 }
 
 export type Task = {
@@ -716,7 +698,7 @@ export enum TeamRole {
   Billing = 'BILLING',
   Member = 'MEMBER',
   Owner = 'OWNER',
-  Viewer = 'VIEWER'
+  Viewer = 'VIEWER',
 }
 
 export type TimeEntry = {
@@ -762,16 +744,86 @@ export type ListClientsQueryVariables = Exact<{
   args: ListArgs;
 }>;
 
-
-export type ListClientsQuery = { __typename?: 'Query', clients?: { __typename?: 'ClientConnection', total?: number | null, nodes?: Array<{ __typename?: 'Client', id?: string | null, name?: string | null, email?: string | null, phone?: string | null, contactName?: string | null, defaultHourlyRateCents?: number | null, currency?: string | null, archivedAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null }> | null, pageInfo?: { __typename?: 'PageInfo', hasNextPage?: boolean | null, nextOffset?: number | null } | null } | null };
+export type ListClientsQuery = {
+  __typename?: 'Query';
+  clients?: {
+    __typename?: 'ClientConnection';
+    total?: number | null;
+    nodes?: Array<{
+      __typename?: 'Client';
+      id?: string | null;
+      name?: string | null;
+      email?: string | null;
+      phone?: string | null;
+      contactName?: string | null;
+      defaultHourlyRateCents?: number | null;
+      currency?: string | null;
+      archivedAt?: Date | null;
+      createdAt?: Date | null;
+      updatedAt?: Date | null;
+    }> | null;
+    pageInfo?: {
+      __typename?: 'PageInfo';
+      hasNextPage?: boolean | null;
+      nextOffset?: number | null;
+    } | null;
+  } | null;
+};
 
 export type GetClientQueryVariables = Exact<{
   id: Scalars['ID']['input'];
   teamId?: InputMaybe<Scalars['ID']['input']>;
 }>;
 
-
-export type GetClientQuery = { __typename?: 'Query', client?: { __typename?: 'Client', id?: string | null, name?: string | null, email?: string | null, phone?: string | null, contactName?: string | null, billingAddress?: any | null, taxId?: string | null, defaultHourlyRateCents?: number | null, currency?: string | null, notes?: string | null, archivedAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, projects?: { __typename?: 'ProjectConnection', total?: number | null, nodes?: Array<{ __typename?: 'Project', id?: string | null, name?: string | null, status?: Status | null, code?: string | null, color?: string | null, createdAt?: Date | null }> | null, pageInfo?: { __typename?: 'PageInfo', hasNextPage?: boolean | null } | null } | null, invoices?: { __typename?: 'InvoiceConnection', total?: number | null, nodes?: Array<{ __typename?: 'Invoice', id?: string | null, invoiceNumber?: string | null, status?: InvoiceStatus | null, issuedDate?: Date | null, dueDate?: Date | null, totalCents?: number | null }> | null } | null } | null };
+export type GetClientQuery = {
+  __typename?: 'Query';
+  client?: {
+    __typename?: 'Client';
+    id?: string | null;
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    contactName?: string | null;
+    billingAddress?: any | null;
+    taxId?: string | null;
+    defaultHourlyRateCents?: number | null;
+    currency?: string | null;
+    notes?: string | null;
+    archivedAt?: Date | null;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+    projects?: {
+      __typename?: 'ProjectConnection';
+      total?: number | null;
+      nodes?: Array<{
+        __typename?: 'Project';
+        id?: string | null;
+        name?: string | null;
+        status?: Status | null;
+        code?: string | null;
+        color?: string | null;
+        createdAt?: Date | null;
+      }> | null;
+      pageInfo?: {
+        __typename?: 'PageInfo';
+        hasNextPage?: boolean | null;
+      } | null;
+    } | null;
+    invoices?: {
+      __typename?: 'InvoiceConnection';
+      total?: number | null;
+      nodes?: Array<{
+        __typename?: 'Invoice';
+        id?: string | null;
+        invoiceNumber?: string | null;
+        status?: InvoiceStatus | null;
+        issuedDate?: Date | null;
+        dueDate?: Date | null;
+        totalCents?: number | null;
+      }> | null;
+    } | null;
+  } | null;
+};
 
 export type SearchClientsQueryVariables = Exact<{
   teamId: Scalars['ID']['input'];
@@ -779,88 +831,257 @@ export type SearchClientsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
-
-export type SearchClientsQuery = { __typename?: 'Query', searchClients?: Array<{ __typename?: 'Client', id?: string | null, name?: string | null, email?: string | null }> | null };
+export type SearchClientsQuery = {
+  __typename?: 'Query';
+  searchClients?: Array<{
+    __typename?: 'Client';
+    id?: string | null;
+    name?: string | null;
+    email?: string | null;
+  }> | null;
+};
 
 export type CreateClientMutationVariables = Exact<{
   input: ClientInput;
 }>;
 
-
-export type CreateClientMutation = { __typename?: 'Mutation', createClient?: { __typename?: 'Client', id?: string | null, name?: string | null, email?: string | null, phone?: string | null, contactName?: string | null, teamId?: string | null, createdAt?: Date | null } | null };
+export type CreateClientMutation = {
+  __typename?: 'Mutation';
+  createClient?: {
+    __typename?: 'Client';
+    id?: string | null;
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    contactName?: string | null;
+    teamId?: string | null;
+    createdAt?: Date | null;
+  } | null;
+};
 
 export type UpdateClientMutationVariables = Exact<{
   id: Scalars['ID']['input'];
   input: ClientPatch;
 }>;
 
-
-export type UpdateClientMutation = { __typename?: 'Mutation', updateClient?: { __typename?: 'Client', id?: string | null, name?: string | null, email?: string | null, phone?: string | null, contactName?: string | null, updatedAt?: Date | null } | null };
+export type UpdateClientMutation = {
+  __typename?: 'Mutation';
+  updateClient?: {
+    __typename?: 'Client';
+    id?: string | null;
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    contactName?: string | null;
+    updatedAt?: Date | null;
+  } | null;
+};
 
 export type ArchiveClientMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type ArchiveClientMutation = { __typename?: 'Mutation', archiveClient?: { __typename?: 'Client', id?: string | null, archivedAt?: Date | null } | null };
+export type ArchiveClientMutation = {
+  __typename?: 'Mutation';
+  archiveClient?: {
+    __typename?: 'Client';
+    id?: string | null;
+    archivedAt?: Date | null;
+  } | null;
+};
 
 export type UnarchiveClientMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type UnarchiveClientMutation = { __typename?: 'Mutation', unarchiveClient?: { __typename?: 'Client', id?: string | null, archivedAt?: Date | null } | null };
+export type UnarchiveClientMutation = {
+  __typename?: 'Mutation';
+  unarchiveClient?: {
+    __typename?: 'Client';
+    id?: string | null;
+    archivedAt?: Date | null;
+  } | null;
+};
 
 export type DeleteClientMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type DeleteClientMutation = { __typename?: 'Mutation', deleteClient?: boolean | null };
+export type DeleteClientMutation = {
+  __typename?: 'Mutation';
+  deleteClient?: boolean | null;
+};
 
 export type GetTeamMembersForProjectQueryVariables = Exact<{
   teamId: Scalars['ID']['input'];
 }>;
 
-
-export type GetTeamMembersForProjectQuery = { __typename?: 'Query', teamMembers?: Array<{ __typename?: 'TeamMember', id?: string | null, user?: { __typename?: 'User', id?: string | null, name?: string | null, email?: string | null, displayName?: string | null } | null }> | null };
+export type GetTeamMembersForProjectQuery = {
+  __typename?: 'Query';
+  teamMembers?: Array<{
+    __typename?: 'TeamMember';
+    id?: string | null;
+    user?: {
+      __typename?: 'User';
+      id?: string | null;
+      name?: string | null;
+      email?: string | null;
+      displayName?: string | null;
+    } | null;
+  }> | null;
+};
 
 export type ListProjectsQueryVariables = Exact<{
   args: ListArgs;
 }>;
 
-
-export type ListProjectsQuery = { __typename?: 'Query', projects?: { __typename?: 'ProjectConnection', total?: number | null, nodes?: Array<{ __typename?: 'Project', id?: string | null, name?: string | null, code?: string | null, status?: Status | null, color?: string | null, tags?: Array<string> | null, startDate?: Date | null, dueDate?: Date | null, createdAt?: Date | null, client?: { __typename?: 'Client', id?: string | null, name?: string | null } | null }> | null, pageInfo?: { __typename?: 'PageInfo', hasNextPage?: boolean | null, nextOffset?: number | null } | null } | null };
+export type ListProjectsQuery = {
+  __typename?: 'Query';
+  projects?: {
+    __typename?: 'ProjectConnection';
+    total?: number | null;
+    nodes?: Array<{
+      __typename?: 'Project';
+      id?: string | null;
+      name?: string | null;
+      code?: string | null;
+      status?: Status | null;
+      color?: string | null;
+      tags?: Array<string> | null;
+      startDate?: Date | null;
+      dueDate?: Date | null;
+      createdAt?: Date | null;
+      client?: {
+        __typename?: 'Client';
+        id?: string | null;
+        name?: string | null;
+      } | null;
+    }> | null;
+    pageInfo?: {
+      __typename?: 'PageInfo';
+      hasNextPage?: boolean | null;
+      nextOffset?: number | null;
+    } | null;
+  } | null;
+};
 
 export type GetProjectQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type GetProjectQuery = { __typename?: 'Query', project?: { __typename?: 'Project', id?: string | null, name?: string | null, description?: string | null, code?: string | null, status?: Status | null, color?: string | null, tags?: Array<string> | null, defaultHourlyRateCents?: number | null, budgetType?: string | null, budgetHours?: number | null, budgetAmountCents?: number | null, startDate?: Date | null, dueDate?: Date | null, archivedAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, client?: { __typename?: 'Client', id?: string | null, name?: string | null, email?: string | null } | null, tasks?: { __typename?: 'TaskConnection', total?: number | null, nodes?: Array<{ __typename?: 'Task', id?: string | null, name?: string | null, description?: string | null, status?: Status | null, billable?: boolean | null, hourlyRateCents?: number | null, tags?: Array<string> | null, orderIndex?: number | null, assignees?: Array<{ __typename?: 'TaskAssignee', id?: string | null, user?: { __typename?: 'User', id?: string | null, name?: string | null, email?: string | null } | null }> | null }> | null } | null, members?: Array<{ __typename?: 'ProjectMember', id?: string | null, role?: ProjectRole | null, user?: { __typename?: 'User', id?: string | null, name?: string | null, email?: string | null, displayName?: string | null } | null }> | null } | null };
+export type GetProjectQuery = {
+  __typename?: 'Query';
+  project?: {
+    __typename?: 'Project';
+    id?: string | null;
+    name?: string | null;
+    description?: string | null;
+    code?: string | null;
+    status?: Status | null;
+    color?: string | null;
+    tags?: Array<string> | null;
+    defaultHourlyRateCents?: number | null;
+    budgetType?: string | null;
+    budgetHours?: number | null;
+    budgetAmountCents?: number | null;
+    startDate?: Date | null;
+    dueDate?: Date | null;
+    archivedAt?: Date | null;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+    client?: {
+      __typename?: 'Client';
+      id?: string | null;
+      name?: string | null;
+      email?: string | null;
+    } | null;
+    tasks?: {
+      __typename?: 'TaskConnection';
+      total?: number | null;
+      nodes?: Array<{
+        __typename?: 'Task';
+        id?: string | null;
+        name?: string | null;
+        description?: string | null;
+        status?: Status | null;
+        billable?: boolean | null;
+        hourlyRateCents?: number | null;
+        tags?: Array<string> | null;
+        orderIndex?: number | null;
+        assignees?: Array<{
+          __typename?: 'TaskAssignee';
+          id?: string | null;
+          user?: {
+            __typename?: 'User';
+            id?: string | null;
+            name?: string | null;
+            email?: string | null;
+          } | null;
+        }> | null;
+      }> | null;
+    } | null;
+    members?: Array<{
+      __typename?: 'ProjectMember';
+      id?: string | null;
+      role?: ProjectRole | null;
+      user?: {
+        __typename?: 'User';
+        id?: string | null;
+        name?: string | null;
+        email?: string | null;
+        displayName?: string | null;
+      } | null;
+    }> | null;
+  } | null;
+};
 
 export type CreateProjectMutationVariables = Exact<{
   input: ProjectInput;
 }>;
 
-
-export type CreateProjectMutation = { __typename?: 'Mutation', createProject?: { __typename?: 'Project', id?: string | null, name?: string | null, code?: string | null, status?: Status | null, createdAt?: Date | null } | null };
+export type CreateProjectMutation = {
+  __typename?: 'Mutation';
+  createProject?: {
+    __typename?: 'Project';
+    id?: string | null;
+    name?: string | null;
+    code?: string | null;
+    status?: Status | null;
+    createdAt?: Date | null;
+  } | null;
+};
 
 export type UpdateProjectMutationVariables = Exact<{
   id: Scalars['ID']['input'];
   input: ProjectPatch;
 }>;
 
-
-export type UpdateProjectMutation = { __typename?: 'Mutation', updateProject?: { __typename?: 'Project', id?: string | null, name?: string | null, description?: string | null, status?: Status | null, updatedAt?: Date | null } | null };
+export type UpdateProjectMutation = {
+  __typename?: 'Mutation';
+  updateProject?: {
+    __typename?: 'Project';
+    id?: string | null;
+    name?: string | null;
+    description?: string | null;
+    status?: Status | null;
+    updatedAt?: Date | null;
+  } | null;
+};
 
 export type SetProjectStatusMutationVariables = Exact<{
   id: Scalars['ID']['input'];
   status: Scalars['String']['input'];
 }>;
 
-
-export type SetProjectStatusMutation = { __typename?: 'Mutation', setProjectStatus?: { __typename?: 'Project', id?: string | null, status?: Status | null, updatedAt?: Date | null } | null };
+export type SetProjectStatusMutation = {
+  __typename?: 'Mutation';
+  setProjectStatus?: {
+    __typename?: 'Project';
+    id?: string | null;
+    status?: Status | null;
+    updatedAt?: Date | null;
+  } | null;
+};
 
 export type AddProjectMemberMutationVariables = Exact<{
   projectId: Scalars['ID']['input'];
@@ -868,22 +1089,68 @@ export type AddProjectMemberMutationVariables = Exact<{
   role: Scalars['String']['input'];
 }>;
 
-
-export type AddProjectMemberMutation = { __typename?: 'Mutation', addProjectMember?: { __typename?: 'ProjectMember', id?: string | null, role?: ProjectRole | null, user?: { __typename?: 'User', id?: string | null, name?: string | null, email?: string | null, displayName?: string | null } | null } | null };
+export type AddProjectMemberMutation = {
+  __typename?: 'Mutation';
+  addProjectMember?: {
+    __typename?: 'ProjectMember';
+    id?: string | null;
+    role?: ProjectRole | null;
+    user?: {
+      __typename?: 'User';
+      id?: string | null;
+      name?: string | null;
+      email?: string | null;
+      displayName?: string | null;
+    } | null;
+  } | null;
+};
 
 export type RemoveProjectMemberMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type RemoveProjectMemberMutation = { __typename?: 'Mutation', removeProjectMember?: boolean | null };
+export type RemoveProjectMemberMutation = {
+  __typename?: 'Mutation';
+  removeProjectMember?: boolean | null;
+};
 
 export type GetTaskQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type GetTaskQuery = { __typename?: 'Query', task?: { __typename?: 'Task', id?: string | null, name?: string | null, description?: string | null, status?: Status | null, billable?: boolean | null, hourlyRateCents?: number | null, tags?: Array<string> | null, orderIndex?: number | null, createdAt?: Date | null, updatedAt?: Date | null, project?: { __typename?: 'Project', id?: string | null, name?: string | null, color?: string | null } | null, assignees?: Array<{ __typename?: 'TaskAssignee', id?: string | null, user?: { __typename?: 'User', id?: string | null, name?: string | null, email?: string | null, displayName?: string | null } | null }> | null } | null };
+export type GetTaskQuery = {
+  __typename?: 'Query';
+  task?: {
+    __typename?: 'Task';
+    id?: string | null;
+    name?: string | null;
+    description?: string | null;
+    status?: Status | null;
+    billable?: boolean | null;
+    hourlyRateCents?: number | null;
+    tags?: Array<string> | null;
+    orderIndex?: number | null;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+    project?: {
+      __typename?: 'Project';
+      id?: string | null;
+      name?: string | null;
+      color?: string | null;
+    } | null;
+    assignees?: Array<{
+      __typename?: 'TaskAssignee';
+      id?: string | null;
+      user?: {
+        __typename?: 'User';
+        id?: string | null;
+        name?: string | null;
+        email?: string | null;
+        displayName?: string | null;
+      } | null;
+    }> | null;
+  } | null;
+};
 
 export type ListTasksQueryVariables = Exact<{
   projectId: Scalars['ID']['input'];
@@ -894,47 +1161,114 @@ export type ListTasksQueryVariables = Exact<{
   order?: InputMaybe<Scalars['String']['input']>;
 }>;
 
-
-export type ListTasksQuery = { __typename?: 'Query', tasks?: { __typename?: 'TaskConnection', total?: number | null, nodes?: Array<{ __typename?: 'Task', id?: string | null, name?: string | null, description?: string | null, status?: Status | null, billable?: boolean | null, hourlyRateCents?: number | null, tags?: Array<string> | null, orderIndex?: number | null, createdAt?: Date | null, assignees?: Array<{ __typename?: 'TaskAssignee', id?: string | null, user?: { __typename?: 'User', id?: string | null, name?: string | null, email?: string | null } | null }> | null }> | null, pageInfo?: { __typename?: 'PageInfo', hasNextPage?: boolean | null, nextOffset?: number | null } | null } | null };
+export type ListTasksQuery = {
+  __typename?: 'Query';
+  tasks?: {
+    __typename?: 'TaskConnection';
+    total?: number | null;
+    nodes?: Array<{
+      __typename?: 'Task';
+      id?: string | null;
+      name?: string | null;
+      description?: string | null;
+      status?: Status | null;
+      billable?: boolean | null;
+      hourlyRateCents?: number | null;
+      tags?: Array<string> | null;
+      orderIndex?: number | null;
+      createdAt?: Date | null;
+      assignees?: Array<{
+        __typename?: 'TaskAssignee';
+        id?: string | null;
+        user?: {
+          __typename?: 'User';
+          id?: string | null;
+          name?: string | null;
+          email?: string | null;
+        } | null;
+      }> | null;
+    }> | null;
+    pageInfo?: {
+      __typename?: 'PageInfo';
+      hasNextPage?: boolean | null;
+      nextOffset?: number | null;
+    } | null;
+  } | null;
+};
 
 export type CreateTaskMutationVariables = Exact<{
   projectId: Scalars['ID']['input'];
   input: TaskInput;
 }>;
 
-
-export type CreateTaskMutation = { __typename?: 'Mutation', createTask?: { __typename?: 'Task', id?: string | null, name?: string | null, description?: string | null, status?: Status | null, billable?: boolean | null, orderIndex?: number | null, createdAt?: Date | null } | null };
+export type CreateTaskMutation = {
+  __typename?: 'Mutation';
+  createTask?: {
+    __typename?: 'Task';
+    id?: string | null;
+    name?: string | null;
+    description?: string | null;
+    status?: Status | null;
+    billable?: boolean | null;
+    orderIndex?: number | null;
+    createdAt?: Date | null;
+  } | null;
+};
 
 export type UpdateTaskMutationVariables = Exact<{
   id: Scalars['ID']['input'];
   input: TaskPatch;
 }>;
 
-
-export type UpdateTaskMutation = { __typename?: 'Mutation', updateTask?: { __typename?: 'Task', id?: string | null, name?: string | null, description?: string | null, status?: Status | null, billable?: boolean | null, updatedAt?: Date | null } | null };
+export type UpdateTaskMutation = {
+  __typename?: 'Mutation';
+  updateTask?: {
+    __typename?: 'Task';
+    id?: string | null;
+    name?: string | null;
+    description?: string | null;
+    status?: Status | null;
+    billable?: boolean | null;
+    updatedAt?: Date | null;
+  } | null;
+};
 
 export type ReorderTasksMutationVariables = Exact<{
   projectId: Scalars['ID']['input'];
   order: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
-
-export type ReorderTasksMutation = { __typename?: 'Mutation', reorderTasks?: boolean | null };
+export type ReorderTasksMutation = {
+  __typename?: 'Mutation';
+  reorderTasks?: boolean | null;
+};
 
 export type AddTaskAssigneeMutationVariables = Exact<{
   taskId: Scalars['ID']['input'];
   userId: Scalars['ID']['input'];
 }>;
 
-
-export type AddTaskAssigneeMutation = { __typename?: 'Mutation', addTaskAssignee?: { __typename?: 'TaskAssignee', id?: string | null, user?: { __typename?: 'User', id?: string | null, name?: string | null } | null } | null };
+export type AddTaskAssigneeMutation = {
+  __typename?: 'Mutation';
+  addTaskAssignee?: {
+    __typename?: 'TaskAssignee';
+    id?: string | null;
+    user?: {
+      __typename?: 'User';
+      id?: string | null;
+      name?: string | null;
+    } | null;
+  } | null;
+};
 
 export type RemoveTaskAssigneeMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type RemoveTaskAssigneeMutation = { __typename?: 'Mutation', removeTaskAssignee?: boolean | null };
+export type RemoveTaskAssigneeMutation = {
+  __typename?: 'Mutation';
+  removeTaskAssignee?: boolean | null;
+};
 
 export type ListTimeEntriesQueryVariables = Exact<{
   teamId: Scalars['ID']['input'];
@@ -951,8 +1285,45 @@ export type ListTimeEntriesQueryVariables = Exact<{
   order?: InputMaybe<Scalars['String']['input']>;
 }>;
 
-
-export type ListTimeEntriesQuery = { __typename?: 'Query', timeEntries?: { __typename?: 'TimeEntryConnection', total?: number | null, nodes?: Array<{ __typename?: 'TimeEntry', id?: string | null, note?: string | null, startedAt?: Date | null, stoppedAt?: Date | null, durationSeconds?: number | null, billable?: boolean | null, hourlyRateCents?: number | null, amountCents?: number | null, project?: { __typename?: 'Project', id?: string | null, name?: string | null, code?: string | null } | null, task?: { __typename?: 'Task', id?: string | null, name?: string | null } | null, user?: { __typename?: 'User', id?: string | null, name?: string | null } | null }> | null, pageInfo?: { __typename?: 'PageInfo', hasNextPage?: boolean | null, nextOffset?: number | null } | null } | null };
+export type ListTimeEntriesQuery = {
+  __typename?: 'Query';
+  timeEntries?: {
+    __typename?: 'TimeEntryConnection';
+    total?: number | null;
+    nodes?: Array<{
+      __typename?: 'TimeEntry';
+      id?: string | null;
+      note?: string | null;
+      startedAt?: Date | null;
+      stoppedAt?: Date | null;
+      durationSeconds?: number | null;
+      billable?: boolean | null;
+      hourlyRateCents?: number | null;
+      amountCents?: number | null;
+      project?: {
+        __typename?: 'Project';
+        id?: string | null;
+        name?: string | null;
+        code?: string | null;
+      } | null;
+      task?: {
+        __typename?: 'Task';
+        id?: string | null;
+        name?: string | null;
+      } | null;
+      user?: {
+        __typename?: 'User';
+        id?: string | null;
+        name?: string | null;
+      } | null;
+    }> | null;
+    pageInfo?: {
+      __typename?: 'PageInfo';
+      hasNextPage?: boolean | null;
+      nextOffset?: number | null;
+    } | null;
+  } | null;
+};
 
 export type StartTimerMutationVariables = Exact<{
   projectId: Scalars['ID']['input'];
@@ -961,15 +1332,31 @@ export type StartTimerMutationVariables = Exact<{
   billable?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
-
-export type StartTimerMutation = { __typename?: 'Mutation', startTimer?: { __typename?: 'TimeEntry', id?: string | null, startedAt?: Date | null, note?: string | null, billable?: boolean | null } | null };
+export type StartTimerMutation = {
+  __typename?: 'Mutation';
+  startTimer?: {
+    __typename?: 'TimeEntry';
+    id?: string | null;
+    startedAt?: Date | null;
+    note?: string | null;
+    billable?: boolean | null;
+  } | null;
+};
 
 export type StopTimerMutationVariables = Exact<{
   timeEntryId: Scalars['ID']['input'];
 }>;
 
-
-export type StopTimerMutation = { __typename?: 'Mutation', stopTimer?: { __typename?: 'TimeEntry', id?: string | null, stoppedAt?: Date | null, durationSeconds?: number | null, amountCents?: number | null } | null };
+export type StopTimerMutation = {
+  __typename?: 'Mutation';
+  stopTimer?: {
+    __typename?: 'TimeEntry';
+    id?: string | null;
+    stoppedAt?: Date | null;
+    durationSeconds?: number | null;
+    amountCents?: number | null;
+  } | null;
+};
 
 export type ListInvoicesQueryVariables = Exact<{
   teamId: Scalars['ID']['input'];
@@ -983,77 +1370,195 @@ export type ListInvoicesQueryVariables = Exact<{
   order?: InputMaybe<Scalars['String']['input']>;
 }>;
 
-
-export type ListInvoicesQuery = { __typename?: 'Query', invoices?: { __typename?: 'InvoiceConnection', total?: number | null, nodes?: Array<{ __typename?: 'Invoice', id?: string | null, invoiceNumber?: string | null, status?: InvoiceStatus | null, issuedDate?: Date | null, dueDate?: Date | null, subtotalCents?: number | null, taxAmountCents?: number | null, totalCents?: number | null, createdAt?: Date | null, client?: { __typename?: 'Client', id?: string | null, name?: string | null } | null }> | null, pageInfo?: { __typename?: 'PageInfo', hasNextPage?: boolean | null, nextOffset?: number | null } | null } | null };
+export type ListInvoicesQuery = {
+  __typename?: 'Query';
+  invoices?: {
+    __typename?: 'InvoiceConnection';
+    total?: number | null;
+    nodes?: Array<{
+      __typename?: 'Invoice';
+      id?: string | null;
+      invoiceNumber?: string | null;
+      status?: InvoiceStatus | null;
+      issuedDate?: Date | null;
+      dueDate?: Date | null;
+      subtotalCents?: number | null;
+      taxAmountCents?: number | null;
+      totalCents?: number | null;
+      createdAt?: Date | null;
+      client?: {
+        __typename?: 'Client';
+        id?: string | null;
+        name?: string | null;
+      } | null;
+    }> | null;
+    pageInfo?: {
+      __typename?: 'PageInfo';
+      hasNextPage?: boolean | null;
+      nextOffset?: number | null;
+    } | null;
+  } | null;
+};
 
 export type GetInvoiceQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type GetInvoiceQuery = { __typename?: 'Query', invoice?: { __typename?: 'Invoice', id?: string | null, invoiceNumber?: string | null, status?: InvoiceStatus | null, issuedDate?: Date | null, dueDate?: Date | null, subtotalCents?: number | null, taxRatePercent?: number | null, taxAmountCents?: number | null, totalCents?: number | null, notes?: string | null, createdAt?: Date | null, updatedAt?: Date | null, client?: { __typename?: 'Client', id?: string | null, name?: string | null, email?: string | null, contactName?: string | null, billingAddress?: any | null, taxId?: string | null } | null, items?: Array<{ __typename?: 'InvoiceItem', id?: string | null, description?: string | null, quantity?: number | null, rateCents?: number | null, amountCents?: number | null, timeEntryId?: string | null, createdAt?: Date | null }> | null } | null };
+export type GetInvoiceQuery = {
+  __typename?: 'Query';
+  invoice?: {
+    __typename?: 'Invoice';
+    id?: string | null;
+    invoiceNumber?: string | null;
+    status?: InvoiceStatus | null;
+    issuedDate?: Date | null;
+    dueDate?: Date | null;
+    subtotalCents?: number | null;
+    taxRatePercent?: number | null;
+    taxAmountCents?: number | null;
+    totalCents?: number | null;
+    notes?: string | null;
+    createdAt?: Date | null;
+    updatedAt?: Date | null;
+    client?: {
+      __typename?: 'Client';
+      id?: string | null;
+      name?: string | null;
+      email?: string | null;
+      contactName?: string | null;
+      billingAddress?: any | null;
+      taxId?: string | null;
+    } | null;
+    items?: Array<{
+      __typename?: 'InvoiceItem';
+      id?: string | null;
+      description?: string | null;
+      quantity?: number | null;
+      rateCents?: number | null;
+      amountCents?: number | null;
+      timeEntryId?: string | null;
+      createdAt?: Date | null;
+    }> | null;
+  } | null;
+};
 
 export type CreateInvoiceMutationVariables = Exact<{
   input: InvoiceInput;
 }>;
 
-
-export type CreateInvoiceMutation = { __typename?: 'Mutation', createInvoice?: { __typename?: 'Invoice', id?: string | null, invoiceNumber?: string | null, status?: InvoiceStatus | null, issuedDate?: Date | null, dueDate?: Date | null, createdAt?: Date | null } | null };
+export type CreateInvoiceMutation = {
+  __typename?: 'Mutation';
+  createInvoice?: {
+    __typename?: 'Invoice';
+    id?: string | null;
+    invoiceNumber?: string | null;
+    status?: InvoiceStatus | null;
+    issuedDate?: Date | null;
+    dueDate?: Date | null;
+    createdAt?: Date | null;
+  } | null;
+};
 
 export type UpdateInvoiceMutationVariables = Exact<{
   id: Scalars['ID']['input'];
   input: InvoicePatch;
 }>;
 
-
-export type UpdateInvoiceMutation = { __typename?: 'Mutation', updateInvoice?: { __typename?: 'Invoice', id?: string | null, invoiceNumber?: string | null, status?: InvoiceStatus | null, updatedAt?: Date | null } | null };
+export type UpdateInvoiceMutation = {
+  __typename?: 'Mutation';
+  updateInvoice?: {
+    __typename?: 'Invoice';
+    id?: string | null;
+    invoiceNumber?: string | null;
+    status?: InvoiceStatus | null;
+    updatedAt?: Date | null;
+  } | null;
+};
 
 export type MarkInvoicePaidMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type MarkInvoicePaidMutation = { __typename?: 'Mutation', markInvoicePaid?: { __typename?: 'Invoice', id?: string | null, status?: InvoiceStatus | null, updatedAt?: Date | null } | null };
+export type MarkInvoicePaidMutation = {
+  __typename?: 'Mutation';
+  markInvoicePaid?: {
+    __typename?: 'Invoice';
+    id?: string | null;
+    status?: InvoiceStatus | null;
+    updatedAt?: Date | null;
+  } | null;
+};
 
 export type CancelInvoiceMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type CancelInvoiceMutation = { __typename?: 'Mutation', cancelInvoice?: { __typename?: 'Invoice', id?: string | null, status?: InvoiceStatus | null, updatedAt?: Date | null } | null };
+export type CancelInvoiceMutation = {
+  __typename?: 'Mutation';
+  cancelInvoice?: {
+    __typename?: 'Invoice';
+    id?: string | null;
+    status?: InvoiceStatus | null;
+    updatedAt?: Date | null;
+  } | null;
+};
 
 export type AddInvoiceItemMutationVariables = Exact<{
   invoiceId: Scalars['ID']['input'];
   input: InvoiceItemInput;
 }>;
 
-
-export type AddInvoiceItemMutation = { __typename?: 'Mutation', addInvoiceItem?: { __typename?: 'InvoiceItem', id?: string | null, description?: string | null, quantity?: number | null, rateCents?: number | null, amountCents?: number | null } | null };
+export type AddInvoiceItemMutation = {
+  __typename?: 'Mutation';
+  addInvoiceItem?: {
+    __typename?: 'InvoiceItem';
+    id?: string | null;
+    description?: string | null;
+    quantity?: number | null;
+    rateCents?: number | null;
+    amountCents?: number | null;
+  } | null;
+};
 
 export type UpdateInvoiceItemMutationVariables = Exact<{
   id: Scalars['ID']['input'];
   input: InvoiceItemPatch;
 }>;
 
-
-export type UpdateInvoiceItemMutation = { __typename?: 'Mutation', updateInvoiceItem?: { __typename?: 'InvoiceItem', id?: string | null, description?: string | null, quantity?: number | null, rateCents?: number | null, amountCents?: number | null } | null };
+export type UpdateInvoiceItemMutation = {
+  __typename?: 'Mutation';
+  updateInvoiceItem?: {
+    __typename?: 'InvoiceItem';
+    id?: string | null;
+    description?: string | null;
+    quantity?: number | null;
+    rateCents?: number | null;
+    amountCents?: number | null;
+  } | null;
+};
 
 export type RemoveInvoiceItemMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-
-export type RemoveInvoiceItemMutation = { __typename?: 'Mutation', removeInvoiceItem?: boolean | null };
-
-
+export type RemoveInvoiceItemMutation = {
+  __typename?: 'Mutation';
+  removeInvoiceItem?: boolean | null;
+};
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
-
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type Resolver<TResult, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+export type Resolver<
+  TResult,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
+> =
+  | ResolverFn<TResult, TParent, TContext, TArgs>
+  | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -1076,9 +1581,25 @@ export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
-  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
-  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
+export interface SubscriptionSubscriberObject<
+  TResult,
+  TKey extends string,
+  TParent,
+  TContext,
+  TArgs,
+> {
+  subscribe: SubscriptionSubscribeFn<
+    { [key in TKey]: TResult },
+    TParent,
+    TContext,
+    TArgs
+  >;
+  resolve?: SubscriptionResolveFn<
+    TResult,
+    { [key in TKey]: TResult },
+    TContext,
+    TArgs
+  >;
 }
 
 export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
@@ -1086,25 +1607,55 @@ export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
   resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;
 }
 
-export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =
+export type SubscriptionObject<
+  TResult,
+  TKey extends string,
+  TParent,
+  TContext,
+  TArgs,
+> =
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<TResult, TKey extends string, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> =
-  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+export type SubscriptionResolver<
+  TResult,
+  TKey extends string,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
+> =
+  | ((
+      ...args: any[]
+    ) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
-export type TypeResolveFn<TTypes, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>> = (
+export type TypeResolveFn<
+  TTypes,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+> = (
   parent: TParent,
   context: TContext,
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<
+  T = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+> = (
+  obj: T,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
-export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> = (
+export type DirectiveResolverFn<
+  TResult = Record<PropertyKey, never>,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
+> = (
   next: NextResolverFn<TResult>,
   parent: TParent,
   args: TArgs,
@@ -1112,15 +1663,16 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-
-
-
-
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Client: ResolverTypeWrapper<Client>;
-  ClientConnection: ResolverTypeWrapper<Omit<ClientConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversTypes['Client']>>, pageInfo?: Maybe<ResolversTypes['PageInfo']> }>;
+  ClientConnection: ResolverTypeWrapper<
+    Omit<ClientConnection, 'nodes' | 'pageInfo'> & {
+      nodes?: Maybe<Array<ResolversTypes['Client']>>;
+      pageInfo?: Maybe<ResolversTypes['PageInfo']>;
+    }
+  >;
   ClientInput: ClientInput;
   ClientPatch: ClientPatch;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
@@ -1129,7 +1681,12 @@ export type ResolversTypes = {
   InstanceRole: InstanceRole;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Invoice: ResolverTypeWrapper<Invoice>;
-  InvoiceConnection: ResolverTypeWrapper<Omit<InvoiceConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversTypes['Invoice']>>, pageInfo?: Maybe<ResolversTypes['PageInfo']> }>;
+  InvoiceConnection: ResolverTypeWrapper<
+    Omit<InvoiceConnection, 'nodes' | 'pageInfo'> & {
+      nodes?: Maybe<Array<ResolversTypes['Invoice']>>;
+      pageInfo?: Maybe<ResolversTypes['PageInfo']>;
+    }
+  >;
   InvoiceInput: InvoiceInput;
   InvoiceItem: ResolverTypeWrapper<InvoiceItem>;
   InvoiceItemInput: InvoiceItemInput;
@@ -1142,7 +1699,12 @@ export type ResolversTypes = {
   Order: Order;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Project: ResolverTypeWrapper<Project>;
-  ProjectConnection: ResolverTypeWrapper<Omit<ProjectConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversTypes['Project']>>, pageInfo?: Maybe<ResolversTypes['PageInfo']> }>;
+  ProjectConnection: ResolverTypeWrapper<
+    Omit<ProjectConnection, 'nodes' | 'pageInfo'> & {
+      nodes?: Maybe<Array<ResolversTypes['Project']>>;
+      pageInfo?: Maybe<ResolversTypes['PageInfo']>;
+    }
+  >;
   ProjectInput: ProjectInput;
   ProjectMember: ResolverTypeWrapper<ProjectMember>;
   ProjectPatch: ProjectPatch;
@@ -1152,14 +1714,26 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Task: ResolverTypeWrapper<ProjectTask>;
   TaskAssignee: ResolverTypeWrapper<TaskAssignee>;
-  TaskConnection: ResolverTypeWrapper<Omit<TaskConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversTypes['Task']>>, pageInfo?: Maybe<ResolversTypes['PageInfo']> }>;
+  TaskConnection: ResolverTypeWrapper<
+    Omit<TaskConnection, 'nodes' | 'pageInfo'> & {
+      nodes?: Maybe<Array<ResolversTypes['Task']>>;
+      pageInfo?: Maybe<ResolversTypes['PageInfo']>;
+    }
+  >;
   TaskInput: TaskInput;
   TaskPatch: TaskPatch;
   Team: ResolverTypeWrapper<Team>;
-  TeamMember: ResolverTypeWrapper<Omit<TeamMember, 'user'> & { user?: Maybe<ResolversTypes['User']> }>;
+  TeamMember: ResolverTypeWrapper<
+    Omit<TeamMember, 'user'> & { user?: Maybe<ResolversTypes['User']> }
+  >;
   TeamRole: TeamRole;
   TimeEntry: ResolverTypeWrapper<TimeEntry>;
-  TimeEntryConnection: ResolverTypeWrapper<Omit<TimeEntryConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversTypes['TimeEntry']>>, pageInfo?: Maybe<ResolversTypes['PageInfo']> }>;
+  TimeEntryConnection: ResolverTypeWrapper<
+    Omit<TimeEntryConnection, 'nodes' | 'pageInfo'> & {
+      nodes?: Maybe<Array<ResolversTypes['TimeEntry']>>;
+      pageInfo?: Maybe<ResolversTypes['PageInfo']>;
+    }
+  >;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -1167,7 +1741,10 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   Client: Client;
-  ClientConnection: Omit<ClientConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversParentTypes['Client']>>, pageInfo?: Maybe<ResolversParentTypes['PageInfo']> };
+  ClientConnection: Omit<ClientConnection, 'nodes' | 'pageInfo'> & {
+    nodes?: Maybe<Array<ResolversParentTypes['Client']>>;
+    pageInfo?: Maybe<ResolversParentTypes['PageInfo']>;
+  };
   ClientInput: ClientInput;
   ClientPatch: ClientPatch;
   DateTime: Scalars['DateTime']['output'];
@@ -1175,7 +1752,10 @@ export type ResolversParentTypes = {
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Invoice: Invoice;
-  InvoiceConnection: Omit<InvoiceConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversParentTypes['Invoice']>>, pageInfo?: Maybe<ResolversParentTypes['PageInfo']> };
+  InvoiceConnection: Omit<InvoiceConnection, 'nodes' | 'pageInfo'> & {
+    nodes?: Maybe<Array<ResolversParentTypes['Invoice']>>;
+    pageInfo?: Maybe<ResolversParentTypes['PageInfo']>;
+  };
   InvoiceInput: InvoiceInput;
   InvoiceItem: InvoiceItem;
   InvoiceItemInput: InvoiceItemInput;
@@ -1186,7 +1766,10 @@ export type ResolversParentTypes = {
   Mutation: Record<PropertyKey, never>;
   PageInfo: PageInfo;
   Project: Project;
-  ProjectConnection: Omit<ProjectConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversParentTypes['Project']>>, pageInfo?: Maybe<ResolversParentTypes['PageInfo']> };
+  ProjectConnection: Omit<ProjectConnection, 'nodes' | 'pageInfo'> & {
+    nodes?: Maybe<Array<ResolversParentTypes['Project']>>;
+    pageInfo?: Maybe<ResolversParentTypes['PageInfo']>;
+  };
   ProjectInput: ProjectInput;
   ProjectMember: ProjectMember;
   ProjectPatch: ProjectPatch;
@@ -1194,262 +1777,869 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   Task: ProjectTask;
   TaskAssignee: TaskAssignee;
-  TaskConnection: Omit<TaskConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversParentTypes['Task']>>, pageInfo?: Maybe<ResolversParentTypes['PageInfo']> };
+  TaskConnection: Omit<TaskConnection, 'nodes' | 'pageInfo'> & {
+    nodes?: Maybe<Array<ResolversParentTypes['Task']>>;
+    pageInfo?: Maybe<ResolversParentTypes['PageInfo']>;
+  };
   TaskInput: TaskInput;
   TaskPatch: TaskPatch;
   Team: Team;
-  TeamMember: Omit<TeamMember, 'user'> & { user?: Maybe<ResolversParentTypes['User']> };
+  TeamMember: Omit<TeamMember, 'user'> & {
+    user?: Maybe<ResolversParentTypes['User']>;
+  };
   TimeEntry: TimeEntry;
-  TimeEntryConnection: Omit<TimeEntryConnection, 'nodes' | 'pageInfo'> & { nodes?: Maybe<Array<ResolversParentTypes['TimeEntry']>>, pageInfo?: Maybe<ResolversParentTypes['PageInfo']> };
+  TimeEntryConnection: Omit<TimeEntryConnection, 'nodes' | 'pageInfo'> & {
+    nodes?: Maybe<Array<ResolversParentTypes['TimeEntry']>>;
+    pageInfo?: Maybe<ResolversParentTypes['PageInfo']>;
+  };
   User: User;
 };
 
-export type ClientResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = {
-  archivedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  billingAddress?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
-  contactName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+export type ClientResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['Client'] =
+    ResolversParentTypes['Client'],
+> = {
+  archivedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  billingAddress?: Resolver<
+    Maybe<ResolversTypes['JSON']>,
+    ParentType,
+    ContextType
+  >;
+  contactName?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
   currency?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  defaultHourlyRateCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  defaultHourlyRateCents?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  invoices?: Resolver<Maybe<ResolversTypes['InvoiceConnection']>, ParentType, ContextType, RequireFields<ClientInvoicesArgs, 'limit' | 'offset' | 'order'>>;
+  invoices?: Resolver<
+    Maybe<ResolversTypes['InvoiceConnection']>,
+    ParentType,
+    ContextType,
+    RequireFields<ClientInvoicesArgs, 'limit' | 'offset' | 'order'>
+  >;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  projects?: Resolver<Maybe<ResolversTypes['ProjectConnection']>, ParentType, ContextType, RequireFields<ClientProjectsArgs, 'limit' | 'offset' | 'order'>>;
+  projects?: Resolver<
+    Maybe<ResolversTypes['ProjectConnection']>,
+    ParentType,
+    ContextType,
+    RequireFields<ClientProjectsArgs, 'limit' | 'offset' | 'order'>
+  >;
   taxId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   teamId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
 };
 
-export type ClientConnectionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ClientConnection'] = ResolversParentTypes['ClientConnection']> = {
-  nodes?: Resolver<Maybe<Array<ResolversTypes['Client']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+export type ClientConnectionResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['ClientConnection'] =
+    ResolversParentTypes['ClientConnection'],
+> = {
+  nodes?: Resolver<
+    Maybe<Array<ResolversTypes['Client']>>,
+    ParentType,
+    ContextType
+  >;
+  pageInfo?: Resolver<
+    Maybe<ResolversTypes['PageInfo']>,
+    ParentType,
+    ContextType
+  >;
   total?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
 };
 
-export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<
+  ResolversTypes['DateTime'],
+  any
+> {
   name: 'DateTime';
 }
 
-export type InvoiceResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Invoice'] = ResolversParentTypes['Invoice']> = {
+export type InvoiceResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['Invoice'] =
+    ResolversParentTypes['Invoice'],
+> = {
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType>;
   clientId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  dueDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  dueDate?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  invoiceNumber?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  issuedDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  items?: Resolver<Maybe<Array<ResolversTypes['InvoiceItem']>>, ParentType, ContextType>;
+  invoiceNumber?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  issuedDate?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  items?: Resolver<
+    Maybe<Array<ResolversTypes['InvoiceItem']>>,
+    ParentType,
+    ContextType
+  >;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  status?: Resolver<Maybe<ResolversTypes['InvoiceStatus']>, ParentType, ContextType>;
-  subtotalCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  taxAmountCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  taxRatePercent?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  status?: Resolver<
+    Maybe<ResolversTypes['InvoiceStatus']>,
+    ParentType,
+    ContextType
+  >;
+  subtotalCents?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >;
+  taxAmountCents?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >;
+  taxRatePercent?: Resolver<
+    Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >;
   team?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType>;
-  timeEntries?: Resolver<Maybe<Array<ResolversTypes['TimeEntry']>>, ParentType, ContextType>;
+  timeEntries?: Resolver<
+    Maybe<Array<ResolversTypes['TimeEntry']>>,
+    ParentType,
+    ContextType
+  >;
   totalCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
 };
 
-export type InvoiceConnectionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['InvoiceConnection'] = ResolversParentTypes['InvoiceConnection']> = {
-  nodes?: Resolver<Maybe<Array<ResolversTypes['Invoice']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+export type InvoiceConnectionResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['InvoiceConnection'] =
+    ResolversParentTypes['InvoiceConnection'],
+> = {
+  nodes?: Resolver<
+    Maybe<Array<ResolversTypes['Invoice']>>,
+    ParentType,
+    ContextType
+  >;
+  pageInfo?: Resolver<
+    Maybe<ResolversTypes['PageInfo']>,
+    ParentType,
+    ContextType
+  >;
   total?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
 };
 
-export type InvoiceItemResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['InvoiceItem'] = ResolversParentTypes['InvoiceItem']> = {
+export type InvoiceItemResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['InvoiceItem'] =
+    ResolversParentTypes['InvoiceItem'],
+> = {
   amountCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   invoiceId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   quantity?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rateCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  timeEntries?: Resolver<Maybe<Array<ResolversTypes['TimeEntry']>>, ParentType, ContextType>;
+  timeEntries?: Resolver<
+    Maybe<Array<ResolversTypes['TimeEntry']>>,
+    ParentType,
+    ContextType
+  >;
   timeEntryId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 };
 
-export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+export interface JsonScalarConfig extends GraphQLScalarTypeConfig<
+  ResolversTypes['JSON'],
+  any
+> {
   name: 'JSON';
 }
 
-export type MutationResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addInvoiceItem?: Resolver<Maybe<ResolversTypes['InvoiceItem']>, ParentType, ContextType, RequireFields<MutationAddInvoiceItemArgs, 'input' | 'invoiceId'>>;
-  addProjectMember?: Resolver<Maybe<ResolversTypes['ProjectMember']>, ParentType, ContextType, RequireFields<MutationAddProjectMemberArgs, 'projectId' | 'role' | 'userId'>>;
-  addTaskAssignee?: Resolver<Maybe<ResolversTypes['TaskAssignee']>, ParentType, ContextType, RequireFields<MutationAddTaskAssigneeArgs, 'taskId' | 'userId'>>;
-  addTimeEntriesToInvoiceItem?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationAddTimeEntriesToInvoiceItemArgs, 'invoiceItemId' | 'timeEntryIds'>>;
-  archiveClient?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<MutationArchiveClientArgs, 'id'>>;
-  cancelInvoice?: Resolver<Maybe<ResolversTypes['Invoice']>, ParentType, ContextType, RequireFields<MutationCancelInvoiceArgs, 'id'>>;
-  createClient?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<MutationCreateClientArgs, 'input'>>;
-  createInvoice?: Resolver<Maybe<ResolversTypes['Invoice']>, ParentType, ContextType, RequireFields<MutationCreateInvoiceArgs, 'input'>>;
-  createProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationCreateProjectArgs, 'input'>>;
-  createTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'input' | 'projectId'>>;
-  createTimeEntry?: Resolver<Maybe<ResolversTypes['TimeEntry']>, ParentType, ContextType, RequireFields<MutationCreateTimeEntryArgs, 'billable' | 'projectId' | 'startedAt' | 'stoppedAt'>>;
-  deleteClient?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteClientArgs, 'id'>>;
-  deleteInvoice?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteInvoiceArgs, 'id'>>;
-  deleteTask?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
-  deleteTimeEntry?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteTimeEntryArgs, 'timeEntryId'>>;
-  markInvoicePaid?: Resolver<Maybe<ResolversTypes['Invoice']>, ParentType, ContextType, RequireFields<MutationMarkInvoicePaidArgs, 'id'>>;
-  markInvoiceSent?: Resolver<Maybe<ResolversTypes['Invoice']>, ParentType, ContextType, RequireFields<MutationMarkInvoiceSentArgs, 'id'>>;
-  removeInvoiceItem?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRemoveInvoiceItemArgs, 'id'>>;
-  removeProjectMember?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRemoveProjectMemberArgs, 'id'>>;
-  removeTaskAssignee?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRemoveTaskAssigneeArgs, 'id'>>;
-  removeTimeEntryFromInvoice?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRemoveTimeEntryFromInvoiceArgs, 'invoiceId' | 'timeEntryId'>>;
-  reorderTasks?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationReorderTasksArgs, 'order' | 'projectId'>>;
-  setProjectStatus?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationSetProjectStatusArgs, 'id' | 'status'>>;
-  startTimer?: Resolver<Maybe<ResolversTypes['TimeEntry']>, ParentType, ContextType, RequireFields<MutationStartTimerArgs, 'billable' | 'projectId'>>;
-  stopTimer?: Resolver<Maybe<ResolversTypes['TimeEntry']>, ParentType, ContextType, RequireFields<MutationStopTimerArgs, 'timeEntryId'>>;
-  unarchiveClient?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<MutationUnarchiveClientArgs, 'id'>>;
-  updateClient?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<MutationUpdateClientArgs, 'id' | 'input'>>;
-  updateInvoice?: Resolver<Maybe<ResolversTypes['Invoice']>, ParentType, ContextType, RequireFields<MutationUpdateInvoiceArgs, 'id' | 'input'>>;
-  updateInvoiceItem?: Resolver<Maybe<ResolversTypes['InvoiceItem']>, ParentType, ContextType, RequireFields<MutationUpdateInvoiceItemArgs, 'id' | 'input'>>;
-  updateProject?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<MutationUpdateProjectArgs, 'id' | 'input'>>;
-  updateProjectMember?: Resolver<Maybe<ResolversTypes['ProjectMember']>, ParentType, ContextType, RequireFields<MutationUpdateProjectMemberArgs, 'id' | 'role'>>;
-  updateTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationUpdateTaskArgs, 'id' | 'input'>>;
-  updateTimeEntry?: Resolver<Maybe<ResolversTypes['TimeEntry']>, ParentType, ContextType, RequireFields<MutationUpdateTimeEntryArgs, 'timeEntryId'>>;
-  updateUserPassword?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationUpdateUserPasswordArgs, 'currentPassword' | 'newPassword'>>;
-  updateUserProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserProfileArgs>>;
+export type MutationResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['Mutation'] =
+    ResolversParentTypes['Mutation'],
+> = {
+  addInvoiceItem?: Resolver<
+    Maybe<ResolversTypes['InvoiceItem']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationAddInvoiceItemArgs, 'input' | 'invoiceId'>
+  >;
+  addProjectMember?: Resolver<
+    Maybe<ResolversTypes['ProjectMember']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationAddProjectMemberArgs, 'projectId' | 'role' | 'userId'>
+  >;
+  addTaskAssignee?: Resolver<
+    Maybe<ResolversTypes['TaskAssignee']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationAddTaskAssigneeArgs, 'taskId' | 'userId'>
+  >;
+  addTimeEntriesToInvoiceItem?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      MutationAddTimeEntriesToInvoiceItemArgs,
+      'invoiceItemId' | 'timeEntryIds'
+    >
+  >;
+  archiveClient?: Resolver<
+    Maybe<ResolversTypes['Client']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationArchiveClientArgs, 'id'>
+  >;
+  cancelInvoice?: Resolver<
+    Maybe<ResolversTypes['Invoice']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCancelInvoiceArgs, 'id'>
+  >;
+  createClient?: Resolver<
+    Maybe<ResolversTypes['Client']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateClientArgs, 'input'>
+  >;
+  createInvoice?: Resolver<
+    Maybe<ResolversTypes['Invoice']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateInvoiceArgs, 'input'>
+  >;
+  createProject?: Resolver<
+    Maybe<ResolversTypes['Project']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateProjectArgs, 'input'>
+  >;
+  createTask?: Resolver<
+    Maybe<ResolversTypes['Task']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateTaskArgs, 'input' | 'projectId'>
+  >;
+  createTimeEntry?: Resolver<
+    Maybe<ResolversTypes['TimeEntry']>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      MutationCreateTimeEntryArgs,
+      'billable' | 'projectId' | 'startedAt' | 'stoppedAt'
+    >
+  >;
+  deleteClient?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteClientArgs, 'id'>
+  >;
+  deleteInvoice?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteInvoiceArgs, 'id'>
+  >;
+  deleteTask?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteTaskArgs, 'id'>
+  >;
+  deleteTimeEntry?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteTimeEntryArgs, 'timeEntryId'>
+  >;
+  markInvoicePaid?: Resolver<
+    Maybe<ResolversTypes['Invoice']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationMarkInvoicePaidArgs, 'id'>
+  >;
+  markInvoiceSent?: Resolver<
+    Maybe<ResolversTypes['Invoice']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationMarkInvoiceSentArgs, 'id'>
+  >;
+  removeInvoiceItem?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationRemoveInvoiceItemArgs, 'id'>
+  >;
+  removeProjectMember?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationRemoveProjectMemberArgs, 'id'>
+  >;
+  removeTaskAssignee?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationRemoveTaskAssigneeArgs, 'id'>
+  >;
+  removeTimeEntryFromInvoice?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      MutationRemoveTimeEntryFromInvoiceArgs,
+      'invoiceId' | 'timeEntryId'
+    >
+  >;
+  reorderTasks?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationReorderTasksArgs, 'order' | 'projectId'>
+  >;
+  setProjectStatus?: Resolver<
+    Maybe<ResolversTypes['Project']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationSetProjectStatusArgs, 'id' | 'status'>
+  >;
+  startTimer?: Resolver<
+    Maybe<ResolversTypes['TimeEntry']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationStartTimerArgs, 'billable' | 'projectId'>
+  >;
+  stopTimer?: Resolver<
+    Maybe<ResolversTypes['TimeEntry']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationStopTimerArgs, 'timeEntryId'>
+  >;
+  unarchiveClient?: Resolver<
+    Maybe<ResolversTypes['Client']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUnarchiveClientArgs, 'id'>
+  >;
+  updateClient?: Resolver<
+    Maybe<ResolversTypes['Client']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateClientArgs, 'id' | 'input'>
+  >;
+  updateInvoice?: Resolver<
+    Maybe<ResolversTypes['Invoice']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateInvoiceArgs, 'id' | 'input'>
+  >;
+  updateInvoiceItem?: Resolver<
+    Maybe<ResolversTypes['InvoiceItem']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateInvoiceItemArgs, 'id' | 'input'>
+  >;
+  updateProject?: Resolver<
+    Maybe<ResolversTypes['Project']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateProjectArgs, 'id' | 'input'>
+  >;
+  updateProjectMember?: Resolver<
+    Maybe<ResolversTypes['ProjectMember']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateProjectMemberArgs, 'id' | 'role'>
+  >;
+  updateTask?: Resolver<
+    Maybe<ResolversTypes['Task']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateTaskArgs, 'id' | 'input'>
+  >;
+  updateTimeEntry?: Resolver<
+    Maybe<ResolversTypes['TimeEntry']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateTimeEntryArgs, 'timeEntryId'>
+  >;
+  updateUserPassword?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      MutationUpdateUserPasswordArgs,
+      'currentPassword' | 'newPassword'
+    >
+  >;
+  updateUserProfile?: Resolver<
+    Maybe<ResolversTypes['User']>,
+    ParentType,
+    ContextType,
+    Partial<MutationUpdateUserProfileArgs>
+  >;
 };
 
-export type PageInfoResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
-  hasNextPage?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+export type PageInfoResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['PageInfo'] =
+    ResolversParentTypes['PageInfo'],
+> = {
+  hasNextPage?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType
+  >;
   nextOffset?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
 };
 
-export type ProjectResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Project'] = ResolversParentTypes['Project']> = {
-  archivedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  budgetAmountCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  budgetHours?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  budgetType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+export type ProjectResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['Project'] =
+    ResolversParentTypes['Project'],
+> = {
+  archivedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  budgetAmountCents?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >;
+  budgetHours?: Resolver<
+    Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >;
+  budgetType?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType>;
   clientId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   color?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  defaultHourlyRateCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  dueDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  defaultHourlyRateCents?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >;
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  dueDate?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  members?: Resolver<Maybe<Array<ResolversTypes['ProjectMember']>>, ParentType, ContextType>;
+  members?: Resolver<
+    Maybe<Array<ResolversTypes['ProjectMember']>>,
+    ParentType,
+    ContextType
+  >;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  startDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  startDate?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
   status?: Resolver<Maybe<ResolversTypes['Status']>, ParentType, ContextType>;
-  tags?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  tasks?: Resolver<Maybe<ResolversTypes['TaskConnection']>, ParentType, ContextType, RequireFields<ProjectTasksArgs, 'limit' | 'offset' | 'order'>>;
+  tags?: Resolver<
+    Maybe<Array<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >;
+  tasks?: Resolver<
+    Maybe<ResolversTypes['TaskConnection']>,
+    ParentType,
+    ContextType,
+    RequireFields<ProjectTasksArgs, 'limit' | 'offset' | 'order'>
+  >;
   teamId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
 };
 
-export type ProjectConnectionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ProjectConnection'] = ResolversParentTypes['ProjectConnection']> = {
-  nodes?: Resolver<Maybe<Array<ResolversTypes['Project']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+export type ProjectConnectionResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['ProjectConnection'] =
+    ResolversParentTypes['ProjectConnection'],
+> = {
+  nodes?: Resolver<
+    Maybe<Array<ResolversTypes['Project']>>,
+    ParentType,
+    ContextType
+  >;
+  pageInfo?: Resolver<
+    Maybe<ResolversTypes['PageInfo']>,
+    ParentType,
+    ContextType
+  >;
   total?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
 };
 
-export type ProjectMemberResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ProjectMember'] = ResolversParentTypes['ProjectMember']> = {
+export type ProjectMemberResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['ProjectMember'] =
+    ResolversParentTypes['ProjectMember'],
+> = {
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  role?: Resolver<Maybe<ResolversTypes['ProjectRole']>, ParentType, ContextType>;
+  role?: Resolver<
+    Maybe<ResolversTypes['ProjectRole']>,
+    ParentType,
+    ContextType
+  >;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, 'id'>>;
-  clients?: Resolver<Maybe<ResolversTypes['ClientConnection']>, ParentType, ContextType, RequireFields<QueryClientsArgs, 'args'>>;
-  invoice?: Resolver<Maybe<ResolversTypes['Invoice']>, ParentType, ContextType, RequireFields<QueryInvoiceArgs, 'id'>>;
-  invoices?: Resolver<Maybe<ResolversTypes['InvoiceConnection']>, ParentType, ContextType, RequireFields<QueryInvoicesArgs, 'limit' | 'offset' | 'order' | 'teamId'>>;
+export type QueryResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['Query'] =
+    ResolversParentTypes['Query'],
+> = {
+  client?: Resolver<
+    Maybe<ResolversTypes['Client']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryClientArgs, 'id'>
+  >;
+  clients?: Resolver<
+    Maybe<ResolversTypes['ClientConnection']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryClientsArgs, 'args'>
+  >;
+  invoice?: Resolver<
+    Maybe<ResolversTypes['Invoice']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryInvoiceArgs, 'id'>
+  >;
+  invoices?: Resolver<
+    Maybe<ResolversTypes['InvoiceConnection']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryInvoicesArgs, 'limit' | 'offset' | 'order' | 'teamId'>
+  >;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  project?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType, RequireFields<QueryProjectArgs, 'id'>>;
-  projects?: Resolver<Maybe<ResolversTypes['ProjectConnection']>, ParentType, ContextType, RequireFields<QueryProjectsArgs, 'args'>>;
-  searchClients?: Resolver<Maybe<Array<ResolversTypes['Client']>>, ParentType, ContextType, RequireFields<QuerySearchClientsArgs, 'limit' | 'q' | 'teamId'>>;
-  task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QueryTaskArgs, 'id'>>;
-  tasks?: Resolver<Maybe<ResolversTypes['TaskConnection']>, ParentType, ContextType, RequireFields<QueryTasksArgs, 'limit' | 'offset' | 'order' | 'projectId'>>;
-  teamMembers?: Resolver<Maybe<Array<ResolversTypes['TeamMember']>>, ParentType, ContextType, RequireFields<QueryTeamMembersArgs, 'teamId'>>;
-  timeEntries?: Resolver<Maybe<ResolversTypes['TimeEntryConnection']>, ParentType, ContextType, RequireFields<QueryTimeEntriesArgs, 'limit' | 'offset' | 'order' | 'teamId'>>;
+  project?: Resolver<
+    Maybe<ResolversTypes['Project']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryProjectArgs, 'id'>
+  >;
+  projects?: Resolver<
+    Maybe<ResolversTypes['ProjectConnection']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryProjectsArgs, 'args'>
+  >;
+  searchClients?: Resolver<
+    Maybe<Array<ResolversTypes['Client']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerySearchClientsArgs, 'limit' | 'q' | 'teamId'>
+  >;
+  task?: Resolver<
+    Maybe<ResolversTypes['Task']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryTaskArgs, 'id'>
+  >;
+  tasks?: Resolver<
+    Maybe<ResolversTypes['TaskConnection']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryTasksArgs, 'limit' | 'offset' | 'order' | 'projectId'>
+  >;
+  teamMembers?: Resolver<
+    Maybe<Array<ResolversTypes['TeamMember']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryTeamMembersArgs, 'teamId'>
+  >;
+  timeEntries?: Resolver<
+    Maybe<ResolversTypes['TimeEntryConnection']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryTimeEntriesArgs, 'limit' | 'offset' | 'order' | 'teamId'>
+  >;
 };
 
-export type TaskResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
-  assignees?: Resolver<Maybe<Array<ResolversTypes['TaskAssignee']>>, ParentType, ContextType>;
-  billable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  hourlyRateCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+export type TaskResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['Task'] =
+    ResolversParentTypes['Task'],
+> = {
+  assignees?: Resolver<
+    Maybe<Array<ResolversTypes['TaskAssignee']>>,
+    ParentType,
+    ContextType
+  >;
+  billable?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType
+  >;
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  hourlyRateCents?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   orderIndex?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   project?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType>;
   projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['Status']>, ParentType, ContextType>;
-  tags?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  tags?: Resolver<
+    Maybe<Array<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >;
+  updatedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
 };
 
-export type TaskAssigneeResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TaskAssignee'] = ResolversParentTypes['TaskAssignee']> = {
+export type TaskAssigneeResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['TaskAssignee'] =
+    ResolversParentTypes['TaskAssignee'],
+> = {
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   taskId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 };
 
-export type TaskConnectionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TaskConnection'] = ResolversParentTypes['TaskConnection']> = {
-  nodes?: Resolver<Maybe<Array<ResolversTypes['Task']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+export type TaskConnectionResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['TaskConnection'] =
+    ResolversParentTypes['TaskConnection'],
+> = {
+  nodes?: Resolver<
+    Maybe<Array<ResolversTypes['Task']>>,
+    ParentType,
+    ContextType
+  >;
+  pageInfo?: Resolver<
+    Maybe<ResolversTypes['PageInfo']>,
+    ParentType,
+    ContextType
+  >;
   total?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
 };
 
-export type TeamResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Team'] = ResolversParentTypes['Team']> = {
-  billingAddress?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+export type TeamResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['Team'] =
+    ResolversParentTypes['Team'],
+> = {
+  billingAddress?: Resolver<
+    Maybe<ResolversTypes['JSON']>,
+    ParentType,
+    ContextType
+  >;
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
 };
 
-export type TeamMemberResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TeamMember'] = ResolversParentTypes['TeamMember']> = {
+export type TeamMemberResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['TeamMember'] =
+    ResolversParentTypes['TeamMember'],
+> = {
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   teamId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 };
 
-export type TimeEntryResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TimeEntry'] = ResolversParentTypes['TimeEntry']> = {
+export type TimeEntryResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['TimeEntry'] =
+    ResolversParentTypes['TimeEntry'],
+> = {
   amountCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  billable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  billable?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType
+  >;
   clientId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  durationSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  hourlyRateCents?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  durationSeconds?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >;
+  hourlyRateCents?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   project?: Resolver<Maybe<ResolversTypes['Project']>, ParentType, ContextType>;
   projectId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  startedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  stoppedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  startedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  stoppedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
   task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType>;
   taskId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
 };
 
-export type TimeEntryConnectionResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['TimeEntryConnection'] = ResolversParentTypes['TimeEntryConnection']> = {
-  nodes?: Resolver<Maybe<Array<ResolversTypes['TimeEntry']>>, ParentType, ContextType>;
-  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>;
+export type TimeEntryConnectionResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['TimeEntryConnection'] =
+    ResolversParentTypes['TimeEntryConnection'],
+> = {
+  nodes?: Resolver<
+    Maybe<Array<ResolversTypes['TimeEntry']>>,
+    ParentType,
+    ContextType
+  >;
+  pageInfo?: Resolver<
+    Maybe<ResolversTypes['PageInfo']>,
+    ParentType,
+    ContextType
+  >;
   total?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+export type UserResolvers<
+  ContextType = GraphQLContext,
+  ParentType extends ResolversParentTypes['User'] =
+    ResolversParentTypes['User'],
+> = {
+  createdAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
+  displayName?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  instanceRole?: Resolver<Maybe<ResolversTypes['InstanceRole']>, ParentType, ContextType>;
+  instanceRole?: Resolver<
+    Maybe<ResolversTypes['InstanceRole']>,
+    ParentType,
+    ContextType
+  >;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  updatedAt?: Resolver<
+    Maybe<ResolversTypes['DateTime']>,
+    ParentType,
+    ContextType
+  >;
 };
 
 export type Resolvers<ContextType = GraphQLContext> = {
@@ -1475,4 +2665,3 @@ export type Resolvers<ContextType = GraphQLContext> = {
   TimeEntryConnection?: TimeEntryConnectionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
-

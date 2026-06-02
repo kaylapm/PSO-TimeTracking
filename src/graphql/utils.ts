@@ -116,13 +116,17 @@ export function sortWhitelist(
     return orderBy;
   }
 
-  throw new ValidationError(`Invalid orderBy field: ${orderBy}. Allowed fields: ${allowedColumns.join(', ')}`);
+  throw new ValidationError(
+    `Invalid orderBy field: ${orderBy}. Allowed fields: ${allowedColumns.join(', ')}`
+  );
 }
 
 /**
  * Validates sort order
  */
-export function validateOrder(order: string | null | undefined): 'ASC' | 'DESC' {
+export function validateOrder(
+  order: string | null | undefined
+): 'ASC' | 'DESC' {
   if (!order) {
     return 'DESC';
   }
@@ -176,7 +180,11 @@ export function buildQuery(options: QueryBuilderOptions): QueryBuilderResult {
 
   // Add search
   if (options.search && options.search.term) {
-    const searchResult = buildSearch(options.search.term, options.search.columns, paramOffset);
+    const searchResult = buildSearch(
+      options.search.term,
+      options.search.columns,
+      paramOffset
+    );
     if (searchResult.sql) {
       whereClauses.push(searchResult.sql);
       params.push(...searchResult.params);
@@ -199,10 +207,15 @@ export function buildQuery(options: QueryBuilderOptions): QueryBuilderResult {
     }
   }
 
-  const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+  const whereClause =
+    whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
   // Build ORDER BY
-  const orderByColumn = sortWhitelist(options.orderBy, options.allowedOrderBy, options.defaultOrderBy);
+  const orderByColumn = sortWhitelist(
+    options.orderBy,
+    options.allowedOrderBy,
+    options.defaultOrderBy
+  );
   const orderDirection = validateOrder(options.order);
   const orderByClause = `ORDER BY ${orderByColumn} ${orderDirection}`;
 
@@ -231,7 +244,11 @@ export function buildQuery(options: QueryBuilderOptions): QueryBuilderResult {
 /**
  * Calculates pagination info
  */
-export function calculatePageInfo(offset: number, limit: number, total: number) {
+export function calculatePageInfo(
+  offset: number,
+  limit: number,
+  total: number
+) {
   const nextOffset = offset + limit;
   const hasNextPage = nextOffset < total;
 

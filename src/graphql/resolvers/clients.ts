@@ -3,7 +3,11 @@ import { ClientRef, ClientConnection } from '../schema/types';
 import { ClientInput, ClientPatch, ListArgsInput } from '../schema/inputs';
 import { parseOffsetLimit, buildQuery, calculatePageInfo } from '../utils';
 import { NotFoundError, withErrorMapping } from '../errors';
-import { requireAuth, requireTeamAccess, requireTeamManagement } from '../context';
+import {
+  requireAuth,
+  requireTeamAccess,
+  requireTeamManagement,
+} from '../context';
 import { Client } from '../types';
 
 /**
@@ -21,7 +25,17 @@ builder.queryFields((t) => ({
     resolve: async (_parent, args, ctx) => {
       requireAuth(ctx);
 
-      const { teamId, offset: rawOffset, limit: rawLimit, search, status, from, to, orderBy, order } = args.args;
+      const {
+        teamId,
+        offset: rawOffset,
+        limit: rawLimit,
+        search,
+        status,
+        from,
+        to,
+        orderBy,
+        order,
+      } = args.args;
 
       // Verify user has access to this team
       await requireTeamAccess(ctx, teamId);
@@ -29,9 +43,7 @@ builder.queryFields((t) => ({
       const { offset, limit } = parseOffsetLimit(rawOffset, rawLimit, 100);
 
       // Build filters
-      const filters = [
-        { sql: 'team_id = $1', params: [teamId] },
-      ];
+      const filters = [{ sql: 'team_id = $1', params: [teamId] }];
 
       // Status filter (archived vs active)
       if (status === 'archived') {
@@ -45,10 +57,15 @@ builder.queryFields((t) => ({
         baseSelect: 'SELECT *',
         baseFrom: 'FROM clients',
         filters,
-        search: search ? { term: search, columns: ['name', 'email', 'phone', 'contact_name'] } : undefined,
+        search: search
+          ? {
+              term: search,
+              columns: ['name', 'email', 'phone', 'contact_name'],
+            }
+          : undefined,
         dateRange: from || to ? { from, to, field: 'created_at' } : undefined,
         orderBy,
-        order: (order as 'asc' | 'desc'),
+        order: order as 'asc' | 'desc',
         allowedOrderBy: ['name', 'email', 'created_at', 'updated_at'],
         defaultOrderBy: 'name',
         offset,
@@ -172,7 +189,9 @@ builder.mutationFields((t) => ({
             args.input.phone,
             args.input.notes,
             args.input.contactName,
-            args.input.billingAddress ? JSON.stringify(args.input.billingAddress) : null,
+            args.input.billingAddress
+              ? JSON.stringify(args.input.billingAddress)
+              : null,
             args.input.taxId,
             args.input.defaultHourlyRateCents,
             args.input.currency,
@@ -233,7 +252,11 @@ builder.mutationFields((t) => ({
         }
         if (args.input.billingAddress !== undefined) {
           updates.push(`billing_address = $${paramIndex++}`);
-          values.push(args.input.billingAddress ? JSON.stringify(args.input.billingAddress) : null);
+          values.push(
+            args.input.billingAddress
+              ? JSON.stringify(args.input.billingAddress)
+              : null
+          );
         }
         if (args.input.taxId !== undefined) {
           updates.push(`tax_id = $${paramIndex++}`);
@@ -297,10 +320,9 @@ builder.mutationFields((t) => ({
       requireTeamManagement(ctx); // Only OWNER and ADMIN can delete clients
 
       return withErrorMapping(async () => {
-        const result = await ctx.db.query(
-          'DELETE FROM clients WHERE id = $1',
-          [args.id]
-        );
+        const result = await ctx.db.query('DELETE FROM clients WHERE id = $1', [
+          args.id,
+        ]);
 
         ctx.loaders.clientById.clear(args.id);
 

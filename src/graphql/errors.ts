@@ -68,7 +68,12 @@ export class DependencyError extends GraphQLError {
  */
 export function mapPgError(error: any): never {
   // PostgreSQL error codes
-  const pgError = error as { code?: string; constraint?: string; detail?: string; message?: string };
+  const pgError = error as {
+    code?: string;
+    constraint?: string;
+    detail?: string;
+    message?: string;
+  };
 
   switch (pgError.code) {
     case '23505': // unique_violation
@@ -109,7 +114,9 @@ export function mapPgError(error: any): never {
 /**
  * Wraps a database operation with error mapping
  */
-export async function withErrorMapping<T>(operation: () => Promise<T>): Promise<T> {
+export async function withErrorMapping<T>(
+  operation: () => Promise<T>
+): Promise<T> {
   try {
     return await operation();
   } catch (error) {

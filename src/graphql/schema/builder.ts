@@ -101,21 +101,24 @@ builder.objectType(builder.objectRef<PageInfo>('PageInfo'), {
 });
 
 // Generic connection creator
-export function createConnectionType<T>(
-  name: string,
-  nodeRef: any
-) {
-  return builder.objectRef<{ nodes: T[]; total: number; pageInfo: PageInfo }>(`${name}Connection`).implement({
-    fields: (t) => ({
-      nodes: t.field({
-        type: [nodeRef],
-        resolve: (parent) => parent.nodes,
+export function createConnectionType<T>(name: string, nodeRef: any) {
+  return builder
+    .objectRef<{
+      nodes: T[];
+      total: number;
+      pageInfo: PageInfo;
+    }>(`${name}Connection`)
+    .implement({
+      fields: (t) => ({
+        nodes: t.field({
+          type: [nodeRef],
+          resolve: (parent) => parent.nodes,
+        }),
+        total: t.exposeInt('total'),
+        pageInfo: t.field({
+          type: 'PageInfo',
+          resolve: (parent) => parent.pageInfo,
+        }),
       }),
-      total: t.exposeInt('total'),
-      pageInfo: t.field({
-        type: 'PageInfo',
-        resolve: (parent) => parent.pageInfo,
-      }),
-    }),
-  });
+    });
 }

@@ -1,0 +1,27 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "=== Running pre-push validation ==="
+
+# 1. Type Check (TypeScript)
+echo "Checking types (TypeScript)..."
+if npx tsc --noEmit; then
+  echo "-> TypeScript: OK"
+else
+  echo "-> TypeScript: ERROR"
+  echo "======================================"
+  exit 1
+fi
+
+# 2. Unit Testing (Jest)
+echo "Running tests (Jest)..."
+if npm test; then
+  echo "-> Jest: OK"
+else
+  echo "-> Jest: ERROR"
+  echo "======================================"
+  exit 1
+fi
+
+echo "All push checks passed successfully."
+echo "======================================"

@@ -1,8 +1,19 @@
 import { builder } from '../schema/builder';
 import { TimeEntryRef, TimeEntryConnection } from '../schema/types';
 import { parseOffsetLimit, buildQuery, calculatePageInfo } from '../utils';
-import { NotFoundError, withErrorMapping, ValidationError, UnauthorizedError } from '../errors';
-import { requireAuth, requireTeamAccess, canLogTime, requireProjectRole, getProjectMemberRole } from '../context';
+import {
+  NotFoundError,
+  withErrorMapping,
+  ValidationError,
+  UnauthorizedError,
+} from '../errors';
+import {
+  requireAuth,
+  requireTeamAccess,
+  canLogTime,
+  requireProjectRole,
+  getProjectMemberRole,
+} from '../context';
 import { TimeEntry } from '../types';
 
 /**
@@ -33,22 +44,25 @@ builder.queryFields((t) => ({
       const { offset, limit } = parseOffsetLimit(args.offset, args.limit, 100);
 
       // Base filter: time entries must belong to the team
-      const filters = [
-        { sql: 'team_id = $1', params: [args.teamId] },
-      ];
+      const filters = [{ sql: 'team_id = $1', params: [args.teamId] }];
 
       // OWNER, ADMIN, VIEWER, and BILLING can see all time entries in the team
       // MEMBER can only see time entries from projects where they are explicitly assigned
       if (ctx.auth.teamRole === 'MEMBER') {
         filters.push({
           sql: 'EXISTS (SELECT 1 FROM project_members WHERE project_id = time_entries.project_id AND user_id = $2)',
-          params: [ctx.auth.userId!] // Non-null assertion: requireAuth ensures userId is not null
+          params: [ctx.auth.userId!], // Non-null assertion: requireAuth ensures userId is not null
         });
-      } else if (ctx.auth.teamRole !== 'OWNER' && ctx.auth.teamRole !== 'ADMIN' && ctx.auth.teamRole !== 'VIEWER' && ctx.auth.teamRole !== 'BILLING') {
+      } else if (
+        ctx.auth.teamRole !== 'OWNER' &&
+        ctx.auth.teamRole !== 'ADMIN' &&
+        ctx.auth.teamRole !== 'VIEWER' &&
+        ctx.auth.teamRole !== 'BILLING'
+      ) {
         // Users without a team role can only see time entries from projects where they are a member
         filters.push({
           sql: 'EXISTS (SELECT 1 FROM project_members WHERE project_id = time_entries.project_id AND user_id = $2)',
-          params: [ctx.auth.userId!]
+          params: [ctx.auth.userId!],
         });
       }
 
@@ -56,29 +70,44 @@ builder.queryFields((t) => ({
       let paramIndex = filters.reduce((sum, f) => sum + f.params.length, 0) + 1;
 
       if (args.projectId) {
-        filters.push({ sql: `project_id = $${paramIndex++}`, params: [args.projectId] });
+        filters.push({
+          sql: `project_id = $${paramIndex++}`,
+          params: [args.projectId],
+        });
       }
 
       if (args.taskId) {
-        filters.push({ sql: `task_id = $${paramIndex++}`, params: [args.taskId] });
+        filters.push({
+          sql: `task_id = $${paramIndex++}`,
+          params: [args.taskId],
+        });
       }
 
       if (args.userId) {
-        filters.push({ sql: `user_id = $${paramIndex++}`, params: [args.userId] });
+        filters.push({
+          sql: `user_id = $${paramIndex++}`,
+          params: [args.userId],
+        });
       }
 
       if (args.clientId) {
-        filters.push({ sql: `client_id = $${paramIndex++}`, params: [args.clientId] });
+        filters.push({
+          sql: `client_id = $${paramIndex++}`,
+          params: [args.clientId],
+        });
       }
 
       if (args.billable !== undefined && args.billable !== null) {
-        filters.push({ sql: `billable = $${paramIndex++}`, params: [args.billable as any] });
+        filters.push({
+          sql: `billable = $${paramIndex++}`,
+          params: [args.billable as any],
+        });
       }
 
       if (args.uninvoicedOnly) {
         filters.push({
           sql: `id NOT IN (SELECT time_entry_id FROM invoice_time_entries)`,
-          params: []
+          params: [],
         });
       }
 
@@ -86,10 +115,18 @@ builder.queryFields((t) => ({
         baseSelect: 'SELECT *',
         baseFrom: 'FROM time_entries',
         filters,
-        dateRange: args.from || args.to ? { from: args.from, to: args.to, field: 'started_at' } : undefined,
+        dateRange:
+          args.from || args.to
+            ? { from: args.from, to: args.to, field: 'started_at' }
+            : undefined,
         orderBy: args.orderBy,
         order: (args.order as 'asc' | 'desc') || 'desc',
-        allowedOrderBy: ['started_at', 'stopped_at', 'duration_seconds', 'created_at'],
+        allowedOrderBy: [
+          'started_at',
+          'stopped_at',
+          'duration_seconds',
+          'created_at',
+        ],
         defaultOrderBy: 'started_at',
         offset,
         limit,
@@ -137,14 +174,18 @@ builder.mutationFields((t) => ({
       // Only MANAGER and CONTRIBUTOR can log time
       const canLog = await canLogTime(ctx, args.projectId);
       if (!canLog) {
-        throw new UnauthorizedError('You do not have permission to log time on this project');
+        throw new UnauthorizedError(
+          'You do not have permission to log time on this project'
+        );
       }
 
       // Verify task belongs to project if provided
       if (args.taskId) {
         const task = await ctx.loaders.taskById.load(args.taskId);
         if (!task || task.project_id !== args.projectId) {
-          throw new ValidationError('Task does not belong to the specified project');
+          throw new ValidationError(
+            'Task does not belong to the specified project'
+          );
         }
       }
 
@@ -192,7 +233,9 @@ builder.mutationFields((t) => ({
       // Only MANAGER and CONTRIBUTOR can stop timers, and must be their own timer
       const canLog = await canLogTime(ctx, timeEntry.project_id);
       if (!canLog) {
-        throw new UnauthorizedError('You do not have permission to log time on this project');
+        throw new UnauthorizedError(
+          'You do not have permission to log time on this project'
+        );
       }
 
       if (timeEntry.user_id !== ctx.auth.userId) {
@@ -233,7 +276,9 @@ builder.mutationFields((t) => ({
       // Calculate duration and amount
       const stoppedAt = new Date();
       const startedAt = new Date(timeEntry.started_at);
-      const durationSeconds = Math.floor((stoppedAt.getTime() - startedAt.getTime()) / 1000);
+      const durationSeconds = Math.floor(
+        (stoppedAt.getTime() - startedAt.getTime()) / 1000
+      );
 
       // Calculate amount: (duration in hours) * hourly rate
       let amountCents: number | null = null;
@@ -254,7 +299,13 @@ builder.mutationFields((t) => ({
         WHERE id = $1
         RETURNING *
         `,
-        [args.timeEntryId, stoppedAt, durationSeconds, hourlyRateCents, amountCents]
+        [
+          args.timeEntryId,
+          stoppedAt,
+          durationSeconds,
+          hourlyRateCents,
+          amountCents,
+        ]
       );
 
       ctx.loaders.timeEntryById.clear(args.timeEntryId);
@@ -285,14 +336,18 @@ builder.mutationFields((t) => ({
       // Only MANAGER and CONTRIBUTOR can log time
       const canLog = await canLogTime(ctx, args.projectId);
       if (!canLog) {
-        throw new UnauthorizedError('You do not have permission to log time on this project');
+        throw new UnauthorizedError(
+          'You do not have permission to log time on this project'
+        );
       }
 
       // Verify task belongs to project if provided
       if (args.taskId) {
         const task = await ctx.loaders.taskById.load(args.taskId);
         if (!task || task.project_id !== args.projectId) {
-          throw new ValidationError('Task does not belong to the specified project');
+          throw new ValidationError(
+            'Task does not belong to the specified project'
+          );
         }
       }
 
@@ -304,7 +359,9 @@ builder.mutationFields((t) => ({
       }
 
       // Calculate duration
-      const durationSeconds = Math.floor((stoppedAt.getTime() - startedAt.getTime()) / 1000);
+      const durationSeconds = Math.floor(
+        (stoppedAt.getTime() - startedAt.getTime()) / 1000
+      );
 
       // Determine hourly rate (task > project > client)
       let hourlyRateCents: number | null = null;
@@ -389,7 +446,8 @@ builder.mutationFields((t) => ({
 
       // Team OWNER and ADMIN can edit any time entry
       // Otherwise, check project-level permissions: MANAGER can edit any, CONTRIBUTOR can edit their own
-      const isTeamAdmin = ctx.auth.teamRole === 'OWNER' || ctx.auth.teamRole === 'ADMIN';
+      const isTeamAdmin =
+        ctx.auth.teamRole === 'OWNER' || ctx.auth.teamRole === 'ADMIN';
 
       if (!isTeamAdmin) {
         const role = await getProjectMemberRole(ctx, timeEntry.project_id);
@@ -402,16 +460,25 @@ builder.mutationFields((t) => ({
         }
 
         if (role === 'CONTRIBUTOR' && timeEntry.user_id !== ctx.auth.userId) {
-          throw new UnauthorizedError('Contributors can only edit their own time entries');
+          throw new UnauthorizedError(
+            'Contributors can only edit their own time entries'
+          );
         }
       }
 
       // Determine which values to use (new or existing)
       const projectId = args.projectId ?? timeEntry.project_id;
-      const taskId = args.taskId !== undefined ? args.taskId : timeEntry.task_id;
+      const taskId =
+        args.taskId !== undefined ? args.taskId : timeEntry.task_id;
       const note = args.note !== undefined ? args.note : timeEntry.note;
-      const startedAt = args.startedAt ? new Date(args.startedAt) : new Date(timeEntry.started_at);
-      const stoppedAt = args.stoppedAt ? new Date(args.stoppedAt) : timeEntry.stopped_at ? new Date(timeEntry.stopped_at) : null;
+      const startedAt = args.startedAt
+        ? new Date(args.startedAt)
+        : new Date(timeEntry.started_at);
+      const stoppedAt = args.stoppedAt
+        ? new Date(args.stoppedAt)
+        : timeEntry.stopped_at
+          ? new Date(timeEntry.stopped_at)
+          : null;
       const billable = args.billable ?? timeEntry.billable;
 
       // Verify project exists if changing
@@ -433,7 +500,9 @@ builder.mutationFields((t) => ({
       if (taskId) {
         const task = await ctx.loaders.taskById.load(taskId);
         if (!task || task.project_id !== projectId) {
-          throw new ValidationError('Task does not belong to the specified project');
+          throw new ValidationError(
+            'Task does not belong to the specified project'
+          );
         }
       }
 
@@ -447,7 +516,9 @@ builder.mutationFields((t) => ({
           throw new ValidationError('End time must be after start time');
         }
 
-        durationSeconds = Math.floor((stoppedAt.getTime() - startedAt.getTime()) / 1000);
+        durationSeconds = Math.floor(
+          (stoppedAt.getTime() - startedAt.getTime()) / 1000
+        );
 
         // Determine hourly rate (task > project > client)
         if (taskId) {
@@ -530,7 +601,8 @@ builder.mutationFields((t) => ({
 
       // Team OWNER and ADMIN can delete any time entry
       // Otherwise, check project-level permissions: MANAGER can delete any, CONTRIBUTOR can delete their own
-      const isTeamAdmin = ctx.auth.teamRole === 'OWNER' || ctx.auth.teamRole === 'ADMIN';
+      const isTeamAdmin =
+        ctx.auth.teamRole === 'OWNER' || ctx.auth.teamRole === 'ADMIN';
 
       if (!isTeamAdmin) {
         const role = await getProjectMemberRole(ctx, timeEntry.project_id);
@@ -543,14 +615,15 @@ builder.mutationFields((t) => ({
         }
 
         if (role === 'CONTRIBUTOR' && timeEntry.user_id !== ctx.auth.userId) {
-          throw new UnauthorizedError('Contributors can only delete their own time entries');
+          throw new UnauthorizedError(
+            'Contributors can only delete their own time entries'
+          );
         }
       }
 
-      await ctx.db.query(
-        'DELETE FROM time_entries WHERE id = $1',
-        [args.timeEntryId]
-      );
+      await ctx.db.query('DELETE FROM time_entries WHERE id = $1', [
+        args.timeEntryId,
+      ]);
 
       ctx.loaders.timeEntryById.clear(args.timeEntryId);
       return true;

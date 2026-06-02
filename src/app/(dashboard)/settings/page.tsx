@@ -79,8 +79,11 @@ export default function SettingsPage() {
   // Initialize form with current user data
   useEffect(() => {
     if (meResult.data?.me) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- initializing form fields from fetched user data
       setName(meResult.data.me.name || '');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayName(meResult.data.me.displayName || '');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail(meResult.data.me.email || '');
     }
   }, [meResult.data]);
@@ -152,7 +155,9 @@ export default function SettingsPage() {
       <div className="space-y-6">
         {/* Profile Settings */}
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4 dark:text-card-foreground">Profile Information</h2>
+          <h2 className="text-xl font-semibold mb-4 dark:text-card-foreground">
+            Profile Information
+          </h2>
 
           <form onSubmit={handleProfileSubmit} className="space-y-4">
             <div>
@@ -206,7 +211,9 @@ export default function SettingsPage() {
 
         {/* Password Settings */}
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4 dark:text-card-foreground">Change Password</h2>
+          <h2 className="text-xl font-semibold mb-4 dark:text-card-foreground">
+            Change Password
+          </h2>
 
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div>

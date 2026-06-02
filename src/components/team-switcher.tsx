@@ -11,14 +11,18 @@ export function TeamSwitcher() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
 
@@ -42,8 +46,12 @@ export function TeamSwitcher() {
             {currentTeam.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="truncate font-medium text-foreground dark:text-foreground">{currentTeam.name}</p>
-            <p className="text-xs text-muted-foreground dark:text-muted-foreground capitalize">{currentTeam.role.toLowerCase()}</p>
+            <p className="truncate font-medium text-foreground dark:text-foreground">
+              {currentTeam.name}
+            </p>
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground capitalize">
+              {currentTeam.role.toLowerCase()}
+            </p>
           </div>
         </div>
         <svg
@@ -84,7 +92,9 @@ export function TeamSwitcher() {
                 </div>
                 <div className="ml-3 flex-1 min-w-0">
                   <p className="truncate font-medium text-left">{team.name}</p>
-                  <p className="text-xs text-muted-foreground dark:text-muted-foreground capitalize text-left">{team.role.toLowerCase()}</p>
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground capitalize text-left">
+                    {team.role.toLowerCase()}
+                  </p>
                 </div>
                 {team.id === currentTeam.id && (
                   <svg

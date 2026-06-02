@@ -1,0 +1,111 @@
+name: Continuous Integration (CI)
+
+on:
+  pull_request:
+    branches: ['staging', 'main']
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.dockerignore'
+      - 'LICENSE'
+      - 'ardine_ddl.sql'
+      - '.idea/**'
+      - '.vscode/**'
+      - '.qodo/**'
+  push:
+    branches: ['staging', 'main']
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.dockerignore'
+      - 'LICENSE'
+      - 'ardine_ddl.sql'
+      - '.idea/**'
+      - '.vscode/**'
+      - '.qodo/**'
+
+jobs:
+  Quality_Job:
+    name: Quality Job (Lint, Format & Typecheck)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Linting (ESLint)
+        run: |
+          echo "Running ESLint"
+          npx eslint .
+
+      - name: Formatting (Prettier)
+        run: npm run format:check
+
+      - name: Type Checking (TypeScript)
+        run: npx tsc --noEmit
+
+  Test_Job:
+    name: Test Job (Unit Testing)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Unit Testing (Jest)
+        run: npm test
+
+  Build_Job:
+    name: Build Job (Build Validation)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Validation (Next.js)
+        run: npm run build
+
+  Summary_Job:
+    name: CI Summary Report
+    needs: [Quality_Job, Test_Job, Build_Job]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write Summary
+        run: |
+          echo "## CI Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Event:** \`$GITHUB_EVENT_NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target Branch:** \`$GITHUB_REF_NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit SHA:** \`$(echo "$GITHUB_SHA" | cut -c1-7)\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Quality Check:** \`${{ needs.Quality_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unit Testing:** \`${{ needs.Test_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Validation:** \`${{ needs.Build_Job.result }}\`" >> $GITHUB_STEP_SUMMARY

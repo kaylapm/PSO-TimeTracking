@@ -1,5 +1,25 @@
-import { builder, createConnectionType, StatusEnum, InvoiceStatusEnum, InstanceRoleEnum, ProjectRoleEnum, OrderEnum } from './builder';
-import { Client, Project, ProjectTask, TimeEntry, Invoice, InvoiceItem, Team, User, ProjectMember, TaskAssignee, TeamMembership } from '../types';
+import {
+  builder,
+  createConnectionType,
+  StatusEnum,
+  InvoiceStatusEnum,
+  InstanceRoleEnum,
+  ProjectRoleEnum,
+  OrderEnum,
+} from './builder';
+import {
+  Client,
+  Project,
+  ProjectTask,
+  TimeEntry,
+  Invoice,
+  InvoiceItem,
+  Team,
+  User,
+  ProjectMember,
+  TaskAssignee,
+  TeamMembership,
+} from '../types';
 import { parseOffsetLimit, buildQuery, calculatePageInfo } from '../utils';
 import { NotFoundError } from '../errors';
 
@@ -10,7 +30,10 @@ TeamRef.implement({
     id: t.exposeID('id'),
     name: t.exposeString('name'),
     slug: t.exposeString('slug'),
-    billingAddress: t.expose('billing_address', { type: 'JSON', nullable: true }),
+    billingAddress: t.expose('billing_address', {
+      type: 'JSON',
+      nullable: true,
+    }),
     createdAt: t.expose('created_at', { type: 'DateTime' }),
     updatedAt: t.expose('updated_at', { type: 'DateTime' }),
   }),
@@ -50,7 +73,8 @@ UserRef.implement({
 });
 
 // ProjectMember type
-export const ProjectMemberRef = builder.objectRef<ProjectMember>('ProjectMember');
+export const ProjectMemberRef =
+  builder.objectRef<ProjectMember>('ProjectMember');
 ProjectMemberRef.implement({
   fields: (t) => ({
     id: t.exposeID('id'),
@@ -118,7 +142,10 @@ TaskRef.implement({
   }),
 });
 
-export const TaskConnection = createConnectionType<ProjectTask>('Task', TaskRef);
+export const TaskConnection = createConnectionType<ProjectTask>(
+  'Task',
+  TaskRef
+);
 
 // InvoiceItem type
 export const InvoiceItemRef = builder.objectRef<InvoiceItem>('InvoiceItem');
@@ -209,7 +236,10 @@ InvoiceRef.implement({
   }),
 });
 
-export const InvoiceConnection = createConnectionType<Invoice>('Invoice', InvoiceRef);
+export const InvoiceConnection = createConnectionType<Invoice>(
+  'Invoice',
+  InvoiceRef
+);
 
 // TimeEntry type
 export const TimeEntryRef = builder.objectRef<TimeEntry>('TimeEntry');
@@ -256,7 +286,10 @@ TimeEntryRef.implement({
   }),
 });
 
-export const TimeEntryConnection = createConnectionType<TimeEntry>('TimeEntry', TimeEntryRef);
+export const TimeEntryConnection = createConnectionType<TimeEntry>(
+  'TimeEntry',
+  TimeEntryRef
+);
 
 // Project type
 export const ProjectRef = builder.objectRef<Project>('Project');
@@ -271,7 +304,9 @@ ProjectRef.implement({
     status: t.expose('status', { type: StatusEnum }),
     color: t.exposeString('color', { nullable: true }),
     tags: t.exposeStringList('tags'),
-    defaultHourlyRateCents: t.exposeInt('default_hourly_rate_cents', { nullable: true }),
+    defaultHourlyRateCents: t.exposeInt('default_hourly_rate_cents', {
+      nullable: true,
+    }),
     budgetType: t.exposeString('budget_type', { nullable: true }),
     budgetHours: t.exposeFloat('budget_hours', { nullable: true }),
     budgetAmountCents: t.exposeInt('budget_amount_cents', { nullable: true }),
@@ -298,14 +333,19 @@ ProjectRef.implement({
         order: t.arg({ type: OrderEnum, defaultValue: 'asc' }),
       },
       resolve: async (parent, args, ctx) => {
-        const { offset, limit } = parseOffsetLimit(args.offset, args.limit, 100);
+        const { offset, limit } = parseOffsetLimit(
+          args.offset,
+          args.limit,
+          100
+        );
 
-        const filters = [
-          { sql: 'project_id = $1', params: [parent.id] },
-        ];
+        const filters = [{ sql: 'project_id = $1', params: [parent.id] }];
 
         if (args.status) {
-          filters.push({ sql: `status = $${filters.length + 1}`, params: [args.status] });
+          filters.push({
+            sql: `status = $${filters.length + 1}`,
+            params: [args.status],
+          });
         }
 
         const { query, countQuery, params } = buildQuery({
@@ -344,7 +384,10 @@ ProjectRef.implement({
   }),
 });
 
-export const ProjectConnection = createConnectionType<Project>('Project', ProjectRef);
+export const ProjectConnection = createConnectionType<Project>(
+  'Project',
+  ProjectRef
+);
 
 // Client type
 export const ClientRef = builder.objectRef<Client>('Client');
@@ -357,9 +400,14 @@ ClientRef.implement({
     phone: t.exposeString('phone', { nullable: true }),
     notes: t.exposeString('notes', { nullable: true }),
     contactName: t.exposeString('contact_name', { nullable: true }),
-    billingAddress: t.expose('billing_address', { type: 'JSON', nullable: true }),
+    billingAddress: t.expose('billing_address', {
+      type: 'JSON',
+      nullable: true,
+    }),
     taxId: t.exposeString('tax_id', { nullable: true }),
-    defaultHourlyRateCents: t.exposeInt('default_hourly_rate_cents', { nullable: true }),
+    defaultHourlyRateCents: t.exposeInt('default_hourly_rate_cents', {
+      nullable: true,
+    }),
     currency: t.exposeString('currency'),
     archivedAt: t.expose('archived_at', { type: 'DateTime', nullable: true }),
     createdAt: t.expose('created_at', { type: 'DateTime' }),
@@ -374,14 +422,19 @@ ClientRef.implement({
         order: t.arg({ type: OrderEnum, defaultValue: 'desc' }),
       },
       resolve: async (parent, args, ctx) => {
-        const { offset, limit } = parseOffsetLimit(args.offset, args.limit, 100);
+        const { offset, limit } = parseOffsetLimit(
+          args.offset,
+          args.limit,
+          100
+        );
 
-        const filters = [
-          { sql: 'client_id = $1', params: [parent.id] },
-        ];
+        const filters = [{ sql: 'client_id = $1', params: [parent.id] }];
 
         if (args.status) {
-          filters.push({ sql: `status = $${filters.length + 1}`, params: [args.status] });
+          filters.push({
+            sql: `status = $${filters.length + 1}`,
+            params: [args.status],
+          });
         }
 
         const { query, countQuery, params } = buildQuery({
@@ -390,7 +443,13 @@ ClientRef.implement({
           filters,
           orderBy: args.orderBy,
           order: args.order,
-          allowedOrderBy: ['name', 'created_at', 'updated_at', 'start_date', 'due_date'],
+          allowedOrderBy: [
+            'name',
+            'created_at',
+            'updated_at',
+            'start_date',
+            'due_date',
+          ],
           defaultOrderBy: 'created_at',
           offset,
           limit,
@@ -423,24 +482,38 @@ ClientRef.implement({
         order: t.arg({ type: OrderEnum, defaultValue: 'desc' }),
       },
       resolve: async (parent, args, ctx) => {
-        const { offset, limit } = parseOffsetLimit(args.offset, args.limit, 100);
+        const { offset, limit } = parseOffsetLimit(
+          args.offset,
+          args.limit,
+          100
+        );
 
-        const filters = [
-          { sql: 'client_id = $1', params: [parent.id] },
-        ];
+        const filters = [{ sql: 'client_id = $1', params: [parent.id] }];
 
         if (args.status) {
-          filters.push({ sql: `status = $${filters.length + 1}`, params: [args.status] });
+          filters.push({
+            sql: `status = $${filters.length + 1}`,
+            params: [args.status],
+          });
         }
 
         const { query, countQuery, params } = buildQuery({
           baseSelect: 'SELECT *',
           baseFrom: 'FROM invoices',
           filters,
-          dateRange: args.from || args.to ? { from: args.from, to: args.to, field: 'issued_date' } : undefined,
+          dateRange:
+            args.from || args.to
+              ? { from: args.from, to: args.to, field: 'issued_date' }
+              : undefined,
           orderBy: args.orderBy,
           order: args.order,
-          allowedOrderBy: ['invoice_number', 'issued_date', 'due_date', 'total_cents', 'created_at'],
+          allowedOrderBy: [
+            'invoice_number',
+            'issued_date',
+            'due_date',
+            'total_cents',
+            'created_at',
+          ],
           defaultOrderBy: 'issued_date',
           offset,
           limit,
@@ -464,4 +537,7 @@ ClientRef.implement({
   }),
 });
 
-export const ClientConnection = createConnectionType<Client>('Client', ClientRef);
+export const ClientConnection = createConnectionType<Client>(
+  'Client',
+  ClientRef
+);

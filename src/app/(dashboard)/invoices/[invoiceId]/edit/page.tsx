@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from 'urql';
@@ -10,7 +10,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, Plus, Trash2, ChevronDown, ChevronRight, Clock, X } from 'lucide-react';
+import {
+  ArrowLeft,
+  Plus,
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  X,
+} from 'lucide-react';
 
 const GET_INVOICE_QUERY = gql(`
   query GetInvoiceForEdit($id: ID!) {
@@ -117,27 +125,16 @@ interface LineItem {
 export default function EditInvoicePage({
   params,
 }: {
-  params: Promise<{ invoiceId: string }>;
+  params: { invoiceId: string };
 }) {
-  const { invoiceId } = use(params);
+  const { invoiceId } = params;
   const router = useRouter();
   const { currentTeam } = useAuth();
   const canAccessInvoices = useCanAccessInvoices();
 
-  // Redirect if user doesn't have access to invoices
-  useEffect(() => {
-    if (currentTeam && !canAccessInvoices) {
-      router.push('/dashboard');
-    }
-  }, [currentTeam, canAccessInvoices, router]);
-
-  // Don't render if user doesn't have access
-  if (!canAccessInvoices) {
-    return null;
-  }
-
-  // Form state
+  // Form state (hooks must be declared unconditionally at top)
   const [invoiceNumber, setInvoiceNumber] = useState('');
+  const idCounterRef = useRef(0);
   const [issuedDate, setIssuedDate] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [taxRatePercent, setTaxRatePercent] = useState('0');
@@ -150,6 +147,7 @@ export default function EditInvoicePage({
   const [invoiceResult, refetchInvoice] = useQuery({
     query: GET_INVOICE_QUERY,
     variables: { id: invoiceId },
+    // ensure hook order stable; pause will be handled by server response availability
   });
 
   const [clientsResult] = useQuery({
@@ -166,11 +164,24 @@ export default function EditInvoicePage({
 
   const [, updateInvoiceMutation] = useMutation(UPDATE_INVOICE_MUTATION);
   const [, addInvoiceItemMutation] = useMutation(ADD_INVOICE_ITEM_MUTATION);
-  const [, updateInvoiceItemMutation] = useMutation(UPDATE_INVOICE_ITEM_MUTATION);
-  const [, removeInvoiceItemMutation] = useMutation(REMOVE_INVOICE_ITEM_MUTATION);
-  const [, removeTimeEntryMutation] = useMutation(REMOVE_TIME_ENTRY_FROM_INVOICE_MUTATION);
+  const [, updateInvoiceItemMutation] = useMutation(
+    UPDATE_INVOICE_ITEM_MUTATION
+  );
+  const [, removeInvoiceItemMutation] = useMutation(
+    REMOVE_INVOICE_ITEM_MUTATION
+  );
+  const [, removeTimeEntryMutation] = useMutation(
+    REMOVE_TIME_ENTRY_FROM_INVOICE_MUTATION
+  );
 
   const invoice = invoiceResult.data?.invoice;
+
+  // Redirect if user doesn't have access to invoices
+  useEffect(() => {
+    if (currentTeam && !canAccessInvoices) {
+      router.push('/dashboard');
+    }
+  }, [currentTeam, canAccessInvoices, router]);
 
   const toggleItemExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -183,7 +194,11 @@ export default function EditInvoicePage({
   };
 
   const handleRemoveTimeEntry = async (timeEntryId: string) => {
-    if (!confirm('Remove this time entry from the invoice? This will make it available for other invoices.')) {
+    if (
+      !confirm(
+        'Remove this time entry from the invoice? This will make it available for other invoices.'
+      )
+    ) {
       return;
     }
 
@@ -218,6 +233,7 @@ export default function EditInvoicePage({
   };
 
   // Pre-fill form when invoice loads
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (invoice) {
       setInvoiceNumber(invoice.invoiceNumber);
@@ -237,12 +253,18 @@ export default function EditInvoicePage({
       );
     }
   }, [invoice]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Don't render if user doesn't have access
+  if (!canAccessInvoices) {
+    return null;
+  }
 
   const addLineItem = () => {
     setLineItems([
       ...lineItems,
       {
-        id: `new-${Date.now()}`,
+        id: `new-${++idCounterRef.current}`,
         description: '',
         quantity: '1',
         rateCents: '0',
@@ -267,7 +289,9 @@ export default function EditInvoicePage({
 
   const updateLineItem = (id: string, field: keyof LineItem, value: string) => {
     setLineItems(
-      lineItems.map((item) => (item.id === id ? { ...item, [field]: value } : item))
+      lineItems.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
     );
   };
 
@@ -369,7 +393,9 @@ export default function EditInvoicePage({
     return (
       <div className="p-12 text-center">
         <p className="text-red-600 dark:text-red-400 mb-4">
-          {invoiceResult.error ? invoiceResult.error.message : 'Invoice not found'}
+          {invoiceResult.error
+            ? invoiceResult.error.message
+            : 'Invoice not found'}
         </p>
         <Link href="/invoices">
           <Button variant="outline">Back to Invoices</Button>
@@ -400,7 +426,9 @@ export default function EditInvoicePage({
             Back to Invoice
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold dark:text-foreground">Edit Invoice</h1>
+        <h1 className="text-3xl font-bold dark:text-foreground">
+          Edit Invoice
+        </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -481,7 +509,12 @@ export default function EditInvoicePage({
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Line Items</h2>
-            <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addLineItem}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Item
             </Button>
@@ -491,15 +524,24 @@ export default function EditInvoicePage({
             {lineItems
               .filter((item) => !item.isDeleted)
               .map((item) => {
-                const invoiceItem = invoice?.items?.find((i: any) => i.id === item.id);
-                const hasTimeEntries = invoiceItem?.timeEntries && invoiceItem.timeEntries.length > 0;
+                const invoiceItem = invoice?.items?.find(
+                  (i: any) => i.id === item.id
+                );
+                const hasTimeEntries =
+                  invoiceItem?.timeEntries &&
+                  invoiceItem.timeEntries.length > 0;
                 const isExpanded = expandedItems.has(item.id);
 
                 return (
-                  <div key={item.id} className="border dark:border-border rounded-lg">
+                  <div
+                    key={item.id}
+                    className="border dark:border-border rounded-lg"
+                  >
                     <div className="grid grid-cols-12 gap-4 p-4">
                       <div className="col-span-5">
-                        <Label htmlFor={`description-${item.id}`}>Description *</Label>
+                        <Label htmlFor={`description-${item.id}`}>
+                          Description *
+                        </Label>
                         <div className="flex items-center gap-2">
                           {hasTimeEntries && (
                             <button
@@ -518,7 +560,11 @@ export default function EditInvoicePage({
                             id={`description-${item.id}`}
                             value={item.description}
                             onChange={(e) =>
-                              updateLineItem(item.id, 'description', e.target.value)
+                              updateLineItem(
+                                item.id,
+                                'description',
+                                e.target.value
+                              )
                             }
                             placeholder="Item description"
                             required
@@ -599,7 +645,9 @@ export default function EditInvoicePage({
                                 <div className="flex items-center gap-1 min-w-[100px]">
                                   <Clock className="w-3 h-3" />
                                   <span>
-                                    {new Date(entry.startedAt).toLocaleDateString('en-US', {
+                                    {new Date(
+                                      entry.startedAt
+                                    ).toLocaleDateString('en-US', {
                                       month: 'short',
                                       day: 'numeric',
                                     })}
@@ -608,7 +656,11 @@ export default function EditInvoicePage({
                                 <div className="flex items-center gap-2 min-w-[180px]">
                                   <span>{formatTime(entry.startedAt)}</span>
                                   <span>→</span>
-                                  <span>{entry.stoppedAt ? formatTime(entry.stoppedAt) : 'Running'}</span>
+                                  <span>
+                                    {entry.stoppedAt
+                                      ? formatTime(entry.stoppedAt)
+                                      : 'Running'}
+                                  </span>
                                 </div>
                                 <div className="font-medium min-w-[60px]">
                                   {formatDuration(entry.durationSeconds)}

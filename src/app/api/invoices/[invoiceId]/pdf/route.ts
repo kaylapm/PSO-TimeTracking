@@ -1,8 +1,8 @@
 // Description: API route to generate and export invoice as PDF
 // Usage: GET /api/invoices/{invoiceId}/pdf
 
-import { query } from "@/db";
-import { NextRequest, NextResponse } from "next/server";
+import { query } from '@/db';
+import { NextRequest, NextResponse } from 'next/server';
 import React from 'react';
 import { renderToStream } from '@react-pdf/renderer';
 import InvoicePDF from './InvoicePDF';
@@ -44,17 +44,15 @@ export async function GET(
     );
 
     if (result.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Invoice not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     }
 
     const invoice = result.rows[0];
 
     // Generate PDF
-    // @ts-expect-error - renderToStream type is overly restrictive, but this works at runtime
-    const stream = await renderToStream(React.createElement(InvoicePDF, { invoice }));
+    const stream = await renderToStream(
+      React.createElement(InvoicePDF, { invoice }) as any
+    );
 
     // Convert stream to buffer
     const chunks: Buffer[] = [];

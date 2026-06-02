@@ -16,7 +16,9 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon-sm"
       onClick={toggleTheme}
-      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={
+        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+      }
       title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       className="relative"
     >

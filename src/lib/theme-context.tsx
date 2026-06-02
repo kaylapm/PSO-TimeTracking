@@ -29,24 +29,24 @@ const STORAGE_KEY = 'ardine_theme';
  * On initial load, it checks localStorage first, then falls back to OS preference.
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('light');
-  const [mounted, setMounted] = useState(false);
-
-  // Initialize theme from localStorage or OS preference on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (stored === 'dark' || stored === 'light') {
-      setThemeState(stored);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setThemeState('dark');
+  const getInitialTheme = (): Theme => {
+    try {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+        if (stored === 'dark' || stored === 'light') return stored;
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+          return 'dark';
+      }
+    } catch (e) {
+      // ignore and fall through
     }
-    setMounted(true);
-  }, []);
+    return 'light';
+  };
+
+  const [theme, setThemeState] = useState<Theme>(() => getInitialTheme());
 
   // Apply the `dark` class to <html> whenever the theme changes
   useEffect(() => {
-    if (!mounted) return;
-
     const root = document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');
@@ -54,7 +54,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.classList.remove('dark');
     }
     localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme, mounted]);
+  }, [theme]);
 
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -65,7 +65,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Prevent flash of wrong theme by rendering nothing until mounted
-  // Children still render but the theme class is set synchronously via useEffect
+  // Children still render but the theme class is set via effect when mounted
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}

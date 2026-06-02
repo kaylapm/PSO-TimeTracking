@@ -21,7 +21,11 @@ const allNavigationItems = [
   { name: 'Clients', href: '/clients' },
   { name: 'Projects', href: '/projects' },
   { name: 'Time', href: '/time' },
-  { name: 'Invoices', href: '/invoices', requiresRoles: ['OWNER', 'ADMIN', 'BILLING'] },
+  {
+    name: 'Invoices',
+    href: '/invoices',
+    requiresRoles: ['OWNER', 'ADMIN', 'BILLING'],
+  },
 ];
 
 export function Navigation() {
@@ -38,12 +42,13 @@ export function Navigation() {
       if (!currentTeam?.role) return false;
       return item.requiresRoles.includes(currentTeam.role);
     });
-  }, [currentTeam?.role]);
+  }, [currentTeam]);
 
   return (
     <div className="flex gap-4">
       {navigationItems.map((item) => {
-        const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+        const isActive =
+          pathname === item.href || pathname?.startsWith(`${item.href}/`);
         return (
           <Link
             key={item.name}
@@ -61,7 +66,8 @@ export function Navigation() {
 }
 
 export function UserMenu() {
-  const { user, logout, instanceRole, teams, currentTeam, switchTeam } = useAuth();
+  const { user, logout, instanceRole, teams, currentTeam, switchTeam } =
+    useAuth();
   const canManageTeam = useCanManageTeam();
   const router = useRouter();
 
@@ -97,18 +103,27 @@ export function UserMenu() {
           {currentTeam && teams.length > 0 && (
             <div className="flex-1 border-r dark:border-border p-4 min-h-[200px]">
               <div className="mb-4">
-                <p className="text-xs font-semibold uppercase text-muted-foreground mb-3">Current Team</p>
+                <p className="text-xs font-semibold uppercase text-muted-foreground mb-3">
+                  Current Team
+                </p>
                 <div className="flex items-center space-x-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-white text-xs font-semibold">
                     {currentTeam.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{currentTeam.name}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{currentTeam.role.toLowerCase()}</p>
+                    <p className="text-sm font-medium truncate">
+                      {currentTeam.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {currentTeam.role.toLowerCase()}
+                    </p>
                   </div>
                   {canManageTeam && (
                     <Link href="/team/settings" className="flex-shrink-0">
-                      <button className="p-1.5 rounded-md hover:bg-accent transition-colors" title="Team Settings">
+                      <button
+                        className="p-1.5 rounded-md hover:bg-accent transition-colors"
+                        title="Team Settings"
+                      >
                         <Settings className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                       </button>
                     </Link>
@@ -118,7 +133,9 @@ export function UserMenu() {
 
               {teams.length > 1 && (
                 <div>
-                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">Switch Team</p>
+                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                    Switch Team
+                  </p>
                   <div className="space-y-1">
                     {teams.map((team) => (
                       <button
@@ -130,8 +147,12 @@ export function UserMenu() {
                           {team.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0 text-left">
-                          <p className="text-sm font-medium truncate">{team.name}</p>
-                          <p className="text-xs text-muted-foreground capitalize">{team.role.toLowerCase()}</p>
+                          <p className="text-sm font-medium truncate">
+                            {team.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground capitalize">
+                            {team.role.toLowerCase()}
+                          </p>
                         </div>
                         {team.id === currentTeam.id && (
                           <Check className="h-4 w-4 text-blue-500 flex-shrink-0" />

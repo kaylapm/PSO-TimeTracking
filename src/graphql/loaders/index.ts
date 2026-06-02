@@ -13,7 +13,10 @@ import {
   InvoiceItem,
 } from '../types';
 
-type QueryFunction = (text: string, params?: any[]) => Promise<QueryResult<any>>;
+type QueryFunction = (
+  text: string,
+  params?: any[]
+) => Promise<QueryResult<any>>;
 
 /**
  * Generic loader for single entities by ID
@@ -105,18 +108,57 @@ export function createLoaders(query: QueryFunction): Loaders {
     timeEntryById: createByIdLoader<TimeEntry>(query, 'time_entries'),
     invoiceById: createByIdLoader<Invoice>(query, 'invoices'),
     invoiceItemById: createByIdLoader<InvoiceItem>(query, 'invoice_items'),
-    projectMemberById: createByIdLoader<ProjectMember>(query, 'project_members'),
+    projectMemberById: createByIdLoader<ProjectMember>(
+      query,
+      'project_members'
+    ),
     taskAssigneeById: createByIdLoader<TaskAssignee>(query, 'task_assignees'),
 
     // By foreign key loaders
-    projectsByClientId: createByForeignKeyLoader<Project>(query, 'projects', 'client_id'),
-    tasksByProjectId: createByForeignKeyLoader<ProjectTask>(query, 'project_tasks', 'project_id'),
-    invoicesByClientId: createByForeignKeyLoader<Invoice>(query, 'invoices', 'client_id'),
-    membersByProjectId: createByForeignKeyLoader<ProjectMember>(query, 'project_members', 'project_id'),
-    assigneesByTaskId: createByForeignKeyLoader<TaskAssignee>(query, 'task_assignees', 'task_id'),
-    invoiceItemsByInvoiceId: createByForeignKeyLoader<InvoiceItem>(query, 'invoice_items', 'invoice_id'),
-    timeEntriesByProjectId: createByForeignKeyLoader<TimeEntry>(query, 'time_entries', 'project_id'),
-    timeEntriesByTaskId: createByForeignKeyLoader<TimeEntry>(query, 'time_entries', 'task_id'),
-    timeEntriesByClientId: createByForeignKeyLoader<TimeEntry>(query, 'time_entries', 'client_id'),
+    projectsByClientId: createByForeignKeyLoader<Project>(
+      query,
+      'projects',
+      'client_id'
+    ),
+    tasksByProjectId: createByForeignKeyLoader<ProjectTask>(
+      query,
+      'project_tasks',
+      'project_id'
+    ),
+    invoicesByClientId: createByForeignKeyLoader<Invoice>(
+      query,
+      'invoices',
+      'client_id'
+    ),
+    membersByProjectId: createByForeignKeyLoader<ProjectMember>(
+      query,
+      'project_members',
+      'project_id'
+    ),
+    assigneesByTaskId: createByForeignKeyLoader<TaskAssignee>(
+      query,
+      'task_assignees',
+      'task_id'
+    ),
+    invoiceItemsByInvoiceId: createByForeignKeyLoader<InvoiceItem>(
+      query,
+      'invoice_items',
+      'invoice_id'
+    ),
+    timeEntriesByProjectId: createByForeignKeyLoader<TimeEntry>(
+      query,
+      'time_entries',
+      'project_id'
+    ),
+    timeEntriesByTaskId: createByForeignKeyLoader<TimeEntry>(
+      query,
+      'time_entries',
+      'task_id'
+    ),
+    timeEntriesByClientId: createByForeignKeyLoader<TimeEntry>(
+      query,
+      'time_entries',
+      'client_id'
+    ),
   };
 }

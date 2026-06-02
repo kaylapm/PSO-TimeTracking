@@ -1,0 +1,20 @@
+# Build directories
+.next
+out
+build
+dist
+
+# Dependency directories
+node_modules
+
+# Generated files
+graphql/generated
+coverage
+
+# Lockfiles and system files
+package-lock.json
+.idea
+.vscode
+.qodo
+.env
+.env.*

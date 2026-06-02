@@ -70,10 +70,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if slug already exists
-    const existingTeam = await db(
-      'SELECT id FROM teams WHERE slug = $1',
-      [slug]
-    );
+    const existingTeam = await db('SELECT id FROM teams WHERE slug = $1', [
+      slug,
+    ]);
 
     if (existingTeam.rows.length > 0) {
       return NextResponse.json(
@@ -127,11 +126,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: 'Team created successfully',
       team,
-      invite: inviteToken ? {
-        token: inviteToken,
-        email: inviteEmail,
-        url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/invite/${inviteToken}`,
-      } : null,
+      invite: inviteToken
+        ? {
+            token: inviteToken,
+            email: inviteEmail,
+            url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/invite/${inviteToken}`,
+          }
+        : null,
     });
   } catch (error) {
     console.error('Error creating team:', error);
