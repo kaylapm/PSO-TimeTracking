@@ -14,6 +14,9 @@ env:
 jobs:
   validate_prerequisites:
     name: Validate Prerequisites & Set Environment
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     outputs:
       env_name: ${{ steps.set-env.outputs.env_name }}
@@ -104,7 +107,9 @@ jobs:
   Notify_Discord:
     name: Send Notification to Discord
     needs: [validate_prerequisites, Deploy, Smoke_Test]
-    if: always()
+    if: |
+      always() &&
+      needs.validate_prerequisites.result != 'skipped'
     runs-on: ubuntu-latest
     steps:
       - name: Notify Discord Channel
