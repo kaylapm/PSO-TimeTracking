@@ -20,10 +20,11 @@ This repository is forked and developed by **Kelompok 5 PSO A** for the PSO cour
 - Kayla Putri Maharani (5026231158)
 - Tahhiyah Muhfimah (5026231170)
 
-## Project Presentation
+## Project Presentation & Deployment Links
 
-Canva Presentation:  
-https://canva.link/6j7r89nu8dvceho
+- **Canva Presentation:** [Canva Link](https://canva.link/6j7r89nu8dvceho)
+- **Staging Environment:** [https://timetracking-app-staging.azurewebsites.net/](https://timetracking-app-staging.azurewebsites.net/)
+- **Production Environment:** [https://timetracking-app-prod.azurewebsites.net/](https://timetracking-app-prod.azurewebsites.net/)
 
 ---
 
