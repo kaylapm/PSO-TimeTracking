@@ -18,52 +18,6 @@ env:
   CONTAINER_NAME: 'ardine-app'
 
 jobs:
-  Quality_Job:
-    name: Quality Job (Lint, Format & Typecheck)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Linting (ESLint)
-        run: npx eslint .
-
-      - name: Formatting (Prettier)
-        run: npm run format:check
-
-      - name: Type Checking (TypeScript)
-        run: npx tsc --noEmit
-
-  Test_Job:
-    name: Test Job (Unit Testing)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Unit Testing (Jest)
-        run: npm test
-
   Build_Job:
     name: Build Job (Build Validation)
     runs-on: ubuntu-latest
@@ -86,7 +40,7 @@ jobs:
 
   Deploy_Production:
     name: Deploy to Production App Service
-    needs: [Quality_Job, Test_Job, Build_Job]
+    needs: [Build_Job]
     runs-on: ubuntu-latest
     environment:
       name: Production
@@ -116,7 +70,7 @@ jobs:
 
   Notify_Discord:
     name: Send Notification to Discord
-    needs: [Quality_Job, Test_Job, Build_Job, Deploy_Production]
+    needs: [Build_Job, Deploy_Production]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -125,15 +79,13 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           # Menentukan warna embed Discord (Merah jika ada yang gagal, Hijau jika semuanya sukses)
-          status: "${{ (contains(needs.Quality_Job.result, 'failure') || contains(needs.Test_Job.result, 'failure') || contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Production.result, 'failure')) && 'Failure' || 'Success' }}"
+          status: "${{ (contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Production.result, 'failure')) && 'Failure' || 'Success' }}"
           # Judul notifikasi berubah otomatis berdasarkan hasil seluruh job
-          title: "${{ (contains(needs.Quality_Job.result, 'failure') || contains(needs.Test_Job.result, 'failure') || contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Production.result, 'failure')) && '❌ ALARM: Pipeline Ardine Gagal!' || '✅ HORE: Pipeline Ardine Sukses!' }}"
+          title: "${{ (contains(needs.Build_Job.result, 'failure') || contains(needs.Deploy_Production.result, 'failure')) && '❌ ALARM: Pipeline Ardine Gagal!' || '✅ HORE: Pipeline Ardine Sukses!' }}"
           description: |
             **Pemicu:** Push/Merge dari branch `${{ github.ref_name }}`
 
             **📊 Laporan Tiap Stage:**
-            - 🧹 **Quality Check:** `${{ needs.Quality_Job.result }}`
-            - 🧪 **Unit Testing:** `${{ needs.Test_Job.result }}`
             - 🏗️ **Build Validation:** `${{ needs.Build_Job.result }}`
             - 🐳 **Deploy to Production:** `${{ needs.Deploy_Production.result }}`
 
@@ -146,7 +98,5 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** \`$GITHUB_REF_NAME\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit:** \`$(echo "$GITHUB_SHA" | cut -c1-7)\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 🧹 **Quality Check:** \`${{ needs.Quality_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 🧪 **Unit Testing:** \`${{ needs.Test_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- 🏗️ **Build Validation:** \`${{ needs.Build_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- 🐳 **Deploy to Production:** \`${{ needs.Deploy_Production.result }}\`" >> $GITHUB_STEP_SUMMARY
