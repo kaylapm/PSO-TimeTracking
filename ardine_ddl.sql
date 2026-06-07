@@ -352,25 +352,3 @@ CREATE TABLE migrations (
     name VARCHAR(255) NOT NULL UNIQUE,
     executed_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
-
--- Weekly bonus points table
-CREATE TABLE weekly_bonus_points (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    week_start DATE NOT NULL,
-    invoice_id UUID REFERENCES invoices(id) ON DELETE SET NULL,
-    points INTEGER DEFAULT 0 NOT NULL,
-    awarded BOOLEAN DEFAULT FALSE NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    UNIQUE (team_id, user_id, week_start)
-);
-
-CREATE INDEX idx_weekly_bonus_team_user ON weekly_bonus_points(team_id, user_id);
-CREATE INDEX idx_weekly_bonus_week_start ON weekly_bonus_points(week_start);
-
-CREATE TRIGGER update_weekly_bonus_updated_at
-    BEFORE UPDATE ON weekly_bonus_points
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();

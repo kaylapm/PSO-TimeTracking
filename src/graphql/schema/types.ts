@@ -22,7 +22,6 @@ import {
 } from '../types';
 import { parseOffsetLimit, buildQuery, calculatePageInfo } from '../utils';
 import { NotFoundError } from '../errors';
-import { WeeklyBonus } from '../types';
 
 // Team type
 export const TeamRef = builder.objectRef<Team>('Team');
@@ -234,21 +233,6 @@ InvoiceRef.implement({
         return result.rows;
       },
     }),
-  }),
-});
-
-// Weekly bonus type
-export const WeeklyBonusRef = builder.objectRef<WeeklyBonus>('WeeklyBonus');
-WeeklyBonusRef.implement({
-  fields: (t) => ({
-    id: t.exposeID('id'),
-    teamId: t.exposeID('team_id'),
-    userId: t.exposeID('user_id'),
-    weekStart: t.expose('week_start', { type: 'DateTime' }),
-    points: t.exposeInt('points'),
-    awarded: t.exposeBoolean('awarded'),
-    createdAt: t.expose('created_at', { type: 'DateTime' }),
-    updatedAt: t.expose('updated_at', { type: 'DateTime' }),
   }),
 });
 
