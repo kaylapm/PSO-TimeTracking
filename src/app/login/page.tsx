@@ -44,22 +44,20 @@ function LoginForm() {
   // Show loading spinner while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-border border-t-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
       <div className="w-full max-w-md">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div className="bg-card text-card-foreground rounded-lg shadow-lg p-8">
           {/* Logo/Title */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Ardine
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Ardine</h1>
+            <p className="text-muted-foreground">
               Time tracking & project management
             </p>
           </div>
@@ -67,10 +65,8 @@ function LoginForm() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                <p className="text-sm text-red-700 dark:text-red-400">
-                  {error}
-                </p>
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                <p className="text-sm text-destructive">{error}</p>
               </div>
             )}
 
@@ -112,7 +108,7 @@ function LoginForm() {
 
           {/* Footer */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               Don&apos;t have an account?{' '}
               <Link
                 href={`/register${redirect !== '/dashboard' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
@@ -132,8 +128,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary" />
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-border border-t-primary" />
         </div>
       }
     >
