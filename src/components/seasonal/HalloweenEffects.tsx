@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { isHalloweenSeason } from '@/lib/themeManager';
+import { getSeasonalTheme } from '@/lib/themeManager';
 
 const BATS = [
   { top: '8%', left: '4%', size: 28, duration: '4s', delay: '0s' },
@@ -92,32 +92,22 @@ function CobwebCorner({ position }: { position: 'top-left' | 'top-right' }) {
 }
 
 export function HalloweenEffects() {
-  const [active, setActive] = useState(false);
+  const active = getSeasonalTheme() === 'halloween';
 
   useEffect(() => {
-    const halloween =
-      isHalloweenSeason() ||
-      localStorage.getItem('halloween_preview') === 'true';
     const root = document.documentElement;
-
-    if (halloween) {
+    if (active) {
       root.classList.add('halloween');
     } else {
       root.classList.remove('halloween');
     }
-
-    setActive(halloween);
-
-    return () => {
-      root.classList.remove('halloween');
-    };
-  }, []);
+    return () => root.classList.remove('halloween');
+  }, [active]);
 
   if (!active) return null;
 
   return (
     <>
-      {/* Floating bats */}
       {BATS.map((bat, i) => (
         <div
           key={i}
@@ -133,8 +123,6 @@ export function HalloweenEffects() {
           <BatIcon size={bat.size} />
         </div>
       ))}
-
-      {/* Corner cobwebs */}
       <CobwebCorner position="top-left" />
       <CobwebCorner position="top-right" />
     </>
@@ -142,20 +130,16 @@ export function HalloweenEffects() {
 }
 
 export function HalloweenBanner() {
-  const [active, setActive] = useState(false);
+  const active = getSeasonalTheme() === 'halloween';
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    const halloween =
-      isHalloweenSeason() ||
-      localStorage.getItem('halloween_preview') === 'true';
-    setActive(halloween);
-    if (halloween) {
+    if (active) {
       setDismissed(
         sessionStorage.getItem('halloween_banner_dismissed') === 'true',
       );
     }
-  }, []);
+  }, [active]);
 
   if (!active || dismissed) return null;
 
@@ -185,7 +169,10 @@ export function HalloweenBanner() {
         </span>
         <span className="text-3xl">🦇</span>
       </div>
-      <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.8)' }}>
+      <p
+        className="text-sm font-medium"
+        style={{ color: 'rgba(255,255,255,0.8)' }}
+      >
         Spooky time tracking is now active. Beware of the bats! 👻
       </p>
       <button

@@ -28,20 +28,14 @@ const themeInitScript = `
   })();
 `;
 
-// Applies the halloween class before React hydrates to prevent a flash of unstyled content.
-// NEXT_PUBLIC_FORCE_HALLOWEEN is interpolated at server render time so the script doesn't
-// need access to process.env in the browser.
+// Applies the seasonal theme class before React hydrates (prevents FOUC).
+// NEXT_PUBLIC_SEASONAL_THEME is interpolated at server render time.
+// To activate a theme: set NEXT_PUBLIC_SEASONAL_THEME=halloween in .env.local
 const seasonalThemeScript = `
   (function() {
     try {
-      var forced = ${process.env.NEXT_PUBLIC_FORCE_HALLOWEEN === 'true'};
-      var preview = localStorage.getItem('halloween_preview') === 'true';
-      var now = new Date();
-      var month = now.getMonth();
-      var day = now.getDate();
-      if (forced || preview || (month === 9 && day >= 25 && day <= 31)) {
-        document.documentElement.classList.add('halloween');
-      }
+      var theme = '${process.env.NEXT_PUBLIC_SEASONAL_THEME ?? ''}';
+      if (theme) document.documentElement.classList.add(theme);
     } catch(e) {}
   })();
 `;

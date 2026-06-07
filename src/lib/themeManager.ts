@@ -1,15 +1,14 @@
 export type SeasonalTheme = 'default' | 'halloween';
 
-/** Returns true if the given date falls in the Halloween season (Oct 25–31). */
-export function isHalloweenSeason(date: Date = new Date()): boolean {
-  if (process.env.NEXT_PUBLIC_FORCE_HALLOWEEN === 'true') return true;
-  const month = date.getMonth(); // 0-indexed; 9 = October
-  const day = date.getDate();
-  return month === 9 && day >= 25 && day <= 31;
-}
-
-/** Returns the seasonal theme name for the given date. */
-export function getSeasonalTheme(date: Date = new Date()): SeasonalTheme {
-  if (isHalloweenSeason(date)) return 'halloween';
+/**
+ * Returns the active seasonal theme set by the developer via NEXT_PUBLIC_SEASONAL_THEME.
+ * No automatic date detection — the developer explicitly activates a theme.
+ *
+ * To activate: set NEXT_PUBLIC_SEASONAL_THEME=halloween in .env.local and restart dev server.
+ * To deactivate: remove the variable or set it to an empty string.
+ */
+export function getSeasonalTheme(): SeasonalTheme {
+  const theme = process.env.NEXT_PUBLIC_SEASONAL_THEME;
+  if (theme === 'halloween') return 'halloween';
   return 'default';
 }
