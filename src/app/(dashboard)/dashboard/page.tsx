@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation } from 'urql';
 import { useAuth, useCanAccessInvoices } from '@/lib/auth-context';
 import { gql } from '@/lib/gql';
@@ -23,6 +23,7 @@ import {
   TrendingUp,
   Plus,
   ArrowRight,
+  Settings,
 } from 'lucide-react';
 
 const DASHBOARD_QUERY = gql(`
@@ -195,6 +196,216 @@ export default function DashboardPage() {
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [selectedTaskId, setSelectedTaskId] = useState('');
   const [note, setNote] = useState('');
+  const [runningSeconds, setRunningSeconds] = useState(0);
+  const [targetTitle, setTargetTitle] = useState('Chase the Weekend Bonus!');
+  const [targetDailyHours, setTargetDailyHours] = useState(8);
+  const [targetOvertimePoints, setTargetOvertimePoints] = useState(10);
+  const [targetWeeklyPoints, setTargetWeeklyPoints] = useState(100);
+  const [targetBonusReward, setTargetBonusReward] = useState(50.00);
+
+  const [showEditTargetDialog, setShowEditTargetDialog] = useState(false);
+  const [editTitle, setEditTitle] = useState(targetTitle);
+  const [editDailyHours, setEditDailyHours] = useState(targetDailyHours);
+  const [editOvertimePoints, setEditOvertimePoints] = useState(targetOvertimePoints);
+  const [editWeeklyPoints, setEditWeeklyPoints] = useState(targetWeeklyPoints);
+  const [editBonusReward, setEditBonusReward] = useState(targetBonusReward);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const title = localStorage.getItem('ardine_target_title') || 'Chase the Weekend Bonus!';
+      const dailyHours = parseFloat(localStorage.getItem('ardine_target_daily_hours') || '8');
+      const overtimePoints = parseInt(localStorage.getItem('ardine_target_overtime_points') || '10', 10);
+      const weeklyPoints = parseInt(localStorage.getItem('ardine_target_weekly_points') || '100', 10);
+      const bonusReward = parseFloat(localStorage.getItem('ardine_target_bonus_reward') || '50.00');
+
+      setTargetTitle(title);
+      setTargetDailyHours(dailyHours);
+      setTargetOvertimePoints(overtimePoints);
+      setTargetWeeklyPoints(weeklyPoints);
+      setTargetBonusReward(bonusReward);
+
+      setEditTitle(title);
+      setEditDailyHours(dailyHours);
+      setEditOvertimePoints(overtimePoints);
+      setEditWeeklyPoints(weeklyPoints);
+      setEditBonusReward(bonusReward);
+    }
+  }, []);
+
+  const handleSaveTarget = () => {
+    localStorage.setItem('ardine_target_title', editTitle);
+    localStorage.setItem('ardine_target_daily_hours', String(editDailyHours));
+    localStorage.setItem('ardine_target_overtime_points', String(editOvertimePoints));
+    localStorage.setItem('ardine_target_weekly_points', String(editWeeklyPoints));
+    localStorage.setItem('ardine_target_bonus_reward', String(editBonusReward));
+
+    setTargetTitle(editTitle);
+    setTargetDailyHours(editDailyHours);
+    setTargetOvertimePoints(editOvertimePoints);
+    setTargetWeeklyPoints(editWeeklyPoints);
+    setTargetBonusReward(editBonusReward);
+
+    setShowEditTargetDialog(false);
+  };
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const latestPos = useRef({ x: 0, y: 0 });
+  const hasDraggedRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const collapsed = localStorage.getItem('ardine_target_collapsed') === 'true';
+      setIsCollapsed(collapsed);
+
+      const savedX = localStorage.getItem('ardine_target_pos_x');
+      const savedY = localStorage.getItem('ardine_target_pos_y');
+      if (savedX !== null && savedY !== null) {
+        const parsedX = parseFloat(savedX);
+        const parsedY = parseFloat(savedY);
+        setPosition({ x: parsedX, y: parsedY });
+        latestPos.current = { x: parsedX, y: parsedY };
+      }
+    }
+  }, []);
+
+  const handleToggleCollapse = (val: boolean) => {
+    setIsCollapsed(val);
+    localStorage.setItem('ardine_target_collapsed', String(val));
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return; // Only drag with left click
+
+    const target = e.target as HTMLElement;
+    if (
+      target.closest('button') ||
+      target.closest('input') ||
+      target.closest('select') ||
+      target.closest('a')
+    ) {
+      return;
+    }
+
+    setIsDragging(true);
+    hasDraggedRef.current = false;
+
+    const initialClientX = e.clientX;
+    const initialClientY = e.clientY;
+    const startX = e.clientX - position.x;
+    const startY = e.clientY - position.y;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const deltaX = Math.abs(moveEvent.clientX - initialClientX);
+      const deltaY = Math.abs(moveEvent.clientY - initialClientY);
+      if (deltaX > 4 || deltaY > 4) {
+        hasDraggedRef.current = true;
+      }
+
+      let newX = moveEvent.clientX - startX;
+      let newY = moveEvent.clientY - startY;
+
+      if (typeof window !== 'undefined') {
+        const widgetWidth = isCollapsed ? 180 : 360;
+        const minX = -window.innerWidth + widgetWidth + 10;
+        const maxX = 10;
+
+        const widgetHeight = isCollapsed ? 60 : 340;
+        const minY = -window.innerHeight + widgetHeight + 10;
+        const maxY = 10;
+
+        newX = Math.max(minX, Math.min(maxX, newX));
+        newY = Math.max(minY, Math.min(maxY, newY));
+      }
+
+      setPosition({ x: newX, y: newY });
+      latestPos.current = { x: newX, y: newY };
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      localStorage.setItem('ardine_target_pos_x', String(latestPos.current.x));
+      localStorage.setItem('ardine_target_pos_y', String(latestPos.current.y));
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.closest('button') ||
+      target.closest('input') ||
+      target.closest('select') ||
+      target.closest('a')
+    ) {
+      return;
+    }
+
+    setIsDragging(true);
+    hasDraggedRef.current = false;
+
+    const touch = e.touches[0];
+    const initialClientX = touch.clientX;
+    const initialClientY = touch.clientY;
+    const startX = touch.clientX - position.x;
+    const startY = touch.clientY - position.y;
+
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      if (moveEvent.touches.length === 0) return;
+      const moveTouch = moveEvent.touches[0];
+
+      const deltaX = Math.abs(moveTouch.clientX - initialClientX);
+      const deltaY = Math.abs(moveTouch.clientY - initialClientY);
+      if (deltaX > 4 || deltaY > 4) {
+        hasDraggedRef.current = true;
+      }
+
+      let newX = moveTouch.clientX - startX;
+      let newY = moveTouch.clientY - startY;
+
+      if (typeof window !== 'undefined') {
+        const widgetWidth = isCollapsed ? 180 : 360;
+        const minX = -window.innerWidth + widgetWidth + 10;
+        const maxX = 10;
+
+        const widgetHeight = isCollapsed ? 60 : 340;
+        const minY = -window.innerHeight + widgetHeight + 10;
+        const maxY = 10;
+
+        newX = Math.max(minX, Math.min(maxX, newX));
+        newY = Math.max(minY, Math.min(maxY, newY));
+      }
+
+      setPosition({ x: newX, y: newY });
+      latestPos.current = { x: newX, y: newY };
+    };
+
+    const handleTouchEnd = () => {
+      setIsDragging(false);
+      localStorage.setItem('ardine_target_pos_x', String(latestPos.current.x));
+      localStorage.setItem('ardine_target_pos_y', String(latestPos.current.y));
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchend', handleTouchEnd);
+  };
+
+  const handlePillClick = (e: React.MouseEvent) => {
+    if (hasDraggedRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    handleToggleCollapse(false);
+  };
 
   // Date calculations
   const now = new Date();
@@ -378,6 +589,90 @@ export default function DashboardPage() {
     (a: any, b: any) => b.seconds - a.seconds
   );
 
+  // Group entries by day of week (Senin to Minggu)
+  const userEntries = data?.thisWeekEntries?.nodes?.filter(
+    (entry: any) => entry.user?.id === user?.id
+  ) || [];
+
+  const runningEntry = userEntries.find((entry: any) => !entry.stoppedAt);
+
+  useEffect(() => {
+    if (!runningEntry) {
+      setRunningSeconds(0);
+      return;
+    }
+    const updateElapsed = () => {
+      const start = new Date(runningEntry.startedAt).getTime();
+      setRunningSeconds(Math.floor((Date.now() - start) / 1000));
+    };
+    updateElapsed();
+    const interval = setInterval(updateElapsed, 1000);
+    return () => clearInterval(interval);
+  }, [runningEntry?.id, runningEntry?.startedAt]);
+
+  const weekDaysData = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(thisWeekStart);
+    d.setDate(thisWeekStart.getDate() + i);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return {
+      dateStr,
+      dayName: dayNames[i],
+      seconds: 0,
+      points: 0,
+    };
+  });
+
+  userEntries.forEach((entry: any) => {
+    if (!entry.startedAt || !entry.stoppedAt) return;
+    const entryDate = new Date(entry.startedAt);
+    const yyyy = entryDate.getFullYear();
+    const mm = String(entryDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(entryDate.getDate()).padStart(2, '0');
+    const entryDateStr = `${yyyy}-${mm}-${dd}`;
+
+    const dayObj = weekDaysData.find((d) => d.dateStr === entryDateStr);
+    if (dayObj) {
+      dayObj.seconds += entry.durationSeconds || 0;
+    }
+  });
+
+  if (runningEntry) {
+    const entryDate = new Date(runningEntry.startedAt);
+    const yyyy = entryDate.getFullYear();
+    const mm = String(entryDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(entryDate.getDate()).padStart(2, '0');
+    const entryDateStr = `${yyyy}-${mm}-${dd}`;
+
+    const dayObj = weekDaysData.find((d) => d.dateStr === entryDateStr);
+    if (dayObj) {
+      dayObj.seconds += runningSeconds;
+    }
+  }
+
+  const dailyTargetSeconds = targetDailyHours * 3600;
+
+  weekDaysData.forEach((day) => {
+    day.points = Math.floor(Math.max(0, day.seconds - dailyTargetSeconds) / 3600) * targetOvertimePoints;
+  });
+
+  const totalWeeklyPoints = weekDaysData.reduce((sum, day) => sum + day.points, 0);
+
+  const todayDate = new Date();
+  const yyyyToday = todayDate.getFullYear();
+  const mmToday = String(todayDate.getMonth() + 1).padStart(2, '0');
+  const ddToday = String(todayDate.getDate()).padStart(2, '0');
+  const todayDateStr = `${yyyyToday}-${mmToday}-${ddToday}`;
+  const todayData = weekDaysData.find((d) => d.dateStr === todayDateStr);
+
+  const todaySeconds = todayData ? todayData.seconds : 0;
+  const todayHours = todaySeconds / 3600;
+  const isTodayTargetAchieved = todaySeconds >= dailyTargetSeconds;
+  const todayOvertimePoints = todayData ? todayData.points : 0;
+
   const formatCurrency = (cents: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -431,7 +726,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="max-w-7xl">
+    <div className="max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold dark:text-foreground">Dashboard</h1>
         <div className="flex gap-2">
@@ -512,6 +807,230 @@ export default function DashboardPage() {
               <Button
                 variant="outline"
                 onClick={() => setShowStartDialog(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Floating Weekend Bonus Tracker Widget */}
+      {isCollapsed ? (
+        <div 
+          onClick={handlePillClick}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+          role="button"
+          tabIndex={0}
+          className={`fixed bottom-6 right-6 z-50 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-full px-5 py-3 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 border border-white/20 select-none hover:scale-105 active:scale-95 whitespace-nowrap min-w-max ${
+            isDragging 
+              ? 'cursor-grabbing transition-none' 
+              : 'cursor-grab transition-all duration-300'
+          }`}
+        >
+          <span className="text-xl">🎯</span>
+          <span className="text-xs font-bold tracking-wide pr-1">Target: {totalWeeklyPoints}/{targetWeeklyPoints} pts</span>
+        </div>
+      ) : (
+        <div 
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+          className={`fixed bottom-6 right-6 z-50 w-[360px] border dark:border-border rounded-xl p-5 bg-card dark:bg-card/95 shadow-2xl border-slate-200/80 animate-in slide-in-from-bottom-5 duration-300 select-none ${
+            isDragging ? 'cursor-grabbing transition-none' : 'cursor-grab'
+          }`}
+        >
+          {/* Card Header */}
+          <div className="flex items-center justify-between pb-3 border-b dark:border-border">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🎯</span>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Weekly Target</h3>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {(currentTeam?.role === 'OWNER' || currentTeam?.role === 'ADMIN') && (
+                <button
+                  onClick={() => {
+                    setEditTitle(targetTitle);
+                    setEditDailyHours(targetDailyHours);
+                    setEditOvertimePoints(targetOvertimePoints);
+                    setEditWeeklyPoints(targetWeeklyPoints);
+                    setEditBonusReward(targetBonusReward);
+                    setShowEditTargetDialog(true);
+                  }}
+                  className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  title="Edit weekly target rules"
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <button 
+                onClick={() => handleToggleCollapse(true)}
+                className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="mt-3 space-y-3.5">
+            {/* Target Title & Progress */}
+            <div className="space-y-1.5">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-slate-50">"{targetTitle}"</h4>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-500">Progress</span>
+                <span className="font-bold text-primary">{totalWeeklyPoints} / {targetWeeklyPoints} Points</span>
+              </div>
+              <div className="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden relative">
+                <div 
+                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all" 
+                  style={{ width: `${Math.min(100, (totalWeeklyPoints / targetWeeklyPoints) * 100)}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Quick Status */}
+            <div className="bg-slate-50/50 dark:bg-slate-950/20 border dark:border-border/50 rounded-lg p-3 space-y-2 text-xs">
+              <div className="flex items-start gap-2">
+                <span className="text-sm">{isTodayTargetAchieved ? '✅' : '⏳'}</span>
+                <div className="space-y-0.5">
+                  <p className="font-semibold text-slate-800 dark:text-slate-200">
+                    {isTodayTargetAchieved 
+                      ? `Daily target achieved! (+${todayOvertimePoints} pts)`
+                      : `Target not achieved. (${todayHours.toFixed(1)}h / ${targetDailyHours}h)`
+                    }
+                  </p>
+                  {!isTodayTargetAchieved && todayHours > 0 && (
+                    <p className="text-[10px] text-muted-foreground">
+                      Need {(targetDailyHours - todayHours).toFixed(1)} hrs for overtime.
+                    </p>
+                  )}
+                </div>
+              </div>
+              
+              {/* Rules Summary Ticker or Bullet */}
+              <div className="text-[10px] text-muted-foreground border-t dark:border-border/50 pt-2 flex justify-between items-center">
+                <span>Target: {targetDailyHours}h/day</span>
+                <span>+{targetOvertimePoints} pts/hr</span>
+                <span>Reward: ${targetBonusReward.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Week Calendar dot-grid or small blocks */}
+            <div>
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Mon - Sun Hours</h4>
+              <div className="grid grid-cols-7 gap-1">
+                {weekDaysData.map((day) => {
+                  const hrs = day.seconds / 3600;
+                  const isToday = day.dateStr === todayDateStr;
+                  let bgClass = "bg-slate-100 dark:bg-slate-800";
+                  let borderClass = "border-transparent";
+                  let textClass = "text-slate-500 dark:text-slate-400";
+
+                  if (hrs >= targetDailyHours) {
+                    bgClass = "bg-emerald-500 text-white";
+                  } else if (hrs > 0) {
+                    bgClass = "bg-amber-500 text-white";
+                  }
+
+                  if (isToday) {
+                    borderClass = "ring-2 ring-primary ring-offset-2 ring-offset-background";
+                  }
+
+                  return (
+                    <div 
+                      key={day.dateStr} 
+                      className={`rounded p-1 text-center transition-all ${bgClass} ${borderClass} flex flex-col justify-between h-10`}
+                      title={`${day.dayName}: ${hrs.toFixed(1)}h (+${day.points} pts)`}
+                    >
+                      <span className="text-[8px] font-bold block uppercase opacity-75">
+                        {day.dayName.slice(0, 3)}
+                      </span>
+                      <span className="text-[9px] font-extrabold block">
+                        {hrs.toFixed(0)}h
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Target Dialog */}
+      <Dialog open={showEditTargetDialog} onOpenChange={setShowEditTargetDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Weekly Target & Rules</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="targetTitle">Target Title / Name</Label>
+              <Input
+                id="targetTitle"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                placeholder="e.g. Chase the Weekend Bonus!"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="targetDailyHours">Daily Target Hours</Label>
+                <Input
+                  id="targetDailyHours"
+                  type="number"
+                  step="0.5"
+                  value={editDailyHours}
+                  onChange={(e) => setEditDailyHours(parseFloat(e.target.value) || 0)}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="targetOvertimePoints">Points per Extra Hour</Label>
+                <Input
+                  id="targetOvertimePoints"
+                  type="number"
+                  value={editOvertimePoints}
+                  onChange={(e) => setEditOvertimePoints(parseInt(e.target.value, 10) || 0)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="targetWeeklyPoints">Weekly Target Points</Label>
+                <Input
+                  id="targetWeeklyPoints"
+                  type="number"
+                  value={editWeeklyPoints}
+                  onChange={(e) => setEditWeeklyPoints(parseInt(e.target.value, 10) || 0)}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="targetBonusReward">Bonus Reward Amount ($)</Label>
+                <Input
+                  id="targetBonusReward"
+                  type="number"
+                  step="0.01"
+                  value={editBonusReward}
+                  onChange={(e) => setEditBonusReward(parseFloat(e.target.value) || 0)}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button onClick={handleSaveTarget}>
+                Save Changes
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowEditTargetDialog(false)}
               >
                 Cancel
               </Button>
