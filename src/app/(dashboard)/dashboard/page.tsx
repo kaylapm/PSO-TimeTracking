@@ -212,6 +212,7 @@ export default function DashboardPage() {
   // Start and end of last month
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const lastMonthEnd = new Date(
+  import WeeklyBonusCard from '@/components/weekly-bonus';
     now.getFullYear(),
     now.getMonth(),
     0,
@@ -298,6 +299,9 @@ export default function DashboardPage() {
 
   // Calculate metrics
   const thisWeekSeconds =
+
+        {/* Weekly bonus progress */}
+        <WeeklyBonusCard entries={data?.thisWeekEntries.nodes} />
     data?.thisWeekEntries.nodes.reduce(
       (acc: number, entry: any) =>
         acc + (entry.stoppedAt ? entry.durationSeconds || 0 : 0),

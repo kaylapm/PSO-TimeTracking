@@ -16,6 +16,95 @@ import {
 } from '../context';
 import { TimeEntry } from '../types';
 
+// Helper: recalculate weekly points for a user and upsert into weekly_bonus_points
+async function recalcWeeklyPoints(ctx: any, teamId: string, userId: string, referenceDate: Date) {
+  // Determine week start (Monday)
+  const d = new Date(referenceDate);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  const weekStartDate = new Date(d);
+  weekStartDate.setDate(d.getDate() + diff);
+  weekStartDate.setHours(0, 0, 0, 0);
+  const weekStart = weekStartDate.toISOString().slice(0, 10);
+
+  // Fetch total seconds per day for this user in the week
+  const q = `
+    SELECT date_trunc('day', started_at) AS day, SUM(duration_seconds) AS total_seconds
+    FROM time_entries
+    WHERE team_id = $1 AND user_id = $2 AND started_at >= $3::date AND started_at < ($3::date + INTERVAL '7 days')
+    GROUP BY day
+  `;
+  const res = await ctx.db.query(q, [teamId, userId, weekStart]);
+
+  // Calculate points: target 8h/day, 10 points per overtime hour
+  const pointsPerHour = 10;
+  let totalPoints = 0;
+  for (const row of res.rows) {
+    const seconds = parseInt(row.total_seconds || '0', 10);
+    const hours = seconds / 3600;
+    const overtime = Math.max(0, hours - 8);
+    totalPoints += Math.floor(overtime * pointsPerHour);
+  }
+
+  // Upsert into weekly_bonus_points
+  await ctx.db.query(
+    `
+    INSERT INTO weekly_bonus_points (team_id, user_id, week_start, points)
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT (team_id, user_id, week_start)
+    DO UPDATE SET points = EXCLUDED.points, updated_at = NOW()
+    `,
+    [teamId, userId, weekStart, totalPoints]
+  );
+
+  // If user reached threshold and not yet awarded, create invoice automatically
+  const threshold = 100;
+  if (totalPoints >= threshold) {
+    const existing = await ctx.db.query(
+      'SELECT * FROM weekly_bonus_points WHERE team_id = $1 AND user_id = $2 AND week_start = $3 LIMIT 1',
+      [teamId, userId, weekStart]
+    );
+
+    const record = existing.rows[0];
+    if (record && !record.awarded) {
+      // Create invoice for the user/team. We need client_id to invoice — try to use user's default client if available
+      // Fallback: create invoice with team as client (requires a client), so skip if no client found
+      const clientRes = await ctx.db.query(
+        `SELECT id FROM clients WHERE team_id = $1 ORDER BY created_at LIMIT 1`,
+        [teamId]
+      );
+
+      if (clientRes.rows.length > 0) {
+        const clientId = clientRes.rows[0].id;
+
+        // Construct invoice number (simple sequential based on timestamp)
+        const invoiceNumber = `BNS-${Date.now()}`;
+        const issuedDate = new Date().toISOString().slice(0, 10);
+        const dueDate = issuedDate; // same day
+
+        const inv = await ctx.db.query(
+          `INSERT INTO invoices (team_id, client_id, invoice_number, status, issued_date, due_date, subtotal_cents, tax_rate_percent, tax_amount_cents, total_cents, notes) VALUES ($1,$2,$3,'draft',$4,$5,0,0,0,0,$6) RETURNING *`,
+          [teamId, clientId, invoiceNumber, issuedDate, dueDate, `Bonus for week ${weekStart}`]
+        );
+
+        const invoiceId = inv.rows[0].id;
+
+        // Add a single invoice item representing the bonus (amount 0 — maybe external billing will fill in), or set amount to 0 and note points
+        const item = await ctx.db.query(
+          `INSERT INTO invoice_items (team_id, invoice_id, time_entry_id, description, quantity, rate_cents, amount_cents) VALUES ($1,$2,NULL,$3,1,0,0) RETURNING *`,
+          [teamId, invoiceId, `Weekly bonus (${totalPoints} points)`]
+        );
+
+        // Mark weekly bonus as awarded
+        await ctx.db.query(
+          `UPDATE weekly_bonus_points SET awarded = TRUE, updated_at = NOW() WHERE team_id = $1 AND user_id = $2 AND week_start = $3`,
+          [teamId, userId, weekStart]
+        );
+      }
+    }
+  }
+}
+
 /**
  * TimeEntry Queries
  */
@@ -210,7 +299,16 @@ builder.mutationFields((t) => ({
           ]
         );
 
-        return result.rows[0];
+        const created = result.rows[0];
+        // Recalculate weekly points for this user
+        try {
+          await recalcWeeklyPoints(ctx, created.team_id, created.user_id, new Date(created.started_at));
+        } catch (e) {
+          // don't block the main operation if recalc fails
+          console.error('Failed to recalc weekly points after createTimeEntry', e);
+        }
+
+        return created;
       });
     },
   }),
@@ -309,7 +407,14 @@ builder.mutationFields((t) => ({
       );
 
       ctx.loaders.timeEntryById.clear(args.timeEntryId);
-      return result.rows[0];
+      const stopped = result.rows[0];
+      try {
+        await recalcWeeklyPoints(ctx, stopped.team_id, stopped.user_id, new Date(stopped.started_at));
+      } catch (e) {
+        console.error('Failed to recalc weekly points after stopTimer', e);
+      }
+
+      return stopped;
     },
   }),
 
@@ -580,7 +685,14 @@ builder.mutationFields((t) => ({
       );
 
       ctx.loaders.timeEntryById.clear(args.timeEntryId);
-      return result.rows[0];
+      const updated = result.rows[0];
+      try {
+        await recalcWeeklyPoints(ctx, updated.team_id, updated.user_id, new Date(updated.started_at));
+      } catch (e) {
+        console.error('Failed to recalc weekly points after updateTimeEntry', e);
+      }
+
+      return updated;
     },
   }),
 
@@ -626,6 +738,12 @@ builder.mutationFields((t) => ({
       ]);
 
       ctx.loaders.timeEntryById.clear(args.timeEntryId);
+      try {
+        await recalcWeeklyPoints(ctx, timeEntry.team_id, timeEntry.user_id, new Date(timeEntry.started_at));
+      } catch (e) {
+        console.error('Failed to recalc weekly points after deleteTimeEntry', e);
+      }
+
       return true;
     },
   }),
