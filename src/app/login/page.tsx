@@ -57,7 +57,7 @@ function LoginForm() {
           {/* Logo/Title */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Ardine - PSO 5
+              Ardine - PSO 5 (Auto CD)
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Time tracking & project management
