@@ -22,6 +22,7 @@ jobs:
       env_name: ${{ steps.set-env.outputs.env_name }}
       image_tag: ${{ steps.set-env.outputs.image_tag }}
       app_url: ${{ steps.set-env.outputs.app_url }}
+      app_name: ${{ steps.set-env.outputs.app_name }}
     steps:
       - name: Check CI Status
         if: github.event_name == 'workflow_run'
@@ -37,14 +38,18 @@ jobs:
         id: set-env
         run: |
           BRANCH_NAME="${{ github.event.workflow_run.head_branch || github.ref_name }}"
+          FULL_SHA="${{ github.event.workflow_run.head_sha || github.sha }}"
+          SHORT_SHA=$(echo "$FULL_SHA" | cut -c1-7)
+          echo "image_tag=sha-$SHORT_SHA" >> "$GITHUB_OUTPUT"
+          
           if [ "$BRANCH_NAME" == "main" ]; then
             echo "env_name=Production" >> "$GITHUB_OUTPUT"
-            echo "image_tag=latest" >> "$GITHUB_OUTPUT"
+            echo "app_name=timetracking-app-prod" >> "$GITHUB_OUTPUT"
             echo "app_url=https://timetracking-app-prod.azurewebsites.net/" >> "$GITHUB_OUTPUT"
             echo "Deployment triggered for Production"
           else
             echo "env_name=Staging" >> "$GITHUB_OUTPUT"
-            echo "image_tag=staging" >> "$GITHUB_OUTPUT"
+            echo "app_name=timetracking-app-staging" >> "$GITHUB_OUTPUT"
             echo "app_url=https://timetracking-app-staging.azurewebsites.net/" >> "$GITHUB_OUTPUT"
             echo "Deployment triggered for Staging"
           fi
@@ -73,13 +78,45 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
+      - name: Check if Image Already Exists in ACR
+        id: check-image
+        run: |
+          IMAGE_TAG="${{ needs.validate_prerequisites.outputs.image_tag }}"
+          FULL_IMAGE="${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:$IMAGE_TAG"
+          echo "Checking if image $FULL_IMAGE exists..."
+          if docker manifest inspect $FULL_IMAGE > /dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Image already exists in ACR. Skipping build."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Image does not exist. It will be built."
+          fi
+
       - name: Build and Push Docker Image
+        if: steps.check-image.outputs.exists != 'true'
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}
+
+      - name: Deploy to Azure Web App (Staging)
+        if: needs.validate_prerequisites.outputs.env_name == 'Staging'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ needs.validate_prerequisites.outputs.app_name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
+          images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}'
+
+      - name: Deploy to Azure Web App (Production)
+        if: needs.validate_prerequisites.outputs.env_name == 'Production'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ needs.validate_prerequisites.outputs.app_name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PRODUCTION }}
+          images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}'
+
 
   Smoke_Test:
     name: Staging Smoke Test
