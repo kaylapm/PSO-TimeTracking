@@ -100,6 +100,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Deploy to Azure Web App (Staging)
         if: needs.validate_prerequisites.outputs.env_name == 'Staging'
@@ -118,31 +120,69 @@ jobs:
           images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}'
 
   Smoke_Test:
-    name: Staging Smoke Test
+    name: Smoke Test Verification
     needs: [validate_prerequisites, Deploy]
-    if: needs.validate_prerequisites.outputs.env_name == 'Staging'
     runs-on: ubuntu-latest
     steps:
-      - name: Verify Staging Web App is Alive
+      - name: Verify Web App is Alive
         run: |
           echo "Waiting 60 seconds for Azure App Service to pull the new container..."
           sleep 60
-          echo "Pinging Staging URL..."
+          echo "Pinging Web App URL: ${{ needs.validate_prerequisites.outputs.app_url }}..."
           for i in {1..10}; do
             if curl -s -f -I ${{ needs.validate_prerequisites.outputs.app_url }} > /dev/null; then
-              echo "Smoke test passed! Staging site is up."
+              echo "Smoke test passed! Web App is up."
               exit 0
             else
               echo "Site not ready yet. Retrying in 15 seconds..."
               sleep 15
             fi
           done
-          echo "Smoke test failed! Staging site is not responding."
+          echo "Smoke test failed! Web App is not responding."
           exit 1
+
+  Rollback:
+    name: Rollback on Failure
+    needs: [validate_prerequisites, Deploy, Smoke_Test]
+    if: |
+      always() &&
+      needs.Deploy.result == 'success' &&
+      needs.Smoke_Test.result == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 2
+
+      - name: Determine Previous Stable Commit SHA
+        id: prev-sha
+        run: |
+          PREV_SHA=$(git rev-parse HEAD~1)
+          SHORT_PREV_SHA=$(echo "$PREV_SHA" | cut -c1-7)
+          echo "prev_image_tag=sha-$SHORT_PREV_SHA" >> "$GITHUB_OUTPUT"
+          echo "Previous stable image tag: sha-$SHORT_PREV_SHA"
+
+      - name: Rollback Azure Web App (Staging)
+        if: needs.validate_prerequisites.outputs.env_name == 'Staging'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ needs.validate_prerequisites.outputs.app_name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
+          images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ steps.prev-sha.outputs.prev_image_tag }}'
+
+      - name: Rollback Azure Web App (Production)
+        if: needs.validate_prerequisites.outputs.env_name == 'Production'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ needs.validate_prerequisites.outputs.app_name }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PRODUCTION }}
+          images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ steps.prev-sha.outputs.prev_image_tag }}'
 
   Notify_Discord:
     name: Send Notification to Discord
-    needs: [validate_prerequisites, Deploy, Smoke_Test]
+    needs: [validate_prerequisites, Deploy, Smoke_Test, Rollback]
     if: |
       always() &&
       needs.validate_prerequisites.result != 'skipped'
@@ -161,7 +201,8 @@ jobs:
             **Laporan Tiap Stage:**
             - **CI Prerequisites:** `${{ needs.validate_prerequisites.result }}`
             - **Deploy to App Service:** `${{ needs.Deploy.result }}`
-            ${{ needs.validate_prerequisites.outputs.env_name == 'Staging' && format('- **Smoke Testing:** `{0}`', needs.Smoke_Test.result) || '' }}
+            - **Smoke Testing:** `${{ needs.Smoke_Test.result }}`
+            ${{ needs.Rollback.result == 'success' && '- **Rollback Status:** `Succeeded (Reverted to previous tag)`' || (needs.Rollback.result == 'failure' && '- **Rollback Status:** `FAILED!`' || '') }}
 
             *(Jika ada yang bernilai 'failure', segera klik tombol di bawah untuk melihat log error di GitHub)*
 
@@ -174,6 +215,9 @@ jobs:
           echo "- **Commit:** \`$(echo "${{ github.event.workflow_run.head_sha || github.sha }}" | cut -c1-7)\`" >> $GITHUB_STEP_SUMMARY
           echo "- **CI Prerequisites:** \`${{ needs.validate_prerequisites.result }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Deploy to App Service:** \`${{ needs.Deploy.result }}\`" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ needs.validate_prerequisites.outputs.env_name }}" == "Staging" ]; then
-            echo "- **Smoke Testing:** \`${{ needs.Smoke_Test.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Smoke Testing:** \`${{ needs.Smoke_Test.result }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.Rollback.result }}" == "success" ]; then
+            echo "- **Rollback:** \`Succeeded (Reverted to previous image version)\`" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.Rollback.result }}" == "failure" ]; then
+            echo "- **Rollback:** \`Failed!\`" >> $GITHUB_STEP_SUMMARY
           fi
