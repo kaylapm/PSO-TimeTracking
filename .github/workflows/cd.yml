@@ -100,8 +100,6 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Deploy to Azure Web App (Staging)
         if: needs.validate_prerequisites.outputs.env_name == 'Staging'
