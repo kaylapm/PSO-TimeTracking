@@ -74,7 +74,8 @@ jobs:
         run: npm test
 
   Build_Job:
-    name: Build Job (Build Validation)
+    name: Build Job (Build & Docker Validation)
+    needs: [Quality_Job, Test_Job]
     runs-on: ubuntu-latest
 
     steps:
@@ -92,6 +93,9 @@ jobs:
 
       - name: Build Validation (Next.js)
         run: npm run build
+
+      - name: Docker Build Validation
+        run: docker build -t ardine-app:test .
 
   Summary_Job:
     name: CI Summary Report
