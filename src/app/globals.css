@@ -81,6 +81,45 @@
   }
 }
 
+/* Christmas seasonal theme — active Dec 20–31 via the `christmas` class on <html> */
+/* Placed after .dark so it wins when both classes coexist */
+.christmas {
+  --background: 148 25% 8%;
+  --foreground: 0 0% 95%;
+  --card: 148 25% 11%;
+  --card-foreground: 0 0% 95%;
+  --popover: 148 25% 11%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 0 100% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 148 61% 22%;
+  --secondary-foreground: 0 0% 95%;
+  --muted: 148 20% 15%;
+  --muted-foreground: 0 0% 65%;
+  --accent: 51 100% 50%;
+  --accent-foreground: 0 0% 10%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 148 30% 20%;
+  --input: 148 20% 15%;
+  --ring: 0 100% 40%;
+}
+
+@keyframes christmas-snow-fall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(50vh) translateX(var(--snow-drift, 20px)) rotate(180deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(105vh) translateX(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 /* Smooth transition for theme switching on key elements */
 @layer base {
   * {

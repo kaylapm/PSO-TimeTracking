@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth, useCanManageTeam } from '@/lib/auth-context';
 import { HalloweenBanner } from '@/components/seasonal/HalloweenEffects';
+import { ChristmasBanner } from '@/components/seasonal/ChristmasEffects';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -242,6 +243,7 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
       <HalloweenBanner />
+      <ChristmasBanner />
       <main className="container mx-auto px-4 py-8">{children}</main>
     </div>
   );

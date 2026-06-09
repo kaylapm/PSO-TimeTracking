@@ -5,6 +5,7 @@ import { AuthProvider } from '@/lib/auth-context';
 import { TeamProvider } from '@/lib/team-context';
 import { ThemeProvider } from '@/lib/theme-context';
 import { HalloweenEffects } from '@/components/seasonal/HalloweenEffects';
+import { ChristmasEffects } from '@/components/seasonal/ChristmasEffects';
 
 export const metadata: Metadata = {
   title: 'Ardine - Time Tracking & Invoicing',
@@ -30,7 +31,7 @@ const themeInitScript = `
 
 // Applies the seasonal theme class before React hydrates (prevents FOUC).
 // NEXT_PUBLIC_SEASONAL_THEME is interpolated at server render time.
-// To activate a theme: set NEXT_PUBLIC_SEASONAL_THEME=halloween in .env.local
+// To activate a theme: set NEXT_PUBLIC_SEASONAL_THEME=halloween or christmas in .env.local
 const seasonalThemeScript = `
   (function() {
     try {
@@ -55,6 +56,7 @@ export default function RootLayout({
       <body className="antialiased bg-background text-foreground transition-colors duration-200">
         <ThemeProvider>
           <HalloweenEffects />
+          <ChristmasEffects />
           <AuthProvider>
             <TeamProvider>
               <GraphQLProvider>{children}</GraphQLProvider>
