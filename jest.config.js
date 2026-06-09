@@ -12,6 +12,11 @@ const customJestConfig = {
     // Handle module aliases
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  collectCoverageFrom: [
+    'src/lib/utils.ts',
+    'src/lib/time-utils.ts',
+    'src/lib/admin-auth.ts',
+  ],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
