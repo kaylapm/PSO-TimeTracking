@@ -60,7 +60,7 @@ function LoginForm() {
               Ardine - PSO limmaaa
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Time tracking & project management
+              Time tracking & project managemenT
             </p>
           </div>
 
