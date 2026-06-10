@@ -4,18 +4,102 @@ import { useEffect, useState } from 'react';
 import { getSeasonalTheme } from '@/lib/themeManager';
 
 const SNOWFLAKES = [
-  { top: '-2%', left: '5%', size: 10, duration: '8s', delay: '0s', drift: '30px' },
-  { top: '-2%', left: '15%', size: 7, duration: '10s', delay: '1.5s', drift: '-20px' },
-  { top: '-2%', left: '27%', size: 12, duration: '7s', delay: '3s', drift: '25px' },
-  { top: '-2%', left: '38%', size: 6, duration: '11s', delay: '0.7s', drift: '-35px' },
-  { top: '-2%', left: '50%', size: 9, duration: '9s', delay: '2s', drift: '20px' },
-  { top: '-2%', left: '63%', size: 11, duration: '6.5s', delay: '4s', drift: '-25px' },
-  { top: '-2%', left: '74%', size: 8, duration: '10.5s', delay: '1s', drift: '30px' },
-  { top: '-2%', left: '85%', size: 13, duration: '8.5s', delay: '2.8s', drift: '-15px' },
-  { top: '-2%', left: '92%', size: 7, duration: '7.5s', delay: '0.3s', drift: '20px' },
-  { top: '-2%', left: '45%', size: 10, duration: '9.5s', delay: '5s', drift: '-30px' },
-  { top: '-2%', left: '20%', size: 6, duration: '12s', delay: '1.2s', drift: '15px' },
-  { top: '-2%', left: '70%', size: 8, duration: '8s', delay: '3.5s', drift: '-20px' },
+  {
+    top: '-2%',
+    left: '5%',
+    size: 10,
+    duration: '8s',
+    delay: '0s',
+    drift: '30px',
+  },
+  {
+    top: '-2%',
+    left: '15%',
+    size: 7,
+    duration: '10s',
+    delay: '1.5s',
+    drift: '-20px',
+  },
+  {
+    top: '-2%',
+    left: '27%',
+    size: 12,
+    duration: '7s',
+    delay: '3s',
+    drift: '25px',
+  },
+  {
+    top: '-2%',
+    left: '38%',
+    size: 6,
+    duration: '11s',
+    delay: '0.7s',
+    drift: '-35px',
+  },
+  {
+    top: '-2%',
+    left: '50%',
+    size: 9,
+    duration: '9s',
+    delay: '2s',
+    drift: '20px',
+  },
+  {
+    top: '-2%',
+    left: '63%',
+    size: 11,
+    duration: '6.5s',
+    delay: '4s',
+    drift: '-25px',
+  },
+  {
+    top: '-2%',
+    left: '74%',
+    size: 8,
+    duration: '10.5s',
+    delay: '1s',
+    drift: '30px',
+  },
+  {
+    top: '-2%',
+    left: '85%',
+    size: 13,
+    duration: '8.5s',
+    delay: '2.8s',
+    drift: '-15px',
+  },
+  {
+    top: '-2%',
+    left: '92%',
+    size: 7,
+    duration: '7.5s',
+    delay: '0.3s',
+    drift: '20px',
+  },
+  {
+    top: '-2%',
+    left: '45%',
+    size: 10,
+    duration: '9.5s',
+    delay: '5s',
+    drift: '-30px',
+  },
+  {
+    top: '-2%',
+    left: '20%',
+    size: 6,
+    duration: '12s',
+    delay: '1.2s',
+    drift: '15px',
+  },
+  {
+    top: '-2%',
+    left: '70%',
+    size: 8,
+    duration: '8s',
+    delay: '3.5s',
+    drift: '-20px',
+  },
 ] as const;
 
 function SnowflakeIcon({ size }: { size: number }) {
@@ -27,10 +111,42 @@ function SnowflakeIcon({ size }: { size: number }) {
       fill="currentColor"
       aria-hidden="true"
     >
-      <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <line x1="19.07" y1="4.93" x2="4.93" y2="19.07" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <line
+        x1="12"
+        y1="2"
+        x2="12"
+        y2="22"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="2"
+        y1="12"
+        x2="22"
+        y2="12"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="4.93"
+        y1="4.93"
+        x2="19.07"
+        y2="19.07"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <line
+        x1="19.07"
+        y1="4.93"
+        x2="4.93"
+        y2="19.07"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
       <circle cx="12" cy="12" r="2" fill="currentColor" />
     </svg>
   );
@@ -79,8 +195,9 @@ export function ChristmasBanner() {
 
   useEffect(() => {
     if (active) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDismissed(
-        sessionStorage.getItem('christmas_banner_dismissed') === 'true',
+        sessionStorage.getItem('christmas_banner_dismissed') === 'true'
       );
     }
   }, [active]);

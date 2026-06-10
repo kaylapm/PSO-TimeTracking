@@ -38,7 +38,7 @@ function CobwebCorner({ position }: { position: 'top-left' | 'top-right' }) {
   const origin = { x: isRight ? size : 0, y: 0 };
 
   const angles = [0, 15, 30, 45, 60, 75, 90].map(
-    (deg) => ((isRight ? 90 + deg : deg) * Math.PI) / 180,
+    (deg) => ((isRight ? 90 + deg : deg) * Math.PI) / 180
   );
   const radii = [40, 80, 120, 160];
 
@@ -135,8 +135,9 @@ export function HalloweenBanner() {
 
   useEffect(() => {
     if (active) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDismissed(
-        sessionStorage.getItem('halloween_banner_dismissed') === 'true',
+        sessionStorage.getItem('halloween_banner_dismissed') === 'true'
       );
     }
   }, [active]);

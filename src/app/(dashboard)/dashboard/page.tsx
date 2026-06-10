@@ -201,34 +201,57 @@ export default function DashboardPage() {
   const [targetDailyHours, setTargetDailyHours] = useState(8);
   const [targetOvertimePoints, setTargetOvertimePoints] = useState(10);
   const [targetWeeklyPoints, setTargetWeeklyPoints] = useState(100);
-  const [targetBonusReward, setTargetBonusReward] = useState(50.00);
+  const [targetBonusReward, setTargetBonusReward] = useState(50.0);
 
   const [showEditTargetDialog, setShowEditTargetDialog] = useState(false);
   const [editTitle, setEditTitle] = useState(targetTitle);
   const [editDailyHours, setEditDailyHours] = useState(targetDailyHours);
-  const [editOvertimePoints, setEditOvertimePoints] = useState(targetOvertimePoints);
+  const [editOvertimePoints, setEditOvertimePoints] =
+    useState(targetOvertimePoints);
   const [editWeeklyPoints, setEditWeeklyPoints] = useState(targetWeeklyPoints);
   const [editBonusReward, setEditBonusReward] = useState(targetBonusReward);
 
   // Load from localStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const title = localStorage.getItem('ardine_target_title') || 'Chase the Weekend Bonus!';
-      const dailyHours = parseFloat(localStorage.getItem('ardine_target_daily_hours') || '8');
-      const overtimePoints = parseInt(localStorage.getItem('ardine_target_overtime_points') || '10', 10);
-      const weeklyPoints = parseInt(localStorage.getItem('ardine_target_weekly_points') || '100', 10);
-      const bonusReward = parseFloat(localStorage.getItem('ardine_target_bonus_reward') || '50.00');
+      const title =
+        localStorage.getItem('ardine_target_title') ||
+        'Chase the Weekend Bonus!';
+      const dailyHours = parseFloat(
+        localStorage.getItem('ardine_target_daily_hours') || '8'
+      );
+      const overtimePoints = parseInt(
+        localStorage.getItem('ardine_target_overtime_points') || '10',
+        10
+      );
+      const weeklyPoints = parseInt(
+        localStorage.getItem('ardine_target_weekly_points') || '100',
+        10
+      );
+      const bonusReward = parseFloat(
+        localStorage.getItem('ardine_target_bonus_reward') || '50.00'
+      );
 
+       
       setTargetTitle(title);
+       
       setTargetDailyHours(dailyHours);
+       
       setTargetOvertimePoints(overtimePoints);
+       
       setTargetWeeklyPoints(weeklyPoints);
+       
       setTargetBonusReward(bonusReward);
 
+       
       setEditTitle(title);
+       
       setEditDailyHours(dailyHours);
+       
       setEditOvertimePoints(overtimePoints);
+       
       setEditWeeklyPoints(weeklyPoints);
+       
       setEditBonusReward(bonusReward);
     }
   }, []);
@@ -236,8 +259,14 @@ export default function DashboardPage() {
   const handleSaveTarget = () => {
     localStorage.setItem('ardine_target_title', editTitle);
     localStorage.setItem('ardine_target_daily_hours', String(editDailyHours));
-    localStorage.setItem('ardine_target_overtime_points', String(editOvertimePoints));
-    localStorage.setItem('ardine_target_weekly_points', String(editWeeklyPoints));
+    localStorage.setItem(
+      'ardine_target_overtime_points',
+      String(editOvertimePoints)
+    );
+    localStorage.setItem(
+      'ardine_target_weekly_points',
+      String(editWeeklyPoints)
+    );
     localStorage.setItem('ardine_target_bonus_reward', String(editBonusReward));
 
     setTargetTitle(editTitle);
@@ -257,7 +286,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const collapsed = localStorage.getItem('ardine_target_collapsed') === 'true';
+      const collapsed =
+        localStorage.getItem('ardine_target_collapsed') === 'true';
+       
       setIsCollapsed(collapsed);
 
       const savedX = localStorage.getItem('ardine_target_pos_x');
@@ -265,6 +296,7 @@ export default function DashboardPage() {
       if (savedX !== null && savedY !== null) {
         const parsedX = parseFloat(savedX);
         const parsedY = parseFloat(savedY);
+         
         setPosition({ x: parsedX, y: parsedY });
         latestPos.current = { x: parsedX, y: parsedY };
       }
@@ -590,24 +622,28 @@ export default function DashboardPage() {
   );
 
   // Group entries by day of week (Senin to Minggu)
-  const userEntries = data?.thisWeekEntries?.nodes?.filter(
-    (entry: any) => entry.user?.id === user?.id
-  ) || [];
+  const userEntries =
+    data?.thisWeekEntries?.nodes?.filter(
+      (entry: any) => entry.user?.id === user?.id
+    ) || [];
 
   const runningEntry = userEntries.find((entry: any) => !entry.stoppedAt);
 
   useEffect(() => {
     if (!runningEntry) {
+       
       setRunningSeconds(0);
       return;
     }
     const updateElapsed = () => {
       const start = new Date(runningEntry.startedAt).getTime();
+       
       setRunningSeconds(Math.floor((Date.now() - start) / 1000));
     };
     updateElapsed();
     const interval = setInterval(updateElapsed, 1000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runningEntry?.id, runningEntry?.startedAt]);
 
   const weekDaysData = Array.from({ length: 7 }, (_, i) => {
@@ -656,10 +692,15 @@ export default function DashboardPage() {
   const dailyTargetSeconds = targetDailyHours * 3600;
 
   weekDaysData.forEach((day) => {
-    day.points = Math.floor(Math.max(0, day.seconds - dailyTargetSeconds) / 3600) * targetOvertimePoints;
+    day.points =
+      Math.floor(Math.max(0, day.seconds - dailyTargetSeconds) / 3600) *
+      targetOvertimePoints;
   });
 
-  const totalWeeklyPoints = weekDaysData.reduce((sum, day) => sum + day.points, 0);
+  const totalWeeklyPoints = weekDaysData.reduce(
+    (sum, day) => sum + day.points,
+    0
+  );
 
   const todayDate = new Date();
   const yyyyToday = todayDate.getFullYear();
@@ -817,7 +858,7 @@ export default function DashboardPage() {
 
       {/* Floating Weekend Bonus Tracker Widget */}
       {isCollapsed ? (
-        <div 
+        <div
           onClick={handlePillClick}
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
@@ -825,16 +866,18 @@ export default function DashboardPage() {
           role="button"
           tabIndex={0}
           className={`fixed bottom-6 right-6 z-50 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-full px-5 py-3 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 border border-white/20 select-none hover:scale-105 active:scale-95 whitespace-nowrap min-w-max ${
-            isDragging 
-              ? 'cursor-grabbing transition-none' 
+            isDragging
+              ? 'cursor-grabbing transition-none'
               : 'cursor-grab transition-all duration-300'
           }`}
         >
           <span className="text-xl">🎯</span>
-          <span className="text-xs font-bold tracking-wide pr-1">Target: {totalWeeklyPoints}/{targetWeeklyPoints} pts</span>
+          <span className="text-xs font-bold tracking-wide pr-1">
+            Target: {totalWeeklyPoints}/{targetWeeklyPoints} pts
+          </span>
         </div>
       ) : (
-        <div 
+        <div
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
           style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
@@ -846,10 +889,13 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between pb-3 border-b dark:border-border">
             <div className="flex items-center gap-2">
               <span className="text-lg">🎯</span>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Weekly Target</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Weekly Target
+              </h3>
             </div>
             <div className="flex items-center gap-1.5">
-              {(currentTeam?.role === 'OWNER' || currentTeam?.role === 'ADMIN') && (
+              {(currentTeam?.role === 'OWNER' ||
+                currentTeam?.role === 'ADMIN') && (
                 <button
                   onClick={() => {
                     setEditTitle(targetTitle);
@@ -865,7 +911,7 @@ export default function DashboardPage() {
                   <Settings className="w-3.5 h-3.5" />
                 </button>
               )}
-              <button 
+              <button
                 onClick={() => handleToggleCollapse(true)}
                 className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
               >
@@ -878,15 +924,21 @@ export default function DashboardPage() {
           <div className="mt-3 space-y-3.5">
             {/* Target Title & Progress */}
             <div className="space-y-1.5">
-              <h4 className="text-sm font-bold text-slate-900 dark:text-slate-50">"{targetTitle}"</h4>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-slate-50">
+                &quot;{targetTitle}&quot;
+              </h4>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-500">Progress</span>
-                <span className="font-bold text-primary">{totalWeeklyPoints} / {targetWeeklyPoints} Points</span>
+                <span className="font-bold text-primary">
+                  {totalWeeklyPoints} / {targetWeeklyPoints} Points
+                </span>
               </div>
               <div className="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden relative">
-                <div 
-                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all" 
-                  style={{ width: `${Math.min(100, (totalWeeklyPoints / targetWeeklyPoints) * 100)}%` }}
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all"
+                  style={{
+                    width: `${Math.min(100, (totalWeeklyPoints / targetWeeklyPoints) * 100)}%`,
+                  }}
                 />
               </div>
             </div>
@@ -894,22 +946,24 @@ export default function DashboardPage() {
             {/* Quick Status */}
             <div className="bg-slate-50/50 dark:bg-slate-950/20 border dark:border-border/50 rounded-lg p-3 space-y-2 text-xs">
               <div className="flex items-start gap-2">
-                <span className="text-sm">{isTodayTargetAchieved ? '✅' : '⏳'}</span>
+                <span className="text-sm">
+                  {isTodayTargetAchieved ? '✅' : '⏳'}
+                </span>
                 <div className="space-y-0.5">
                   <p className="font-semibold text-slate-800 dark:text-slate-200">
-                    {isTodayTargetAchieved 
+                    {isTodayTargetAchieved
                       ? `Daily target achieved! (+${todayOvertimePoints} pts)`
-                      : `Target not achieved. (${todayHours.toFixed(1)}h / ${targetDailyHours}h)`
-                    }
+                      : `Target not achieved. (${todayHours.toFixed(1)}h / ${targetDailyHours}h)`}
                   </p>
                   {!isTodayTargetAchieved && todayHours > 0 && (
                     <p className="text-[10px] text-muted-foreground">
-                      Need {(targetDailyHours - todayHours).toFixed(1)} hrs for overtime.
+                      Need {(targetDailyHours - todayHours).toFixed(1)} hrs for
+                      overtime.
                     </p>
                   )}
                 </div>
               </div>
-              
+
               {/* Rules Summary Ticker or Bullet */}
               <div className="text-[10px] text-muted-foreground border-t dark:border-border/50 pt-2 flex justify-between items-center">
                 <span>Target: {targetDailyHours}h/day</span>
@@ -920,28 +974,31 @@ export default function DashboardPage() {
 
             {/* Week Calendar dot-grid or small blocks */}
             <div>
-              <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Mon - Sun Hours</h4>
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+                Mon - Sun Hours
+              </h4>
               <div className="grid grid-cols-7 gap-1">
                 {weekDaysData.map((day) => {
                   const hrs = day.seconds / 3600;
                   const isToday = day.dateStr === todayDateStr;
-                  let bgClass = "bg-slate-100 dark:bg-slate-800";
-                  let borderClass = "border-transparent";
-                  let textClass = "text-slate-500 dark:text-slate-400";
+                  let bgClass = 'bg-slate-100 dark:bg-slate-800';
+                  let borderClass = 'border-transparent';
+                  let textClass = 'text-slate-500 dark:text-slate-400';
 
                   if (hrs >= targetDailyHours) {
-                    bgClass = "bg-emerald-500 text-white";
+                    bgClass = 'bg-emerald-500 text-white';
                   } else if (hrs > 0) {
-                    bgClass = "bg-amber-500 text-white";
+                    bgClass = 'bg-amber-500 text-white';
                   }
 
                   if (isToday) {
-                    borderClass = "ring-2 ring-primary ring-offset-2 ring-offset-background";
+                    borderClass =
+                      'ring-2 ring-primary ring-offset-2 ring-offset-background';
                   }
 
                   return (
-                    <div 
-                      key={day.dateStr} 
+                    <div
+                      key={day.dateStr}
                       className={`rounded p-1 text-center transition-all ${bgClass} ${borderClass} flex flex-col justify-between h-10`}
                       title={`${day.dayName}: ${hrs.toFixed(1)}h (+${day.points} pts)`}
                     >
@@ -961,7 +1018,10 @@ export default function DashboardPage() {
       )}
 
       {/* Edit Target Dialog */}
-      <Dialog open={showEditTargetDialog} onOpenChange={setShowEditTargetDialog}>
+      <Dialog
+        open={showEditTargetDialog}
+        onOpenChange={setShowEditTargetDialog}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Weekly Target & Rules</DialogTitle>
@@ -986,17 +1046,23 @@ export default function DashboardPage() {
                   type="number"
                   step="0.5"
                   value={editDailyHours}
-                  onChange={(e) => setEditDailyHours(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setEditDailyHours(parseFloat(e.target.value) || 0)
+                  }
                 />
               </div>
 
               <div>
-                <Label htmlFor="targetOvertimePoints">Points per Extra Hour</Label>
+                <Label htmlFor="targetOvertimePoints">
+                  Points per Extra Hour
+                </Label>
                 <Input
                   id="targetOvertimePoints"
                   type="number"
                   value={editOvertimePoints}
-                  onChange={(e) => setEditOvertimePoints(parseInt(e.target.value, 10) || 0)}
+                  onChange={(e) =>
+                    setEditOvertimePoints(parseInt(e.target.value, 10) || 0)
+                  }
                 />
               </div>
             </div>
@@ -1008,26 +1074,30 @@ export default function DashboardPage() {
                   id="targetWeeklyPoints"
                   type="number"
                   value={editWeeklyPoints}
-                  onChange={(e) => setEditWeeklyPoints(parseInt(e.target.value, 10) || 0)}
+                  onChange={(e) =>
+                    setEditWeeklyPoints(parseInt(e.target.value, 10) || 0)
+                  }
                 />
               </div>
 
               <div>
-                <Label htmlFor="targetBonusReward">Bonus Reward Amount ($)</Label>
+                <Label htmlFor="targetBonusReward">
+                  Bonus Reward Amount ($)
+                </Label>
                 <Input
                   id="targetBonusReward"
                   type="number"
                   step="0.01"
                   value={editBonusReward}
-                  onChange={(e) => setEditBonusReward(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setEditBonusReward(parseFloat(e.target.value) || 0)
+                  }
                 />
               </div>
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button onClick={handleSaveTarget}>
-                Save Changes
-              </Button>
+              <Button onClick={handleSaveTarget}>Save Changes</Button>
               <Button
                 variant="outline"
                 onClick={() => setShowEditTargetDialog(false)}

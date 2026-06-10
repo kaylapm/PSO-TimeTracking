@@ -166,15 +166,27 @@ export default function NewInvoicePage() {
   const [targetDailyHours, setTargetDailyHours] = useState(8);
   const [targetOvertimePoints, setTargetOvertimePoints] = useState(10);
   const [targetWeeklyPoints, setTargetWeeklyPoints] = useState(100);
-  const [targetBonusReward, setTargetBonusReward] = useState(50.00);
+  const [targetBonusReward, setTargetBonusReward] = useState(50.0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const title = localStorage.getItem('ardine_target_title') || 'Chase the Weekend Bonus!';
-      const dailyHours = parseFloat(localStorage.getItem('ardine_target_daily_hours') || '8');
-      const overtimePoints = parseInt(localStorage.getItem('ardine_target_overtime_points') || '10', 10);
-      const weeklyPoints = parseInt(localStorage.getItem('ardine_target_weekly_points') || '100', 10);
-      const bonusReward = parseFloat(localStorage.getItem('ardine_target_bonus_reward') || '50.00');
+      const title =
+        localStorage.getItem('ardine_target_title') ||
+        'Chase the Weekend Bonus!';
+      const dailyHours = parseFloat(
+        localStorage.getItem('ardine_target_daily_hours') || '8'
+      );
+      const overtimePoints = parseInt(
+        localStorage.getItem('ardine_target_overtime_points') || '10',
+        10
+      );
+      const weeklyPoints = parseInt(
+        localStorage.getItem('ardine_target_weekly_points') || '100',
+        10
+      );
+      const bonusReward = parseFloat(
+        localStorage.getItem('ardine_target_bonus_reward') || '50.00'
+      );
 
       setTargetTitle(title);
       setTargetDailyHours(dailyHours);
@@ -265,7 +277,7 @@ export default function NewInvoicePage() {
 
   // Weekend Bonus Calculations
   const userWeekEntries = userWeekEntriesResult.data?.timeEntries.nodes || [];
-  
+
   // Group entries by day of week (Senin to Minggu)
   const weekDaysData = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(thisWeekStart);
@@ -284,7 +296,7 @@ export default function NewInvoicePage() {
     const mm = String(entryDate.getMonth() + 1).padStart(2, '0');
     const dd = String(entryDate.getDate()).padStart(2, '0');
     const entryDateStr = `${yyyy}-${mm}-${dd}`;
-    
+
     const dayObj = weekDaysData.find((d) => d.dateStr === entryDateStr);
     if (dayObj) {
       dayObj.seconds += entry.durationSeconds || 0;
@@ -294,7 +306,9 @@ export default function NewInvoicePage() {
   let totalWeeklyPoints = 0;
   const dailyTargetSeconds = targetDailyHours * 3600;
   weekDaysData.forEach((day) => {
-    const points = Math.floor(Math.max(0, day.seconds - dailyTargetSeconds) / 3600) * targetOvertimePoints;
+    const points =
+      Math.floor(Math.max(0, day.seconds - dailyTargetSeconds) / 3600) *
+      targetOvertimePoints;
     totalWeeklyPoints += points;
   });
 
@@ -930,8 +944,16 @@ export default function NewInvoicePage() {
                   Weekly Target Bonus Unlocked!
                 </h3>
                 <p className="text-xs text-emerald-600/90 dark:text-emerald-400/90 leading-relaxed">
-                  You have collected <span className="font-bold text-emerald-700 dark:text-emerald-300">{totalWeeklyPoints} Points</span> from working overtime this week! 
-                  You are eligible for a <strong>Weekly Incentive Bonus of ${targetBonusReward.toFixed(2)}</strong> which can be automatically added to this client's invoice.
+                  You have collected{' '}
+                  <span className="font-bold text-emerald-700 dark:text-emerald-300">
+                    {totalWeeklyPoints} Points
+                  </span>{' '}
+                  from working overtime this week! You are eligible for a{' '}
+                  <strong>
+                    Weekly Incentive Bonus of ${targetBonusReward.toFixed(2)}
+                  </strong>{' '}
+                  which can be automatically added to this client&apos;s
+                  invoice.
                 </p>
                 <div className="pt-2 flex items-center gap-2">
                   <Button
@@ -939,7 +961,8 @@ export default function NewInvoicePage() {
                     size="sm"
                     className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-1.5"
                     onClick={() => {
-                      const bonusDesc = 'Weekly Incentive Bonus - ' + targetTitle;
+                      const bonusDesc =
+                        'Weekly Incentive Bonus - ' + targetTitle;
                       const isAlreadyAdded = lineItems.some(
                         (item) => item.description === bonusDesc
                       );
@@ -959,7 +982,11 @@ export default function NewInvoicePage() {
                   >
                     Add Bonus to Invoice (+${targetBonusReward.toFixed(2)})
                   </Button>
-                  {lineItems.some((item) => item.description === 'Weekly Incentive Bonus - ' + targetTitle) && (
+                  {lineItems.some(
+                    (item) =>
+                      item.description ===
+                      'Weekly Incentive Bonus - ' + targetTitle
+                  ) && (
                     <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
                       ✅ Bonus has been successfully added to invoice!
                     </span>
