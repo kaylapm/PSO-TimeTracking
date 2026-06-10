@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:17-alpine
-    container_name: ardine-db
+    container_name: ardine-db-dev
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -12,10 +12,10 @@ services:
     ports:
       - '${POSTGRES_PORT:-5432}:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_dev:/var/lib/postgresql/data
       - ./ardine_ddl.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
-      - ardine-network
+      - ardine-network-dev
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
       interval: 10s
@@ -23,13 +23,12 @@ services:
       retries: 5
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_SEASONAL_THEME: ${NEXT_PUBLIC_SEASONAL_THEME:-}
-    container_name: ardine-app
-    restart: unless-stopped
+    image: node:20-alpine
+    container_name: ardine-app-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
       - '${APP_PORT:-3000}:3000'
     environment:
@@ -39,22 +38,18 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-ardine}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-
-      # Application configuration
-      NODE_ENV: production
+      NODE_ENV: development
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
-
-      # Next.js configuration
-      NEXT_TELEMETRY_DISABLED: 1
+    command: sh -c "npm install && npm run dev"
     depends_on:
       db:
         condition: service_healthy
     networks:
-      - ardine-network
+      - ardine-network-dev
 
 networks:
-  ardine-network:
+  ardine-network-dev:
     driver: bridge
 
 volumes:
-  postgres_data:
+  postgres_data_dev:

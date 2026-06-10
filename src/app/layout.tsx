@@ -4,6 +4,8 @@ import { GraphQLProvider } from '@/lib/graphql-client';
 import { AuthProvider } from '@/lib/auth-context';
 import { TeamProvider } from '@/lib/team-context';
 import { ThemeProvider } from '@/lib/theme-context';
+import { HalloweenEffects } from '@/components/seasonal/HalloweenEffects';
+import { ChristmasEffects } from '@/components/seasonal/ChristmasEffects';
 
 export const metadata: Metadata = {
   title: 'Ardine - Time Tracking & Invoicing',
@@ -27,6 +29,18 @@ const themeInitScript = `
   })();
 `;
 
+// Applies the seasonal theme class before React hydrates (prevents FOUC).
+// NEXT_PUBLIC_SEASONAL_THEME is interpolated at server render time.
+// To activate a theme: set NEXT_PUBLIC_SEASONAL_THEME=halloween or christmas in .env.local
+const seasonalThemeScript = `
+  (function() {
+    try {
+      var theme = '${process.env.NEXT_PUBLIC_SEASONAL_THEME ?? ''}';
+      if (theme) document.documentElement.classList.add(theme);
+    } catch(e) {}
+  })();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,11 +49,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Prevent flash of unstyled content (FOUC) for dark mode */}
+        {/* Prevent flash of unstyled content (FOUC) for dark mode and seasonal themes */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: seasonalThemeScript }} />
       </head>
       <body className="antialiased bg-background text-foreground transition-colors duration-200">
         <ThemeProvider>
+          <HalloweenEffects />
+          <ChristmasEffects />
           <AuthProvider>
             <TeamProvider>
               <GraphQLProvider>{children}</GraphQLProvider>
