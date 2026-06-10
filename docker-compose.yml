@@ -26,6 +26,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SEASONAL_THEME: ${NEXT_PUBLIC_SEASONAL_THEME:-}
     container_name: ardine-app
     restart: unless-stopped
     ports:
