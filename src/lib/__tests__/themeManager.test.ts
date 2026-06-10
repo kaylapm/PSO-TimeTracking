@@ -35,4 +35,16 @@ describe('getSeasonalTheme', () => {
     const { getSeasonalTheme: get } = require('../themeManager');
     expect(get()).toBe('default');
   });
+
+  it('returns christmas when NEXT_PUBLIC_SEASONAL_THEME=christmas', () => {
+    process.env.NEXT_PUBLIC_SEASONAL_THEME = 'christmas';
+    const { getSeasonalTheme: get } = require('../themeManager');
+    expect(get()).toBe('christmas');
+  });
+
+  it('returns default when NEXT_PUBLIC_SEASONAL_THEME is set to another seasonal value', () => {
+    process.env.NEXT_PUBLIC_SEASONAL_THEME = 'thanksgiving';
+    const { getSeasonalTheme: get } = require('../themeManager');
+    expect(get()).toBe('default');
+  });
 });
