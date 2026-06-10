@@ -232,26 +232,24 @@ export default function DashboardPage() {
         localStorage.getItem('ardine_target_bonus_reward') || '50.00'
       );
 
-       
       setTargetTitle(title);
-       
+
       setTargetDailyHours(dailyHours);
-       
+
       setTargetOvertimePoints(overtimePoints);
-       
+
       setTargetWeeklyPoints(weeklyPoints);
-       
+
       setTargetBonusReward(bonusReward);
 
-       
       setEditTitle(title);
-       
+
       setEditDailyHours(dailyHours);
-       
+
       setEditOvertimePoints(overtimePoints);
-       
+
       setEditWeeklyPoints(weeklyPoints);
-       
+
       setEditBonusReward(bonusReward);
     }
   }, []);
@@ -288,7 +286,7 @@ export default function DashboardPage() {
     if (typeof window !== 'undefined') {
       const collapsed =
         localStorage.getItem('ardine_target_collapsed') === 'true';
-       
+
       setIsCollapsed(collapsed);
 
       const savedX = localStorage.getItem('ardine_target_pos_x');
@@ -296,7 +294,7 @@ export default function DashboardPage() {
       if (savedX !== null && savedY !== null) {
         const parsedX = parseFloat(savedX);
         const parsedY = parseFloat(savedY);
-         
+
         setPosition({ x: parsedX, y: parsedY });
         latestPos.current = { x: parsedX, y: parsedY };
       }
@@ -631,13 +629,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!runningEntry) {
-       
       setRunningSeconds(0);
       return;
     }
     const updateElapsed = () => {
       const start = new Date(runningEntry.startedAt).getTime();
-       
+
       setRunningSeconds(Math.floor((Date.now() - start) / 1000));
     };
     updateElapsed();

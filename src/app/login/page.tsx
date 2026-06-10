@@ -63,65 +63,65 @@ function LoginForm() {
             </p>
           </div>
 
-  {/* Login Form */ }
-  <form onSubmit={handleSubmit} className="space-y-6">
-    {error && (
-      <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
-        <p className="text-sm text-destructive">{error}</p>
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                <p className="text-sm text-destructive">{error}</p>
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="you@company.com"
+                autoComplete="email"
+                autoFocus
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                autoComplete="current-password"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading || !email || !password}
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </Button>
+          </form>
+
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Don&apos;t have an account?{' '}
+              <Link
+                href={`/register${redirect !== '/dashboard' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
+                className="text-primary hover:underline font-medium"
+              >
+                Sign up
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
-    )}
-
-    <div>
-      <Label htmlFor="email">Email</Label>
-      <Input
-        id="email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        placeholder="you@company.com"
-        autoComplete="email"
-        autoFocus
-      />
     </div>
-
-    <div>
-      <Label htmlFor="password">Password</Label>
-      <Input
-        id="password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        placeholder="••••••••"
-        autoComplete="current-password"
-      />
-    </div>
-
-    <Button
-      type="submit"
-      className="w-full"
-      disabled={loading || !email || !password}
-    >
-      {loading ? 'Signing in...' : 'Sign in'}
-    </Button>
-  </form>
-
-  {/* Footer */ }
-  <div className="mt-6 text-center">
-    <p className="text-sm text-muted-foreground">
-      Don&apos;t have an account?{' '}
-      <Link
-        href={`/register${redirect !== '/dashboard' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
-        className="text-primary hover:underline font-medium"
-      >
-        Sign up
-      </Link>
-    </p>
-  </div>
-        </div >
-      </div >
-    </div >
   );
 }
 
