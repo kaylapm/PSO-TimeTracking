@@ -26,8 +26,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_SEASONAL_THEME: ${NEXT_PUBLIC_SEASONAL_THEME:-}
     container_name: ardine-app
     restart: unless-stopped
     ports:
@@ -43,6 +41,7 @@ services:
       # Application configuration
       NODE_ENV: production
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      SEASONAL_THEME: ${SEASONAL_THEME:-}
 
       # Next.js configuration
       NEXT_TELEMETRY_DISABLED: 1

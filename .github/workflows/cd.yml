@@ -10,7 +10,10 @@ on:
 env:
   AZURE_CONTAINER_REGISTRY: 'registrytimetracking.azurecr.io'
   CONTAINER_NAME: 'ardine-app'
-  NEXT_PUBLIC_SEASONAL_THEME: 'halloween'
+  # SEASONAL_THEME adalah runtime env var — nilainya dibaca tiap request oleh Next.js.
+  # Untuk ganti tema: ubah secret SEASONAL_THEME_STAGING / SEASONAL_THEME_PRODUCTION
+  # di GitHub Repository Settings > Secrets, lalu trigger ulang pipeline ini.
+  # Nilai valid: 'halloween', 'christmas', atau '' (default/tanpa tema).
 
 jobs:
   validate_prerequisites:
@@ -101,8 +104,6 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}
-          build-args: |
-            NEXT_PUBLIC_SEASONAL_THEME=${{ env.NEXT_PUBLIC_SEASONAL_THEME }}
 
       - name: Deploy to Azure Web App (Staging)
         if: needs.validate_prerequisites.outputs.env_name == 'Staging'
@@ -111,6 +112,14 @@ jobs:
           app-name: ${{ needs.validate_prerequisites.outputs.app_name }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
           images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}'
+          app-settings-json: |
+            [
+              {
+                "name": "SEASONAL_THEME",
+                "value": "${{ secrets.SEASONAL_THEME_STAGING }}",
+                "slotSetting": false
+              }
+            ]
 
       - name: Deploy to Azure Web App (Production)
         if: needs.validate_prerequisites.outputs.env_name == 'Production'
@@ -119,6 +128,14 @@ jobs:
           app-name: ${{ needs.validate_prerequisites.outputs.app_name }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PRODUCTION }}
           images: '${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}'
+          app-settings-json: |
+            [
+              {
+                "name": "SEASONAL_THEME",
+                "value": "${{ secrets.SEASONAL_THEME_PRODUCTION }}",
+                "slotSetting": false
+              }
+            ]
 
   Smoke_Test:
     name: Smoke Test Verification

@@ -97,9 +97,29 @@ jobs:
       - name: Docker Build Validation
         run: docker build -t ardine-app:test .
 
+  E2E_Test_Job:
+    name: E2E Test Job (Cypress)
+    needs: [Quality_Job, Test_Job, Build_Job]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm run start
+          wait-on: 'http://localhost:3000/login'
+        env:
+          # SEASONAL_THEME adalah runtime env var (bukan build-time).
+          # Set ke string kosong di CI = tema default (tidak ada tema musiman).
+          # Di Azure, set via App Service Configuration > Environment Variables.
+          SEASONAL_THEME: ''
+
   Summary_Job:
     name: CI Summary Report
-    needs: [Quality_Job, Test_Job, Build_Job]
+    needs: [Quality_Job, Test_Job, Build_Job, E2E_Test_Job]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -113,3 +133,4 @@ jobs:
           echo "- **Quality Check:** \`${{ needs.Quality_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Unit Testing:** \`${{ needs.Test_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Build Validation:** \`${{ needs.Build_Job.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **E2E Testing (Cypress):** \`${{ needs.E2E_Test_Job.result }}\`" >> $GITHUB_STEP_SUMMARY

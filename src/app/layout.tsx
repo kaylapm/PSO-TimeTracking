@@ -13,45 +13,24 @@ export const metadata: Metadata = {
     'Self-hosted time tracking and invoicing for freelancers and teams',
 };
 
-/**
- * Inline script to prevent flash of wrong theme on initial page load.
- * Reads the saved theme from localStorage (or OS preference) and applies
- * the `dark` class to <html> before React hydrates.
- */
-const themeInitScript = `
-  (function() {
-    try {
-      var theme = localStorage.getItem('ardine_theme');
-      if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      }
-    } catch(e) {}
-  })();
-`;
-
-// Applies the seasonal theme class before React hydrates (prevents FOUC).
-// NEXT_PUBLIC_SEASONAL_THEME is interpolated at server render time.
-// To activate a theme: set NEXT_PUBLIC_SEASONAL_THEME=halloween or christmas in .env.local
-const seasonalThemeScript = `
-  (function() {
-    try {
-      var theme = '${process.env.NEXT_PUBLIC_SEASONAL_THEME ?? ''}';
-      if (theme) document.documentElement.classList.add(theme);
-    } catch(e) {}
-  })();
-`;
+export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const seasonalTheme = (process.env.SEASONAL_THEME ?? '') as string;
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={seasonalTheme || undefined}
+    >
       <head>
-        {/* Prevent flash of unstyled content (FOUC) for dark mode and seasonal themes */}
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        <script dangerouslySetInnerHTML={{ __html: seasonalThemeScript }} />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="/theme-init.js" />
       </head>
       <body className="antialiased bg-background text-foreground transition-colors duration-200">
         <ThemeProvider>
