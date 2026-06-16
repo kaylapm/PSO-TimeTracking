@@ -112,9 +112,6 @@ jobs:
           start: npm run start
           wait-on: 'http://localhost:3000/login'
         env:
-          # SEASONAL_THEME adalah runtime env var (bukan build-time).
-          # Set ke string kosong di CI = tema default (tidak ada tema musiman).
-          # Di Azure, set via App Service Configuration > Environment Variables.
           SEASONAL_THEME: ''
 
   Summary_Job:

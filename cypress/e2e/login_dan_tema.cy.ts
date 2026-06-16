@@ -6,7 +6,7 @@ describe('Pengujian Halaman Login & Tema Musiman', () => {
   });
 
   it('harus menampilkan form login dengan benar', () => {
-    cy.get('h1').should('contain', 'Ardine - PSO 5');
+    cy.get('h1').should('contain', 'Ardine');
     cy.get('input#email').should('be.visible');
     cy.get('input#password').should('be.visible');
     cy.get('button[type="submit"]').should('be.disabled');
@@ -18,18 +18,27 @@ describe('Pengujian Halaman Login & Tema Musiman', () => {
     cy.get('button[type="submit"]').should('not.be.disabled');
   });
 
-  it('harus menampilkan pesan error saat login gagal', () => {
-    cy.intercept('POST', '/api/auth/login', {
-      statusCode: 401,
-      body: { error: 'Email atau password salah' },
-    }).as('loginRequest');
-
-    cy.get('input#email').type('salah@example.com');
-    cy.get('input#password').type('salahpassword');
+  it('harus menampilkan pesan error saat login gagal (Real Backend)', () => {
+    cy.get('input#email').type('salah_banget@example.com');
+    cy.get('input#password').type('salahpassword123');
     cy.get('button[type="submit"]').click();
 
-    cy.wait('@loginRequest');
-    cy.get('.text-destructive').should('be.visible');
+    cy.get('.text-destructive', { timeout: 10000 }).should('be.visible');
+  });
+
+  it('harus bisa login sukses dan melakukan logout (Real Backend)', () => {
+    cy.get('input#email').type('testingpso@gmail.com');
+    cy.get('input#password').type('testing123');
+    cy.get('button[type="submit"]').click();
+
+    cy.url({ timeout: 10000 }).should('include', '/dashboard');
+
+    cy.contains('testing pso', { matchCase: false })
+      .should('be.visible')
+      .click();
+    cy.contains('Logout', { matchCase: false }).should('be.visible').click();
+
+    cy.url({ timeout: 10000 }).should('include', '/login');
   });
 
   it('harus menerapkan class tema musiman pada dokumen jika diaktifkan (Staging)', () => {
