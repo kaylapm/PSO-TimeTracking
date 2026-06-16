@@ -138,10 +138,3 @@ export default function LoginPage() {
     </Suspense>
   );
 }
-        </div >
-      }
-    >
-  <LoginForm />
-    </Suspense >
-  );
-}
