@@ -56,7 +56,7 @@ function LoginForm() {
         <div className="bg-card text-card-foreground rounded-lg shadow-lg p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              Ardine - PSO 5
+              Ardine - PSO 5 {/* Theme testing */}
             </h1>
             <p className="text-muted-foreground">
               Time tracking & project management
