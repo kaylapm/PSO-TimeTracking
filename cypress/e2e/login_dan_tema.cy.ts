@@ -1,4 +1,18 @@
 describe('Pengujian Halaman Login & Tema Musiman', () => {
+  before(() => {
+    // Seed database with test user if not exists
+    cy.request({
+      method: 'POST',
+      url: '/api/auth/register',
+      failOnStatusCode: false,
+      body: {
+        name: 'testing pso',
+        email: 'testingpso@gmail.com',
+        password: 'testing123',
+      },
+    });
+  });
+
   beforeEach(() => {
     cy.on('uncaught:exception', () => false);
     cy.visit('/login', { failOnStatusCode: false });

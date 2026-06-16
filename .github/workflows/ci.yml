@@ -105,6 +105,11 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      - name: Start Database for E2E Tests
+        run: |
+          docker compose up -d db
+          sleep 10
+
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:

@@ -1,4 +1,18 @@
 describe('Fitur Time Tracking (Start/Stop Timer)', () => {
+  before(() => {
+    // Seed database with test user if not exists
+    cy.request({
+      method: 'POST',
+      url: '/api/auth/register',
+      failOnStatusCode: false,
+      body: {
+        name: 'testing pso',
+        email: 'testingpso@gmail.com',
+        password: 'testing123',
+      },
+    });
+  });
+
   beforeEach(() => {
     cy.on('uncaught:exception', () => false);
   });
