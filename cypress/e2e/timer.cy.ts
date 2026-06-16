@@ -26,6 +26,22 @@ describe('Fitur Time Tracking (Start/Stop Timer)', () => {
 
     cy.url({ timeout: 10000 }).should('include', '/dashboard');
 
+    // Create a Client first (required for Project)
+    cy.visit('/clients/new');
+    cy.get('input#name').type('Client E2E Testing');
+    cy.get('button[type="submit"]').click();
+    cy.url({ timeout: 10000 }).should('include', '/clients/');
+
+    // Create a Project (required for Timer)
+    cy.visit('/projects/new');
+    cy.get('input#name').type('Project E2E Testing');
+    cy.get('select#client').select('Client E2E Testing');
+    cy.get('button[type="submit"]').click();
+    cy.url({ timeout: 10000 }).should('include', '/projects/');
+
+    // Back to Dashboard to test the Timer
+    cy.visit('/dashboard');
+
     cy.get('body').then(($body) => {
       if ($body.text().includes('Stop Timer')) {
         cy.contains('button', 'Stop Timer').click();
