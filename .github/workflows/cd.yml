@@ -105,9 +105,11 @@ jobs:
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}
 
-      - name: Deploy to Azure Web App (Staging)
+      - name: Sanitize Secret and Deploy to Azure Web App (Staging)
         if: needs.validate_prerequisites.outputs.env_name == 'Staging'
         uses: azure/webapps-deploy@v3
+        env:
+          THEME_SECRET: ${{ secrets.SEASONAL_THEME_STAGING }}
         with:
           app-name: ${{ needs.validate_prerequisites.outputs.app_name }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
@@ -116,7 +118,7 @@ jobs:
             [
               {
                 "name": "SEASONAL_THEME",
-                "value": "${{ secrets.SEASONAL_THEME_STAGING }}",
+                "value": "${{ env.THEME_SECRET }}",
                 "slotSetting": false
               }
             ]
