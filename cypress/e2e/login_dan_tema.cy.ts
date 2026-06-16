@@ -32,10 +32,16 @@ describe('Pengujian Halaman Login & Tema Musiman', () => {
     cy.get('.text-destructive').should('be.visible');
   });
 
-  it('harus menerapkan class tema christmas pada dokumen jika diaktifkan (Staging)', () => {
-    cy.document().then((doc) => {
-      doc.documentElement.classList.add('christmas');
+  it('harus menerapkan class tema musiman pada dokumen jika diaktifkan (Staging)', () => {
+    const themes = ['halloween', 'christmas'];
+    themes.forEach((theme) => {
+      cy.document().then((doc) => {
+        doc.documentElement.classList.add(theme);
+      });
+      cy.get('html').should('have.class', theme);
+      cy.document().then((doc) => {
+        doc.documentElement.classList.remove(theme);
+      });
     });
-    cy.get('html').should('have.class', 'christmas');
   });
 });

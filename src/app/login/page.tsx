@@ -55,10 +55,10 @@ function LoginForm() {
       <div className="w-full max-w-md">
         <div className="bg-card text-card-foreground rounded-lg shadow-lg p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               Ardine - PSO 5
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-muted-foreground">
               Time tracking & project managemenT
             </p>
           </div>
