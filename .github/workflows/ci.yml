@@ -105,6 +105,9 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      - name: Setup Environment Variables
+        run: cp .env.example .env
+
       - name: Start Database for E2E Tests
         run: |
           docker compose up -d db
