@@ -59,7 +59,7 @@ function LoginForm() {
               Ardine - PSO 5
             </h1>
             <p className="text-muted-foreground">
-              Time tracking & project managemenT
+              Time tracking & project management
             </p>
           </div>
 
