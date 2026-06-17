@@ -61,7 +61,7 @@ export default function TaskDetailPage() {
     if (cents === null) return null;
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'IDR',
     }).format(cents / 100);
   };
 

@@ -266,7 +266,7 @@ export default function ProjectDetailPage() {
     if (cents === null) return null;
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'IDR',
     }).format(cents / 100);
   };
 
@@ -940,7 +940,7 @@ export default function ProjectDetailPage() {
               </div>
 
               <div>
-                <Label htmlFor="task-rate">Hourly Rate (USD)</Label>
+                <Label htmlFor="task-rate">Hourly Rate (IDR)</Label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                     $

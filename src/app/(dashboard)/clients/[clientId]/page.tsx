@@ -78,7 +78,7 @@ export default function ClientDetailPage() {
   const { data, fetching, error } = result;
   const client = data?.client;
 
-  const formatCurrency = (cents: number | null, currency: string = 'USD') => {
+  const formatCurrency = (cents: number | null, currency: string = 'IDR') => {
     if (cents === null) return null;
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -264,7 +264,7 @@ export default function ClientDetailPage() {
                     <p className="font-semibold">
                       {formatCurrency(
                         client.defaultHourlyRateCents,
-                        client.currency || 'USD'
+                        client.currency || 'IDR'
                       )}
                       /hour
                     </p>

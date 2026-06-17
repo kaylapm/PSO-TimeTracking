@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useQuery, useMutation } from 'urql';
 import { useAuth, useCanAccessInvoices } from '@/lib/auth-context';
 import { gql } from '@/lib/gql';
@@ -122,12 +122,9 @@ interface LineItem {
   isDeleted?: boolean;
 }
 
-export default function EditInvoicePage({
-  params,
-}: {
-  params: { invoiceId: string };
-}) {
-  const { invoiceId } = params;
+export default function EditInvoicePage() {
+  const params = useParams();
+  const invoiceId = params.invoiceId as string;
   const router = useRouter();
   const { currentTeam } = useAuth();
   const canAccessInvoices = useCanAccessInvoices();
@@ -318,7 +315,7 @@ export default function EditInvoicePage({
   const formatCurrency = (cents: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'IDR',
     }).format(cents / 100);
   };
 

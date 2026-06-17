@@ -27,7 +27,7 @@ export const ClientInput = builder.inputType('ClientInput', {
     billingAddress: t.field({ type: 'JSON', required: false }),
     taxId: t.string({ required: false }),
     defaultHourlyRateCents: t.int({ required: false }),
-    currency: t.string({ defaultValue: 'USD' }),
+    currency: t.string({ defaultValue: 'IDR' }),
   }),
 });
 

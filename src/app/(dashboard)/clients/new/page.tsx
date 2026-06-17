@@ -37,7 +37,7 @@ export default function NewClientPage() {
     phone: '',
     contactName: '',
     defaultHourlyRateCents: '',
-    currency: 'USD',
+    currency: 'IDR',
     notes: '',
     billingAddress: {
       street: '',
@@ -204,7 +204,7 @@ export default function NewClientPage() {
                   }
                   className="w-full px-3 py-2 border dark:border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-ring bg-background dark:bg-background text-foreground dark:text-foreground"
                 >
-                  <option value="USD">USD</option>
+                  <option value="IDR">IDR</option>
                   <option value="EUR">EUR</option>
                   <option value="GBP">GBP</option>
                   <option value="CAD">CAD</option>
