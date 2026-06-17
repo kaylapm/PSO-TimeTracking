@@ -20,7 +20,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const seasonalTheme = (process.env.SEASONAL_THEME ?? '') as string;
+  const seasonalTheme = 'christmas';
 
   return (
     <html

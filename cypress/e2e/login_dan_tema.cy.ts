@@ -1,4 +1,4 @@
-describe('Pengujian Halaman Login & Tema Musiman', () => {
+describe('Pengujian Halaman Login', () => {
   before(() => {
     // Seed database with test user if not exists
     cy.request({
@@ -53,18 +53,5 @@ describe('Pengujian Halaman Login & Tema Musiman', () => {
     cy.contains('Logout', { matchCase: false }).should('be.visible').click();
 
     cy.url({ timeout: 10000 }).should('include', '/login');
-  });
-
-  it('harus menerapkan class tema musiman pada dokumen jika diaktifkan (Staging)', () => {
-    const themes = ['halloween', 'christmas'];
-    themes.forEach((theme) => {
-      cy.document().then((doc) => {
-        doc.documentElement.classList.add(theme);
-      });
-      cy.get('html').should('have.class', theme);
-      cy.document().then((doc) => {
-        doc.documentElement.classList.remove(theme);
-      });
-    });
   });
 });

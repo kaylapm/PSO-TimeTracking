@@ -139,15 +139,14 @@ export default function TeamSettingsPage() {
       setTeamName(result.data.team.name);
       const addr = result.data.team.billingAddress;
       if (addr) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- populate form from fetched team data on mount
         setStreet(addr.street || '');
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+
         setCity(addr.city || '');
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+
         setState(addr.state || '');
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+
         setPostalCode(addr.postalCode || '');
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+
         setCountry(addr.country || 'United States');
       }
     }
