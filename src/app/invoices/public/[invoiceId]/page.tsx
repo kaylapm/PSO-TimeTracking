@@ -4,6 +4,7 @@ import { useState, Fragment } from 'react';
 import { useQuery } from 'urql';
 import { gql } from '@/lib/gql';
 import { Badge } from '@/components/ui/badge';
+import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight, Clock, FileDown } from 'lucide-react';
 
@@ -49,12 +50,9 @@ const GET_PUBLIC_INVOICE_QUERY = gql(`
   }
 `);
 
-export default function PublicInvoicePage({
-  params,
-}: {
-  params: { invoiceId: string };
-}) {
-  const { invoiceId } = params;
+export default function PublicInvoicePage() {
+  const params = useParams();
+  const invoiceId = params.invoiceId as string;
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const [result] = useQuery({
@@ -78,7 +76,7 @@ export default function PublicInvoicePage({
   const formatCurrency = (cents: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'IDR',
     }).format(cents / 100);
   };
 
