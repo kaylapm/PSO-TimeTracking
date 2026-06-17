@@ -10,7 +10,6 @@ on:
 env:
   AZURE_CONTAINER_REGISTRY: 'registrytimetracking.azurecr.io'
   CONTAINER_NAME: 'ardine-app'
-  NEXT_PUBLIC_SEASONAL_THEME: 'halloween'
 
 jobs:
   validate_prerequisites:
@@ -101,10 +100,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ needs.validate_prerequisites.outputs.image_tag }}
-          build-args: |
-            NEXT_PUBLIC_SEASONAL_THEME=${{ env.NEXT_PUBLIC_SEASONAL_THEME }}
 
-      - name: Deploy to Azure Web App (Staging)
+      - name: Sanitize Secret and Deploy to Azure Web App (Staging)
         if: needs.validate_prerequisites.outputs.env_name == 'Staging'
         uses: azure/webapps-deploy@v3
         with:

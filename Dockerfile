@@ -21,10 +21,6 @@ COPY . .
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Expose build-time environment variables for Next.js
-ARG NEXT_PUBLIC_SEASONAL_THEME
-ENV NEXT_PUBLIC_SEASONAL_THEME=$NEXT_PUBLIC_SEASONAL_THEME
-
 # Build the application
 RUN npm run build
 

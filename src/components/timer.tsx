@@ -131,7 +131,7 @@ export function Timer({
       clearInterval(interval);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [activeTimer?.id, activeTimer?.startedAt, calculateElapsed, refetchTimer]);
+  }, [activeTimer, calculateElapsed, refetchTimer]);
 
   // Sync with localStorage on timer changes
   useEffect(() => {
