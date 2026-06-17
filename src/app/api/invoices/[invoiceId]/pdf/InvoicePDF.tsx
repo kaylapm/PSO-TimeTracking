@@ -176,7 +176,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
   const formatCurrency = (cents: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'IDR',
     }).format(cents / 100);
   };
 
