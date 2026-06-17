@@ -995,9 +995,9 @@ export default function DashboardPage() {
                 {weekDaysData.map((day) => {
                   const hrs = day.seconds / 3600;
                   const isToday = day.dateStr === todayDateStr;
-                  let bgClass = 'bg-slate-100 dark:bg-slate-800/80';
+                  let bgClass =
+                    'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400';
                   let borderClass = 'border-transparent';
-                  let textClass = 'text-slate-500 dark:text-slate-400';
 
                   if (hrs >= targetDailyHours) {
                     bgClass =
