@@ -16,6 +16,7 @@ const customJestConfig = {
     'src/lib/utils.ts',
     'src/lib/time-utils.ts',
     'src/lib/admin-auth.ts',
+    'src/lib/themeManager.ts',
   ],
 };
 
