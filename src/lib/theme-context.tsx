@@ -8,13 +8,11 @@ import {
   useState,
 } from 'react';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'system' | 'halloween' | 'christmas';
 
 interface ThemeContextType {
   /** Current active theme */
   theme: Theme;
-  /** Toggle between light and dark mode */
-  toggleTheme: () => void;
   /** Set a specific theme */
   setTheme: (theme: Theme) => void;
 }
@@ -24,50 +22,53 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const STORAGE_KEY = 'ardine_theme';
 
 /**
- * ThemeProvider manages dark/light mode state and persists it to localStorage.
- * It applies the `dark` class on <html> to activate Tailwind's dark mode.
- * On initial load, it checks localStorage first, then falls back to OS preference.
+ * ThemeProvider manages theme state and persists it to localStorage.
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const getInitialTheme = (): Theme => {
     try {
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-        if (stored === 'dark' || stored === 'light') return stored;
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches)
-          return 'dark';
+        if (
+          stored &&
+          ['light', 'dark', 'system', 'halloween', 'christmas'].includes(stored)
+        ) {
+          return stored;
+        }
       }
     } catch (e) {
       // ignore and fall through
     }
-    return 'light';
+    return 'system';
   };
 
   const [theme, setThemeState] = useState<Theme>(() => getInitialTheme());
 
-  // Apply the `dark` class to <html> whenever the theme changes
+  // Apply the theme class to <html> whenever the theme changes
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
+    root.classList.remove('dark', 'halloween', 'christmas');
+
+    let activeTheme = theme;
+    if (theme === 'system') {
+      activeTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
     }
+
+    if (activeTheme !== 'light' && activeTheme !== 'system') {
+      root.classList.add(activeTheme);
+    }
+
     localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
-
-  const toggleTheme = useCallback(() => {
-    setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  }, []);
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
   }, []);
 
-  // Prevent flash of wrong theme by rendering nothing until mounted
-  // Children still render but the theme class is set via effect when mounted
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -1,43 +1,52 @@
 'use client';
 
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Palette } from 'lucide-react';
 import { useTheme } from '@/lib/theme-context';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
-/**
- * ThemeToggle renders a button that switches between light and dark mode.
- * Uses lucide-react icons for Sun/Moon with a smooth transition.
- */
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
-    <Button
-      variant="ghost"
-      size="icon-sm"
-      onClick={toggleTheme}
-      aria-label={
-        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
-      }
-      title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="relative"
-    >
-      {/* Sun icon — visible in dark mode, triggers switch to light */}
-      <Sun
-        className={`h-4 w-4 transition-all duration-300 ${
-          theme === 'dark'
-            ? 'rotate-0 scale-100 opacity-100'
-            : 'rotate-90 scale-0 opacity-0 absolute'
-        }`}
-      />
-      {/* Moon icon — visible in light mode, triggers switch to dark */}
-      <Moon
-        className={`h-4 w-4 transition-all duration-300 ${
-          theme === 'light'
-            ? 'rotate-0 scale-100 opacity-100'
-            : '-rotate-90 scale-0 opacity-0 absolute'
-        }`}
-      />
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="relative"
+          title="Select theme"
+        >
+          <Palette className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme('light')}>
+          <Sun className="mr-2 h-4 w-4" />
+          <span>Light</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>
+          <Moon className="mr-2 h-4 w-4" />
+          <span>Dark</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('system')}>
+          <span className="mr-2 text-sm">💻</span>
+          <span>System</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('halloween')}>
+          <span className="mr-2 text-sm">🎃</span>
+          <span>Halloween</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('christmas')}>
+          <span className="mr-2 text-sm">🎄</span>
+          <span>Christmas</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

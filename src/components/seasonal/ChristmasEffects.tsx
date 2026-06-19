@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSeasonalTheme } from '@/lib/themeManager';
+import { useTheme } from '@/lib/theme-context';
 
 const SNOWFLAKES = [
   {
@@ -153,16 +153,11 @@ function SnowflakeIcon({ size }: { size: number }) {
 }
 
 export function ChristmasEffects() {
-  const active = getSeasonalTheme() === 'christmas';
+  const { theme } = useTheme();
+  const active = theme === 'christmas';
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (active) {
-      root.classList.add('christmas');
-    } else {
-      root.classList.remove('christmas');
-    }
-    return () => root.classList.remove('christmas');
+    // ThemeProvider handles class toggling
   }, [active]);
 
   if (!active) return null;
@@ -190,7 +185,8 @@ export function ChristmasEffects() {
 }
 
 export function ChristmasBanner() {
-  const active = getSeasonalTheme() === 'christmas';
+  const { theme } = useTheme();
+  const active = theme === 'christmas';
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
