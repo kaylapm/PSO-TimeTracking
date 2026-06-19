@@ -20,14 +20,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const seasonalTheme = 'christmas';
-
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={seasonalTheme || undefined}
-    >
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-init.js" />

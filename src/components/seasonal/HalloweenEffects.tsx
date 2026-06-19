@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSeasonalTheme } from '@/lib/themeManager';
+import { useTheme } from '@/lib/theme-context';
 
 const BATS = [
   { top: '8%', left: '4%', size: 28, duration: '4s', delay: '0s' },
@@ -92,16 +92,12 @@ function CobwebCorner({ position }: { position: 'top-left' | 'top-right' }) {
 }
 
 export function HalloweenEffects() {
-  const active = getSeasonalTheme() === 'halloween';
+  const { theme } = useTheme();
+  const active = theme === 'halloween';
 
   useEffect(() => {
     const root = document.documentElement;
-    if (active) {
-      root.classList.add('halloween');
-    } else {
-      root.classList.remove('halloween');
-    }
-    return () => root.classList.remove('halloween');
+    // We no longer manually add/remove the class here because ThemeProvider handles it.
   }, [active]);
 
   if (!active) return null;
@@ -130,7 +126,8 @@ export function HalloweenEffects() {
 }
 
 export function HalloweenBanner() {
-  const active = getSeasonalTheme() === 'halloween';
+  const { theme } = useTheme();
+  const active = theme === 'halloween';
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
